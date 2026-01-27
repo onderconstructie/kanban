@@ -1,0 +1,2539 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SprintFlow — Kanban Board</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='4' y='4' width='24' height='24' rx='4' fill='%23f0fdf4' stroke='%2310b981' stroke-width='2'/%3E%3Crect x='8' y='9' width='5' height='14' rx='1' fill='%2310b981' opacity='0.3'/%3E%3Crect x='14' y='9' width='5' height='10' rx='1' fill='%2310b981' opacity='0.5'/%3E%3Crect x='20' y='9' width='5' height='6' rx='1' fill='%2310b981' opacity='0.8'/%3E%3C/svg%3E">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        :root {
+            --slate-50: #f8fafc;
+            --slate-100: #f1f5f9;
+            --slate-200: #e2e8f0;
+            --slate-300: #cbd5e1;
+            --slate-400: #94a3b8;
+            --slate-500: #64748b;
+            --slate-600: #475569;
+            --slate-700: #334155;
+            --slate-800: #1e293b;
+            --slate-900: #0f172a;
+            --white: #ffffff;
+
+            --red-50: #fef2f2;
+            --red-100: #fee2e2;
+            --red-500: #ef4444;
+            --red-600: #dc2626;
+
+            --orange-50: #fff7ed;
+            --orange-100: #ffedd5;
+            --orange-500: #f97316;
+            --orange-600: #ea580c;
+
+            --green-50: #f0fdf4;
+            --green-100: #dcfce7;
+            --green-500: #22c55e;
+            --green-600: #16a34a;
+
+            --blue-50: #eff6ff;
+            --blue-100: #dbeafe;
+            --blue-500: #3b82f6;
+            --blue-600: #2563eb;
+
+            --purple-50: #faf5ff;
+            --purple-100: #f3e8ff;
+            --purple-500: #a855f7;
+            --purple-600: #9333ea;
+
+            --accent: #10b981;
+            --accent-light: #d1fae5;
+            --accent-dark: #0d9668;
+
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--slate-100);
+            color: var(--slate-700);
+            line-height: 1.5;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Header */
+        .header {
+            background: var(--white);
+            border-bottom: 1px solid var(--slate-200);
+            padding: 0.875rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo {
+            width: 38px;
+            height: 38px;
+            background: var(--green-50);
+            border: 1.5px solid var(--accent);
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .logo svg {
+            width: 20px;
+            height: 20px;
+            color: var(--accent);
+        }
+
+        .header-text h1 {
+            font-size: 1.0625rem;
+            font-weight: 700;
+            color: var(--slate-800);
+            letter-spacing: -0.02em;
+        }
+
+        .header-text p {
+            font-size: 0.6875rem;
+            color: var(--slate-500);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 0.4375rem 0.75rem;
+            font-size: 0.8125rem;
+            font-weight: 500;
+            font-family: inherit;
+            border: none;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.375rem;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .btn svg {
+            width: 15px;
+            height: 15px;
+            flex-shrink: 0;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-dark);
+        }
+
+        .btn-secondary {
+            background: var(--slate-100);
+            color: var(--slate-600);
+            border: 1.5px solid var(--slate-200);
+        }
+
+        .btn-secondary:hover {
+            background: var(--slate-200);
+            border-color: var(--slate-300);
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: var(--slate-500);
+        }
+
+        .btn-ghost:hover {
+            background: var(--slate-100);
+            color: var(--slate-700);
+        }
+
+        .btn-sm {
+            padding: 0.3125rem 0.5rem;
+            font-size: 0.75rem;
+        }
+
+        /* Sprint Bar */
+        .sprint-bar {
+            background: var(--white);
+            border-bottom: 1px solid var(--slate-200);
+            padding: 0.75rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .sprint-info {
+            display: flex;
+            align-items: center;
+            gap: 0.625rem;
+        }
+
+        .sprint-icon {
+            width: 34px;
+            height: 34px;
+            background: var(--accent-light);
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sprint-icon svg {
+            width: 16px;
+            height: 16px;
+            color: var(--accent);
+        }
+
+        .sprint-name {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--slate-800);
+        }
+
+        .sprint-dates {
+            font-size: 0.6875rem;
+            color: var(--slate-500);
+        }
+
+        .sprint-stats {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-left: auto;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 0.25rem 0.75rem;
+            background: var(--slate-50);
+            border-radius: var(--radius-sm);
+        }
+
+        .stat-value {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--slate-800);
+        }
+
+        .stat-label {
+            font-size: 0.5625rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--slate-400);
+        }
+
+        /* Capacity Bar */
+        .capacity-container {
+            display: flex;
+            align-items: center;
+            gap: 0.625rem;
+            padding: 0.5rem 0.75rem;
+            background: var(--slate-50);
+            border: 1.5px solid var(--slate-200);
+            border-radius: var(--radius-sm);
+        }
+
+        .capacity-label {
+            font-size: 0.625rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--slate-400);
+            letter-spacing: 0.03em;
+        }
+
+        .capacity-bar {
+            width: 100px;
+            height: 8px;
+            background: var(--slate-200);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .capacity-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.4s ease;
+        }
+
+        .capacity-fill.under { background: var(--accent); }
+        .capacity-fill.warning { background: var(--orange-500); }
+        .capacity-fill.over { background: var(--red-500); }
+
+        .capacity-text {
+            font-size: 0.75rem;
+            font-weight: 600;
+            min-width: 90px;
+        }
+
+        .capacity-text.under { color: var(--accent); }
+        .capacity-text.warning { color: var(--orange-600); }
+        .capacity-text.over { color: var(--red-600); }
+
+        /* Filter Bar - Redesigned */
+        .filter-bar {
+            padding: 0.75rem 1.5rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 1.5rem;
+            background: var(--slate-50);
+            border-bottom: 1px solid var(--slate-200);
+        }
+
+        .search-box {
+            position: relative;
+            width: 200px;
+            flex-shrink: 0;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 0.5rem 0.75rem 0.5rem 2rem;
+            font-size: 0.8125rem;
+            font-family: inherit;
+            color: var(--slate-700);
+            background: var(--white);
+            border: 1.5px solid var(--slate-200);
+            border-radius: var(--radius-sm);
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .search-box input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-light);
+        }
+
+        .search-box input::placeholder {
+            color: var(--slate-400);
+        }
+
+        .search-box svg {
+            position: absolute;
+            left: 0.625rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 14px;
+            height: 14px;
+            color: var(--slate-400);
+        }
+
+        /* Filter Groups */
+        .filter-groups {
+            display: flex;
+            gap: 1.5rem;
+            flex: 1;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.375rem;
+        }
+
+        .filter-group-label {
+            font-size: 0.625rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--slate-400);
+            padding-left: 0.25rem;
+        }
+
+        .filter-group-chips {
+            display: flex;
+            gap: 0.375rem;
+            flex-wrap: wrap;
+        }
+
+        /* Epic Chips - Square with color bar */
+        .filter-chip-epic {
+            padding: 0.375rem 0.625rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            font-family: inherit;
+            color: var(--slate-600);
+            background: var(--white);
+            border: 1.5px solid var(--slate-200);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.15s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            position: relative;
+            padding-left: 1.25rem;
+        }
+
+        .filter-chip-epic::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+        }
+
+        .filter-chip-epic:hover {
+            border-color: var(--slate-300);
+            background: var(--slate-50);
+        }
+
+        .filter-chip-epic.active {
+            background: var(--white);
+            border-color: var(--slate-400);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        /* Team Chips - Round with avatar */
+        .filter-chip-team {
+            padding: 0.25rem 0.625rem 0.25rem 0.25rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            font-family: inherit;
+            color: var(--slate-600);
+            background: var(--white);
+            border: 1.5px solid var(--slate-200);
+            border-radius: 9999px;
+            cursor: pointer;
+            transition: all 0.15s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+        }
+
+        .filter-chip-team:hover {
+            border-color: var(--slate-300);
+            background: var(--slate-50);
+        }
+
+        .filter-chip-team.active {
+            background: var(--white);
+            border-color: var(--slate-400);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .filter-chip-team .mini-avatar {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.5625rem;
+            font-weight: 600;
+            color: var(--white);
+        }
+
+        .clear-filters-btn {
+            padding: 0.375rem 0.625rem;
+            font-size: 0.6875rem;
+            font-weight: 500;
+            color: var(--slate-400);
+            background: transparent;
+            border: 1px dashed var(--slate-300);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.15s;
+            font-family: inherit;
+            align-self: flex-end;
+        }
+
+        .clear-filters-btn:hover {
+            color: var(--red-500);
+            border-color: var(--red-300);
+            background: var(--red-50);
+        }
+
+        /* Board */
+        .board-container {
+            padding: 1rem 1.5rem 2rem;
+            overflow-x: auto;
+        }
+
+        .board {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 0.875rem;
+            min-height: calc(100vh - 240px);
+        }
+
+        @media (max-width: 1400px) {
+            .board {
+                grid-template-columns: repeat(5, minmax(240px, 1fr));
+            }
+        }
+
+        /* Columns */
+        .column {
+            background: var(--white);
+            border: 1.5px solid var(--slate-200);
+            border-radius: var(--radius-lg);
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+            transition: border-color 0.2s;
+        }
+
+        .column.drag-over {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-light);
+        }
+
+        .column-header {
+            padding: 0.875rem 1rem;
+            border-bottom: 1px solid var(--slate-100);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .column-title {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .column-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .column-name {
+            font-size: 0.8125rem;
+            font-weight: 600;
+            color: var(--slate-700);
+        }
+
+        .column-count {
+            font-size: 0.6875rem;
+            font-weight: 600;
+            padding: 0.125rem 0.5rem;
+            border-radius: 9999px;
+            background: var(--slate-100);
+            color: var(--slate-500);
+        }
+
+        .column-cards {
+            flex: 1;
+            padding: 0.625rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--slate-50);
+            border: 1.5px solid var(--slate-200);
+            border-radius: var(--radius-md);
+            padding: 0.75rem;
+            cursor: grab;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .card:hover {
+            border-color: var(--slate-300);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .card.dragging {
+            opacity: 0.5;
+            cursor: grabbing;
+        }
+
+        .card-epic {
+            font-size: 0.625rem;
+            font-weight: 600;
+            padding: 0.125rem 0.375rem;
+            border-radius: 3px;
+            display: inline-block;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-title {
+            font-size: 0.8125rem;
+            font-weight: 600;
+            color: var(--slate-800);
+            margin-bottom: 0.25rem;
+            line-height: 1.4;
+            padding-right: 2.5rem;
+        }
+
+        .card-description {
+            font-size: 0.6875rem;
+            color: var(--slate-500);
+            line-height: 1.5;
+            margin-bottom: 0.5rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        /* Subtasks in card */
+        .card-subtasks-list {
+            margin-bottom: 0.625rem;
+            padding: 0.5rem;
+            background: var(--white);
+            border: 1px solid var(--slate-200);
+            border-radius: 6px;
+        }
+
+        .card-subtask-item {
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.1875rem 0;
+            font-size: 0.6875rem;
+            color: var(--slate-600);
+        }
+
+        .card-subtask-item.done {
+            color: var(--slate-400);
+            text-decoration: line-through;
+        }
+
+        .card-subtask-item svg {
+            width: 11px;
+            height: 11px;
+            flex-shrink: 0;
+        }
+
+        .card-subtask-item.done svg { color: var(--accent); }
+        .card-subtask-item:not(.done) svg { color: var(--slate-300); }
+
+        .card-subtasks-more {
+            font-size: 0.625rem;
+            color: var(--slate-400);
+            margin-top: 0.1875rem;
+        }
+
+        .card-meta {
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+            flex-wrap: wrap;
+        }
+
+        .card-priority {
+            font-size: 0.625rem;
+            font-weight: 600;
+            padding: 0.125rem 0.375rem;
+            border-radius: 3px;
+        }
+
+        .priority-hoog {
+            background: var(--red-100);
+            color: var(--red-600);
+        }
+
+        .priority-medium {
+            background: var(--orange-100);
+            color: var(--orange-600);
+        }
+
+        .priority-laag {
+            background: var(--green-100);
+            color: var(--green-600);
+        }
+
+        .card-estimate {
+            font-size: 0.625rem;
+            font-weight: 600;
+            padding: 0.125rem 0.375rem;
+            border-radius: 3px;
+            background: var(--blue-50);
+            color: var(--blue-600);
+        }
+
+        .card-due {
+            font-size: 0.625rem;
+            font-weight: 500;
+            color: var(--slate-500);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            margin-left: auto;
+        }
+
+        .card-due svg {
+            width: 10px;
+            height: 10px;
+        }
+
+        .card-due.overdue {
+            color: var(--red-600);
+        }
+
+        .card-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 0.625rem;
+            padding-top: 0.625rem;
+            border-top: 1px solid var(--slate-200);
+        }
+
+        .card-owner {
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+        }
+
+        .avatar {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.5625rem;
+            font-weight: 600;
+            color: var(--white);
+        }
+
+        .avatar-group {
+            display: flex;
+        }
+
+        .avatar-group .avatar {
+            margin-left: -5px;
+            border: 2px solid var(--slate-50);
+        }
+
+        .avatar-group .avatar:first-child {
+            margin-left: 0;
+        }
+
+        .owner-name {
+            font-size: 0.6875rem;
+            color: var(--slate-600);
+        }
+
+        .card-actions {
+            position: absolute;
+            top: 0.375rem;
+            right: 0.375rem;
+            display: none;
+            gap: 0.25rem;
+        }
+
+        .card:hover .card-actions {
+            display: flex;
+        }
+
+        .card-action-btn {
+            width: 22px;
+            height: 22px;
+            border-radius: 4px;
+            background: var(--white);
+            border: 1px solid var(--slate-200);
+            color: var(--slate-400);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s;
+        }
+
+        .card-action-btn:hover {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: var(--white);
+        }
+
+        .card-action-btn svg {
+            width: 11px;
+            height: 11px;
+        }
+
+        /* Add Card Button */
+        .add-card-btn {
+            width: 100%;
+            padding: 0.625rem;
+            background: transparent;
+            border: 1.5px dashed var(--slate-300);
+            border-radius: var(--radius-sm);
+            color: var(--slate-400);
+            font-size: 0.75rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.375rem;
+            font-family: inherit;
+        }
+
+        .add-card-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: var(--accent-light);
+        }
+
+        .add-card-btn svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.4);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background: var(--white);
+            border: 1.5px solid var(--slate-200);
+            border-radius: var(--radius-lg);
+            width: 90%;
+            max-width: 560px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            transform: scale(0.95);
+            transition: transform 0.2s;
+        }
+
+        .modal-overlay.active .modal {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            padding: 1.125rem 1.5rem;
+            border-bottom: 1px solid var(--slate-200);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--slate-800);
+        }
+
+        .modal-close {
+            width: 30px;
+            height: 30px;
+            border-radius: var(--radius-sm);
+            background: transparent;
+            border: none;
+            color: var(--slate-400);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.125rem;
+            transition: all 0.15s;
+        }
+
+        .modal-close:hover {
+            background: var(--slate-100);
+            color: var(--slate-600);
+        }
+
+        .modal-body {
+            padding: 1.25rem 1.5rem;
+        }
+
+        .modal-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--slate-200);
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.5rem;
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 1.125rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.8125rem;
+            font-weight: 500;
+            color: var(--slate-700);
+            margin-bottom: 0.375rem;
+        }
+
+        .form-input,
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            padding: 0.5rem 0.75rem;
+            font-size: 0.875rem;
+            font-family: inherit;
+            color: var(--slate-700);
+            background: var(--white);
+            border: 1.5px solid var(--slate-200);
+            border-radius: var(--radius-sm);
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-light);
+        }
+
+        .form-textarea {
+            min-height: 70px;
+            resize: vertical;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .form-hint {
+            font-size: 0.6875rem;
+            color: var(--slate-400);
+            margin-top: 0.25rem;
+        }
+
+        /* Epic Select with Add Option */
+        .select-with-add {
+            position: relative;
+        }
+
+        .add-epic-inline {
+            display: none;
+            margin-top: 0.5rem;
+            padding: 0.625rem;
+            background: var(--slate-50);
+            border: 1px solid var(--slate-200);
+            border-radius: var(--radius-sm);
+        }
+
+        .add-epic-inline.active {
+            display: block;
+        }
+
+        .add-epic-inline-row {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        /* Sidebar Panel */
+        .sidebar-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.3);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s;
+        }
+
+        .sidebar-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .sidebar-panel {
+            position: fixed;
+            top: 0;
+            right: -420px;
+            width: 420px;
+            height: 100vh;
+            background: var(--white);
+            border-left: 1px solid var(--slate-200);
+            z-index: 1001;
+            transition: right 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            box-shadow: -10px 0 30px rgba(0,0,0,0.1);
+        }
+
+        .sidebar-panel.active {
+            right: 0;
+        }
+
+        .panel-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.25rem;
+        }
+
+        /* Item Lists */
+        .item-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .item-row {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.625rem 0.75rem;
+            background: var(--slate-50);
+            border: 1.5px solid var(--slate-200);
+            border-radius: var(--radius-sm);
+        }
+
+        .item-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+            flex-shrink: 0;
+        }
+
+        .item-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .item-name {
+            font-size: 0.8125rem;
+            font-weight: 500;
+            color: var(--slate-700);
+        }
+
+        .item-sub {
+            font-size: 0.6875rem;
+            color: var(--slate-400);
+        }
+
+        /* Team member availability */
+        .team-availability {
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+            margin-left: auto;
+        }
+
+        .availability-input {
+            width: 50px;
+            padding: 0.25rem 0.375rem;
+            font-size: 0.75rem;
+            text-align: center;
+            border: 1px solid var(--slate-200);
+            border-radius: 4px;
+        }
+
+        .availability-label {
+            font-size: 0.625rem;
+            color: var(--slate-400);
+        }
+
+        /* Dropdown */
+        .dropdown {
+            position: relative;
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 0.5rem;
+            background: var(--white);
+            border: 1.5px solid var(--slate-200);
+            border-radius: var(--radius-md);
+            padding: 0.5rem;
+            min-width: 180px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-8px);
+            transition: all 0.15s;
+            z-index: 100;
+        }
+
+        .dropdown.active .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-item {
+            width: 100%;
+            padding: 0.5rem 0.75rem;
+            background: transparent;
+            border: none;
+            border-radius: var(--radius-sm);
+            color: var(--slate-700);
+            font-size: 0.8125rem;
+            font-weight: 500;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.15s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: inherit;
+        }
+
+        .dropdown-item:hover {
+            background: var(--slate-50);
+            color: var(--accent);
+        }
+
+        .dropdown-item svg {
+            width: 15px;
+            height: 15px;
+            color: var(--slate-400);
+        }
+
+        .dropdown-item:hover svg {
+            color: var(--accent);
+        }
+
+        /* Checklist */
+        .checklist {
+            display: flex;
+            flex-direction: column;
+            gap: 0.375rem;
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.4375rem 0.625rem;
+            background: var(--slate-50);
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--slate-200);
+        }
+
+        .checklist-item input[type="checkbox"] {
+            width: 15px;
+            height: 15px;
+            accent-color: var(--accent);
+        }
+
+        .checklist-item.done span {
+            text-decoration: line-through;
+            color: var(--slate-400);
+        }
+
+        .checklist-item span {
+            flex: 1;
+            font-size: 0.8125rem;
+            color: var(--slate-600);
+        }
+
+        /* Participants */
+        .participants-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 0.375rem;
+            max-height: 130px;
+            overflow-y: auto;
+        }
+
+        .participant-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.4375rem 0.625rem;
+            background: var(--slate-50);
+            border: 1px solid var(--slate-200);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .participant-item:hover {
+            border-color: var(--slate-300);
+        }
+
+        .participant-item input {
+            accent-color: var(--accent);
+        }
+
+        /* Sprint Capacity Section */
+        .capacity-section {
+            background: var(--green-50);
+            border: 1.5px solid var(--accent);
+            border-radius: var(--radius-md);
+            padding: 1rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .capacity-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+        }
+
+        .capacity-title {
+            font-size: 0.8125rem;
+            font-weight: 600;
+            color: var(--accent-dark);
+        }
+
+        .capacity-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.625rem;
+        }
+
+        .capacity-stat {
+            text-align: center;
+            padding: 0.5rem;
+            background: var(--white);
+            border-radius: var(--radius-sm);
+        }
+
+        .capacity-stat-value {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--slate-800);
+        }
+
+        .capacity-stat-label {
+            font-size: 0.5625rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--slate-500);
+        }
+
+        /* Toast */
+        .toast-container {
+            position: fixed;
+            bottom: 1.25rem;
+            right: 1.25rem;
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .toast {
+            padding: 0.75rem 1rem;
+            background: var(--white);
+            border: 1.5px solid var(--slate-200);
+            border-radius: var(--radius-md);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+            display: flex;
+            align-items: center;
+            gap: 0.625rem;
+            animation: slideIn 0.3s ease;
+            min-width: 240px;
+        }
+
+        .toast.success { border-left: 3px solid var(--accent); }
+        .toast.error { border-left: 3px solid var(--red-500); }
+
+        .toast svg {
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+        }
+
+        .toast.success svg { color: var(--accent); }
+        .toast.error svg { color: var(--red-500); }
+
+        .toast span {
+            font-size: 0.8125rem;
+            font-weight: 500;
+            color: var(--slate-700);
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 1.5rem 1rem;
+            color: var(--slate-400);
+        }
+
+        .empty-state p {
+            font-size: 0.8125rem;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--slate-300); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--slate-400); }
+
+        /* Responsive */
+        @media (max-width: 1100px) {
+            .filter-bar {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 0.75rem;
+            }
+
+            .search-box {
+                width: 100%;
+            }
+
+            .filter-groups {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+        }
+
+        @media (max-width: 900px) {
+            .header {
+                padding: 0.625rem 1rem;
+                flex-wrap: wrap;
+                gap: 0.625rem;
+            }
+
+            .header-actions {
+                width: 100%;
+                justify-content: flex-end;
+            }
+
+            .sprint-bar {
+                padding: 0.625rem 1rem;
+            }
+
+            .sprint-stats {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .filter-bar {
+                padding: 0.625rem 1rem;
+            }
+
+            .board-container {
+                padding: 0.625rem 1rem;
+            }
+
+            .board {
+                grid-template-columns: repeat(5, minmax(220px, 1fr));
+            }
+
+            .sidebar-panel {
+                width: 100%;
+                right: -100%;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-left">
+            <div class="logo">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="18" height="18" rx="2"/>
+                    <path d="M9 3v18"/>
+                    <path d="M15 3v18"/>
+                    <path d="M3 9h18"/>
+                    <path d="M3 15h18"/>
+                </svg>
+            </div>
+            <div class="header-text">
+                <h1>SprintFlow</h1>
+                <p>Kanban Bord — Sprint Planning</p>
+            </div>
+        </div>
+        <div class="header-actions">
+            <button class="btn btn-secondary" onclick="openPanel('team')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                Team
+            </button>
+            <button class="btn btn-secondary" onclick="openPanel('epics')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+                Epics
+            </button>
+            <button class="btn btn-secondary" onclick="openPanel('sprint')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg>
+                Sprint
+            </button>
+            <div class="dropdown" id="exportDropdown">
+                <button class="btn btn-secondary" onclick="toggleDropdown('exportDropdown')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    Exporteren
+                </button>
+                <div class="dropdown-menu">
+                    <button class="dropdown-item" onclick="exportAsJPG()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+                        JPG Afbeelding
+                    </button>
+                    <button class="dropdown-item" onclick="exportAsPDF()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+                        PDF Document
+                    </button>
+                    <button class="dropdown-item" onclick="exportAsCSV()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                        CSV Spreadsheet
+                    </button>
+                </div>
+            </div>
+            <button class="btn btn-primary" onclick="openCardModal()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Nieuwe Taak
+            </button>
+        </div>
+    </header>
+
+    <!-- Sprint Bar -->
+    <div class="sprint-bar">
+        <div class="sprint-info">
+            <div class="sprint-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            </div>
+            <div>
+                <div class="sprint-name" id="currentSprintName">Sprint 1</div>
+                <div class="sprint-dates" id="sprintDates">Geen datums ingesteld</div>
+            </div>
+        </div>
+        <div class="sprint-stats">
+            <div class="stat-item">
+                <div class="stat-value" id="statTotalTasks">0</div>
+                <div class="stat-label">Taken</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="statCompletedTasks">0</div>
+                <div class="stat-label">Klaar</div>
+            </div>
+            <div class="capacity-container">
+                <span class="capacity-label">Capaciteit</span>
+                <div class="capacity-bar">
+                    <div class="capacity-fill under" id="capacityFill" style="width: 0%"></div>
+                </div>
+                <span class="capacity-text under" id="capacityText">0 / 0 dagen</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter Bar - Redesigned with separate groups -->
+    <div class="filter-bar">
+        <div class="search-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+            <input type="text" id="searchInput" placeholder="Zoeken..." oninput="filterCards()">
+        </div>
+        <div class="filter-groups">
+            <div class="filter-group" id="epicFilterGroup" style="display: none;">
+                <span class="filter-group-label">Epics</span>
+                <div class="filter-group-chips" id="epicFilterChips">
+                    <!-- Epic chips rendered by JS -->
+                </div>
+            </div>
+            <div class="filter-group" id="teamFilterGroup" style="display: none;">
+                <span class="filter-group-label">Teamleden</span>
+                <div class="filter-group-chips" id="teamFilterChips">
+                    <!-- Team chips rendered by JS -->
+                </div>
+            </div>
+        </div>
+        <button class="clear-filters-btn" id="clearFiltersBtn" style="display: none;" onclick="clearAllFilters()">
+            Filters wissen
+        </button>
+    </div>
+
+    <!-- Board -->
+    <div class="board-container">
+        <div class="board" id="board">
+            <!-- Columns rendered by JS -->
+        </div>
+    </div>
+
+    <!-- Card Modal -->
+    <div class="modal-overlay" id="cardModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title" id="cardModalTitle">Nieuwe Taak</h3>
+                <button class="modal-close" onclick="closeCardModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="cardId">
+                <div class="form-group">
+                    <label class="form-label">Titel *</label>
+                    <input type="text" class="form-input" id="cardTitleInput" placeholder="Geef de taak een titel...">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Beschrijving</label>
+                    <textarea class="form-textarea" id="cardDescInput" placeholder="Beschrijf de taak..."></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Epic</label>
+                        <div class="select-with-add">
+                            <select class="form-select" id="cardEpicSelect" onchange="handleEpicSelect()">
+                                <option value="">Geen epic</option>
+                                <option value="__new__">+ Nieuwe epic aanmaken...</option>
+                            </select>
+                            <div class="add-epic-inline" id="addEpicInline">
+                                <div class="add-epic-inline-row">
+                                    <input type="text" class="form-input" id="inlineEpicName" placeholder="Epic naam...">
+                                    <input type="color" id="inlineEpicColor" value="#a855f7" style="width: 36px; height: 36px; border: 1px solid var(--slate-200); border-radius: 4px; cursor: pointer; padding: 2px;">
+                                    <button class="btn btn-primary btn-sm" onclick="addEpicInline()">Toevoegen</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Status</label>
+                        <select class="form-select" id="cardStatusSelect">
+                            <option value="backlog">Backlog</option>
+                            <option value="todo">Te Doen</option>
+                            <option value="bezig">Bezig</option>
+                            <option value="review">Review</option>
+                            <option value="klaar">Klaar</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Eigenaar</label>
+                        <select class="form-select" id="cardOwnerSelect">
+                            <option value="">Niet toegewezen</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Prioriteit</label>
+                        <select class="form-select" id="cardPrioritySelect">
+                            <option value="laag">Laag</option>
+                            <option value="medium">Medium</option>
+                            <option value="hoog">Hoog</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Inschatting (dagen)</label>
+                        <select class="form-select" id="cardEstimateSelect">
+                            <option value="">—</option>
+                            <option value="0.5">½ dag</option>
+                            <option value="1">1 dag</option>
+                            <option value="1.5">1½ dag</option>
+                            <option value="2">2 dagen</option>
+                            <option value="2.5">2½ dagen</option>
+                            <option value="3">3 dagen</option>
+                            <option value="4">4 dagen</option>
+                            <option value="5">5 dagen</option>
+                            <option value="6">6 dagen</option>
+                            <option value="8">8 dagen</option>
+                            <option value="10">10 dagen</option>
+                        </select>
+                        <div class="form-hint">Geschatte doorlooptijd in werkdagen</div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Deadline</label>
+                        <input type="date" class="form-input" id="cardDueInput">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Betrokkenen</label>
+                    <div id="participantsContainer" class="participants-grid">
+                        <!-- Checkboxes rendered by JS -->
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Subtaken</label>
+                    <div id="subtasksContainer" class="checklist">
+                        <!-- Subtasks rendered by JS -->
+                    </div>
+                    <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
+                        <input type="text" class="form-input" id="newSubtaskInput" placeholder="Nieuwe subtaak...">
+                        <button class="btn btn-secondary" onclick="addSubtask()">+</button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-ghost" onclick="closeCardModal()">Annuleren</button>
+                <button class="btn btn-primary" onclick="saveCard()">Opslaan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Team Panel -->
+    <div class="sidebar-overlay" id="teamOverlay" onclick="closePanel('team')"></div>
+    <div class="sidebar-panel" id="teamPanel">
+        <div class="modal-header">
+            <h3 class="modal-title">Teamleden</h3>
+            <button class="modal-close" onclick="closePanel('team')">×</button>
+        </div>
+        <div class="panel-content">
+            <div class="form-group">
+                <label class="form-label">Nieuw teamlid toevoegen</label>
+                <div style="display: flex; gap: 0.5rem;">
+                    <input type="text" class="form-input" id="newMemberName" placeholder="Naam..." style="flex: 1;">
+                    <input type="color" id="newMemberColor" value="#10b981" style="width: 40px; height: 36px; border: 1.5px solid var(--slate-200); border-radius: var(--radius-sm); cursor: pointer; padding: 2px;">
+                    <button class="btn btn-primary" onclick="addTeamMember()">+</button>
+                </div>
+                <div class="form-hint">Druk op Enter of klik + om toe te voegen</div>
+            </div>
+            <div class="item-list" id="teamList">
+                <!-- Team members rendered by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Epics Panel -->
+    <div class="sidebar-overlay" id="epicsOverlay" onclick="closePanel('epics')"></div>
+    <div class="sidebar-panel" id="epicsPanel">
+        <div class="modal-header">
+            <h3 class="modal-title">Epics</h3>
+            <button class="modal-close" onclick="closePanel('epics')">×</button>
+        </div>
+        <div class="panel-content">
+            <div class="form-group">
+                <label class="form-label">Nieuwe epic toevoegen</label>
+                <div style="display: flex; gap: 0.5rem;">
+                    <input type="text" class="form-input" id="newEpicName" placeholder="Epic naam..." style="flex: 1;">
+                    <input type="color" id="newEpicColor" value="#a855f7" style="width: 40px; height: 36px; border: 1.5px solid var(--slate-200); border-radius: var(--radius-sm); cursor: pointer; padding: 2px;">
+                    <button class="btn btn-primary" onclick="addEpic()">+</button>
+                </div>
+                <div class="form-hint">Druk op Enter of klik + om toe te voegen</div>
+            </div>
+            <div class="item-list" id="epicsList">
+                <!-- Epics rendered by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Sprint Panel -->
+    <div class="sidebar-overlay" id="sprintOverlay" onclick="closePanel('sprint')"></div>
+    <div class="sidebar-panel" id="sprintPanel">
+        <div class="modal-header">
+            <h3 class="modal-title">Sprint Instellingen</h3>
+            <button class="modal-close" onclick="closePanel('sprint')">×</button>
+        </div>
+        <div class="panel-content">
+            <!-- Capacity Overview -->
+            <div class="capacity-section">
+                <div class="capacity-header">
+                    <span class="capacity-title">Sprint Capaciteit</span>
+                </div>
+                <div class="capacity-stats">
+                    <div class="capacity-stat">
+                        <div class="capacity-stat-value" id="panelCapacityTotal">0</div>
+                        <div class="capacity-stat-label">Beschikbaar</div>
+                    </div>
+                    <div class="capacity-stat">
+                        <div class="capacity-stat-value" id="panelCapacityUsed">0</div>
+                        <div class="capacity-stat-label">Ingepland</div>
+                    </div>
+                    <div class="capacity-stat">
+                        <div class="capacity-stat-value" id="panelCapacityRemaining">0</div>
+                        <div class="capacity-stat-label">Resterend</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Sprint Naam</label>
+                <input type="text" class="form-input" id="sprintNameInput" placeholder="Sprint 1">
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Startdatum</label>
+                    <input type="date" class="form-input" id="sprintStartInput">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Einddatum</label>
+                    <input type="date" class="form-input" id="sprintEndInput">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Werkdagen in sprint</label>
+                <input type="number" class="form-input" id="sprintDaysInput" placeholder="10" min="1" max="30">
+                <div class="form-hint">Aantal werkdagen (excl. weekenden/feestdagen)</div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Sprint Doel</label>
+                <textarea class="form-textarea" id="sprintGoalInput" placeholder="Wat wil je bereiken deze sprint?"></textarea>
+            </div>
+            <button class="btn btn-primary" onclick="saveSprint()" style="width: 100%;">Sprint Opslaan</button>
+
+            <div style="margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px solid var(--slate-200);">
+                <div class="form-label" style="margin-bottom: 0.75rem;">Team Beschikbaarheid (dagen per persoon)</div>
+                <div class="item-list" id="teamAvailabilityList">
+                    <!-- Team availability rendered by JS -->
+                </div>
+            </div>
+
+            <div style="margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px solid var(--slate-200);">
+                <div class="form-label" style="margin-bottom: 0.75rem;">Sprint Statistieken</div>
+                <div class="item-list">
+                    <div class="item-row">
+                        <div class="item-info"><div class="item-name">Totaal Taken</div></div>
+                        <div class="item-sub" id="panelStatTotal">0</div>
+                    </div>
+                    <div class="item-row">
+                        <div class="item-info"><div class="item-name">Afgerond</div></div>
+                        <div class="item-sub" id="panelStatDone">0</div>
+                    </div>
+                    <div class="item-row">
+                        <div class="item-info"><div class="item-name">Dagen Ingepland</div></div>
+                        <div class="item-sub" id="panelStatDays">0</div>
+                    </div>
+                    <div class="item-row">
+                        <div class="item-info"><div class="item-name">Dagen Afgerond</div></div>
+                        <div class="item-sub" id="panelStatDaysDone">0</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+        // ============================================
+        // DATA STRUCTURES & STATE
+        // ============================================
+
+        const COLUMNS = [
+            { id: 'backlog', name: 'Backlog', color: '#64748b' },
+            { id: 'todo', name: 'Te Doen', color: '#3b82f6' },
+            { id: 'bezig', name: 'Bezig', color: '#f97316' },
+            { id: 'review', name: 'Review', color: '#a855f7' },
+            { id: 'klaar', name: 'Klaar', color: '#22c55e' }
+        ];
+
+        const AVATAR_COLORS = [
+            '#10b981', '#3b82f6', '#a855f7', '#f97316', '#ef4444',
+            '#ec4899', '#14b8a6', '#8b5cf6', '#06b6d4', '#84cc16'
+        ];
+
+        let state = {
+            cards: [],
+            team: [],
+            epics: [],
+            sprint: { name: 'Sprint 1', startDate: '', endDate: '', days: 10, goal: '' },
+            teamAvailability: {},
+            filters: { search: '', epic: null, owner: null },
+            currentEditSubtasks: []
+        };
+
+        // ============================================
+        // STORAGE
+        // ============================================
+
+        function saveToStorage() {
+            localStorage.setItem('sprintflow_kanban_v3', JSON.stringify(state));
+        }
+
+        function loadFromStorage() {
+            const saved = localStorage.getItem('sprintflow_kanban_v3');
+            if (saved) state = { ...state, ...JSON.parse(saved) };
+        }
+
+        // ============================================
+        // UTILITY FUNCTIONS
+        // ============================================
+
+        function generateId() {
+            return 'id_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        }
+
+        function getInitials(name) {
+            return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+        }
+
+        function formatDate(dateStr) {
+            if (!dateStr) return '';
+            return new Date(dateStr).toLocaleDateString('nl-NL', { day: 'numeric', month: 'short' });
+        }
+
+        function formatEstimate(estimate) {
+            if (!estimate) return '';
+            const val = parseFloat(estimate);
+            if (val === 0.5) return '½ dag';
+            if (val === 1) return '1 dag';
+            if (val === 1.5) return '1½ dag';
+            if (val === 2.5) return '2½ d';
+            return `${val} d`;
+        }
+
+        function isOverdue(dateStr) {
+            if (!dateStr) return false;
+            const today = new Date(); today.setHours(0, 0, 0, 0);
+            return new Date(dateStr) < today;
+        }
+
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    ${type === 'success' ? '<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>' : '<circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>'}
+                </svg>
+                <span>${message}</span>
+            `;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        function hexToRgba(hex, alpha) {
+            const r = parseInt(hex.slice(1, 3), 16);
+            const g = parseInt(hex.slice(3, 5), 16);
+            const b = parseInt(hex.slice(5, 7), 16);
+            return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+        }
+
+        // ============================================
+        // CAPACITY CALCULATIONS
+        // ============================================
+
+        function getTotalCapacity() {
+            let total = 0;
+            state.team.forEach(member => {
+                total += parseFloat(state.teamAvailability[member.id] || state.sprint.days || 0);
+            });
+            return total;
+        }
+
+        function getUsedCapacity() {
+            return state.cards.filter(c => c.status !== 'backlog').reduce((sum, c) => sum + (parseFloat(c.estimate) || 0), 0);
+        }
+
+        function getCompletedCapacity() {
+            return state.cards.filter(c => c.status === 'klaar').reduce((sum, c) => sum + (parseFloat(c.estimate) || 0), 0);
+        }
+
+        // ============================================
+        // RENDER FUNCTIONS
+        // ============================================
+
+        function renderBoard() {
+            const board = document.getElementById('board');
+            board.innerHTML = '';
+
+            COLUMNS.forEach(column => {
+                const cards = getFilteredCards().filter(c => c.status === column.id);
+                const columnEl = document.createElement('div');
+                columnEl.className = 'column';
+                columnEl.dataset.status = column.id;
+                columnEl.ondrop = (e) => handleDrop(e, column.id);
+                columnEl.ondragover = handleDragOver;
+                columnEl.ondragleave = handleDragLeave;
+
+                columnEl.innerHTML = `
+                    <div class="column-header">
+                        <div class="column-title">
+                            <div class="column-dot" style="background: ${column.color}"></div>
+                            <span class="column-name">${column.name}</span>
+                        </div>
+                        <span class="column-count">${cards.length}</span>
+                    </div>
+                    <div class="column-cards">
+                        ${cards.map(renderCard).join('')}
+                        <button class="add-card-btn" onclick="openCardModal(null, '${column.id}')">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                            </svg>
+                            Taak toevoegen
+                        </button>
+                    </div>
+                `;
+                board.appendChild(columnEl);
+            });
+
+            updateStats();
+        }
+
+        function renderCard(card) {
+            const epic = state.epics.find(e => e.id === card.epicId);
+            const owner = state.team.find(t => t.id === card.ownerId);
+            const participants = (card.participants || []).map(id => state.team.find(t => t.id === id)).filter(Boolean);
+            const isCardOverdue = card.status !== 'klaar' && isOverdue(card.dueDate);
+            const subtasks = card.subtasks || [];
+            const completedSubtasks = subtasks.filter(s => s.done).length;
+
+            let subtasksHtml = '';
+            if (subtasks.length > 0) {
+                const visible = subtasks.slice(0, 3);
+                const remaining = subtasks.length - 3;
+                subtasksHtml = `
+                    <div class="card-subtasks-list">
+                        ${visible.map(s => `
+                            <div class="card-subtask-item ${s.done ? 'done' : ''}">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    ${s.done ? '<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>' : '<circle cx="12" cy="12" r="10"/>'}
+                                </svg>
+                                ${s.text}
+                            </div>
+                        `).join('')}
+                        ${remaining > 0 ? `<div class="card-subtasks-more">+${remaining} meer...</div>` : ''}
+                    </div>
+                `;
+            }
+
+            return `
+                <div class="card" draggable="true" data-id="${card.id}" ondragstart="handleDragStart(event)" ondragend="handleDragEnd(event)">
+                    <div class="card-actions">
+                        <button class="card-action-btn" onclick="openCardModal('${card.id}')" title="Bewerken">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                        </button>
+                        <button class="card-action-btn" onclick="deleteCard('${card.id}')" title="Verwijderen">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                        </button>
+                    </div>
+                    ${epic ? `<span class="card-epic" style="background: ${hexToRgba(epic.color, 0.15)}; color: ${epic.color}">${epic.name}</span>` : ''}
+                    <h4 class="card-title">${card.title}</h4>
+                    ${card.description ? `<p class="card-description">${card.description}</p>` : ''}
+                    ${subtasksHtml}
+                    <div class="card-meta">
+                        <span class="card-priority priority-${card.priority}">${card.priority === 'hoog' ? 'Hoog' : card.priority === 'medium' ? 'Medium' : 'Laag'}</span>
+                        ${card.estimate ? `<span class="card-estimate">${formatEstimate(card.estimate)}</span>` : ''}
+                        ${card.dueDate ? `<span class="card-due ${isCardOverdue ? 'overdue' : ''}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/></svg>${formatDate(card.dueDate)}</span>` : ''}
+                    </div>
+                    <div class="card-footer">
+                        <div class="card-owner">
+                            ${owner ? `<div class="avatar" style="background: ${owner.color}">${getInitials(owner.name)}</div><span class="owner-name">${owner.name}</span>` : '<span class="owner-name" style="color: var(--slate-400);">Niet toegewezen</span>'}
+                        </div>
+                        ${participants.length > 0 ? `<div class="avatar-group">${participants.slice(0, 3).map(p => `<div class="avatar" style="background: ${p.color}" title="${p.name}">${getInitials(p.name)}</div>`).join('')}${participants.length > 3 ? `<div class="avatar" style="background: var(--slate-300); color: var(--slate-600);">+${participants.length - 3}</div>` : ''}</div>` : ''}
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderTeamList() {
+            const list = document.getElementById('teamList');
+            list.innerHTML = state.team.length ? state.team.map(member => `
+                <div class="item-row">
+                    <div class="avatar" style="background: ${member.color}">${getInitials(member.name)}</div>
+                    <div class="item-info">
+                        <div class="item-name">${member.name}</div>
+                        <div class="item-sub">${state.cards.filter(c => c.ownerId === member.id).length} taken</div>
+                    </div>
+                    <button class="card-action-btn" onclick="deleteTeamMember('${member.id}')" title="Verwijderen">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                    </button>
+                </div>
+            `).join('') : '<div class="empty-state"><p>Nog geen teamleden toegevoegd</p></div>';
+        }
+
+        function renderTeamAvailabilityList() {
+            const list = document.getElementById('teamAvailabilityList');
+            if (!state.team.length) {
+                list.innerHTML = '<div class="empty-state"><p>Voeg eerst teamleden toe</p></div>';
+                return;
+            }
+            list.innerHTML = state.team.map(member => {
+                const availability = state.teamAvailability[member.id] || state.sprint.days || 10;
+                return `
+                    <div class="item-row">
+                        <div class="avatar" style="background: ${member.color}; width: 26px; height: 26px; font-size: 0.625rem;">${getInitials(member.name)}</div>
+                        <div class="item-info"><div class="item-name">${member.name}</div></div>
+                        <div class="team-availability">
+                            <input type="number" class="availability-input" value="${availability}" min="0" max="30" step="0.5" onchange="updateTeamAvailability('${member.id}', this.value)">
+                            <span class="availability-label">dagen</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderEpicsList() {
+            const list = document.getElementById('epicsList');
+            list.innerHTML = state.epics.length ? state.epics.map(epic => `
+                <div class="item-row">
+                    <div class="item-color" style="background: ${epic.color}"></div>
+                    <div class="item-info">
+                        <div class="item-name">${epic.name}</div>
+                        <div class="item-sub">${state.cards.filter(c => c.epicId === epic.id).length} taken</div>
+                    </div>
+                    <button class="card-action-btn" onclick="deleteEpic('${epic.id}')" title="Verwijderen">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                    </button>
+                </div>
+            `).join('') : '<div class="empty-state"><p>Nog geen epics toegevoegd</p></div>';
+        }
+
+        function renderFilterChips() {
+            // Epic chips
+            const epicGroup = document.getElementById('epicFilterGroup');
+            const epicChips = document.getElementById('epicFilterChips');
+            if (state.epics.length > 0) {
+                epicGroup.style.display = 'flex';
+                epicChips.innerHTML = state.epics.map(epic => `
+                    <button class="filter-chip-epic ${state.filters.epic === epic.id ? 'active' : ''}" style="--epic-color: ${epic.color};" onclick="toggleFilter('epic', '${epic.id}')">
+                        <style>.filter-chip-epic[style*="${epic.color}"]::before { background: ${epic.color}; }</style>
+                        ${epic.name}
+                    </button>
+                `).join('');
+            } else {
+                epicGroup.style.display = 'none';
+            }
+
+            // Team chips
+            const teamGroup = document.getElementById('teamFilterGroup');
+            const teamChips = document.getElementById('teamFilterChips');
+            if (state.team.length > 0) {
+                teamGroup.style.display = 'flex';
+                teamChips.innerHTML = state.team.map(member => `
+                    <button class="filter-chip-team ${state.filters.owner === member.id ? 'active' : ''}" onclick="toggleFilter('owner', '${member.id}')">
+                        <span class="mini-avatar" style="background: ${member.color}">${getInitials(member.name)}</span>
+                        ${member.name}
+                    </button>
+                `).join('');
+            } else {
+                teamGroup.style.display = 'none';
+            }
+
+            // Clear filters button
+            const hasActiveFilters = state.filters.epic || state.filters.owner || state.filters.search;
+            document.getElementById('clearFiltersBtn').style.display = hasActiveFilters ? 'block' : 'none';
+        }
+
+        function renderParticipantCheckboxes() {
+            const container = document.getElementById('participantsContainer');
+            container.innerHTML = state.team.length ? state.team.map(member => `
+                <label class="participant-item">
+                    <input type="checkbox" value="${member.id}">
+                    <div class="avatar" style="background: ${member.color}; width: 20px; height: 20px; font-size: 0.5rem;">${getInitials(member.name)}</div>
+                    <span style="font-size: 0.8125rem; color: var(--slate-700);">${member.name}</span>
+                </label>
+            `).join('') : '<p style="color: var(--slate-400); font-size: 0.8125rem;">Voeg eerst teamleden toe</p>';
+        }
+
+        function renderSubtasks() {
+            const container = document.getElementById('subtasksContainer');
+            container.innerHTML = state.currentEditSubtasks.map((subtask, index) => `
+                <div class="checklist-item ${subtask.done ? 'done' : ''}">
+                    <input type="checkbox" ${subtask.done ? 'checked' : ''} onchange="toggleSubtask(${index})">
+                    <span>${subtask.text}</span>
+                    <button class="card-action-btn" onclick="removeSubtask(${index})" style="width: 18px; height: 18px;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 9px; height: 9px;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function updateStats() {
+            const total = state.cards.length;
+            const done = state.cards.filter(c => c.status === 'klaar').length;
+            const totalCapacity = getTotalCapacity();
+            const usedCapacity = getUsedCapacity();
+            const completedCapacity = getCompletedCapacity();
+            const remaining = totalCapacity - usedCapacity;
+
+            document.getElementById('statTotalTasks').textContent = total;
+            document.getElementById('statCompletedTasks').textContent = done;
+
+            const capacityPercentage = totalCapacity > 0 ? Math.min((usedCapacity / totalCapacity) * 100, 100) : 0;
+            const capacityFill = document.getElementById('capacityFill');
+            const capacityText = document.getElementById('capacityText');
+
+            capacityFill.style.width = `${capacityPercentage}%`;
+            capacityText.textContent = `${usedCapacity} / ${totalCapacity} dagen`;
+
+            let statusClass = 'under';
+            if (usedCapacity > totalCapacity) statusClass = 'over';
+            else if (capacityPercentage > 85) statusClass = 'warning';
+
+            capacityFill.className = `capacity-fill ${statusClass}`;
+            capacityText.className = `capacity-text ${statusClass}`;
+
+            document.getElementById('panelStatTotal').textContent = total;
+            document.getElementById('panelStatDone').textContent = done;
+            document.getElementById('panelStatDays').textContent = usedCapacity;
+            document.getElementById('panelStatDaysDone').textContent = completedCapacity;
+
+            document.getElementById('panelCapacityTotal').textContent = totalCapacity;
+            document.getElementById('panelCapacityUsed').textContent = usedCapacity;
+            document.getElementById('panelCapacityRemaining').textContent = Math.max(0, remaining).toFixed(1);
+
+            document.getElementById('sprintDates').textContent = state.sprint.startDate && state.sprint.endDate 
+                ? `${formatDate(state.sprint.startDate)} — ${formatDate(state.sprint.endDate)}` 
+                : 'Geen datums ingesteld';
+        }
+
+        function updateSelects() {
+            document.getElementById('cardEpicSelect').innerHTML = '<option value="">Geen epic</option>' +
+                state.epics.map(e => `<option value="${e.id}">${e.name}</option>`).join('') +
+                '<option value="__new__">+ Nieuwe epic aanmaken...</option>';
+
+            document.getElementById('cardOwnerSelect').innerHTML = '<option value="">Niet toegewezen</option>' +
+                state.team.map(t => `<option value="${t.id}">${t.name}</option>`).join('');
+        }
+
+        // ============================================
+        // FILTER FUNCTIONS
+        // ============================================
+
+        function getFilteredCards() {
+            return state.cards.filter(card => {
+                if (state.filters.search) {
+                    const search = state.filters.search.toLowerCase();
+                    if (!card.title.toLowerCase().includes(search) && !(card.description || '').toLowerCase().includes(search)) return false;
+                }
+                if (state.filters.epic && card.epicId !== state.filters.epic) return false;
+                if (state.filters.owner && card.ownerId !== state.filters.owner) return false;
+                return true;
+            });
+        }
+
+        function filterCards() {
+            state.filters.search = document.getElementById('searchInput').value;
+            renderBoard();
+            renderFilterChips();
+        }
+
+        function toggleFilter(type, value) {
+            state.filters[type] = state.filters[type] === value ? null : value;
+            renderFilterChips();
+            renderBoard();
+        }
+
+        function clearAllFilters() {
+            state.filters = { search: '', epic: null, owner: null };
+            document.getElementById('searchInput').value = '';
+            renderFilterChips();
+            renderBoard();
+        }
+
+        // ============================================
+        // DRAG & DROP
+        // ============================================
+
+        let draggedCard = null;
+
+        function handleDragStart(e) {
+            draggedCard = e.target;
+            e.target.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+        }
+
+        function handleDragEnd(e) {
+            e.target.classList.remove('dragging');
+            document.querySelectorAll('.column').forEach(col => col.classList.remove('drag-over'));
+            draggedCard = null;
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.currentTarget.classList.add('drag-over');
+        }
+
+        function handleDragLeave(e) {
+            e.currentTarget.classList.remove('drag-over');
+        }
+
+        function handleDrop(e, status) {
+            e.preventDefault();
+            e.currentTarget.classList.remove('drag-over');
+            if (draggedCard) {
+                const card = state.cards.find(c => c.id === draggedCard.dataset.id);
+                if (card) {
+                    card.status = status;
+                    saveToStorage();
+                    renderBoard();
+                    showToast('Taak verplaatst');
+                }
+            }
+        }
+
+        // ============================================
+        // CARD OPERATIONS
+        // ============================================
+
+        function openCardModal(cardId = null, defaultStatus = 'todo') {
+            updateSelects();
+            renderParticipantCheckboxes();
+            document.getElementById('addEpicInline').classList.remove('active');
+
+            if (cardId) {
+                const card = state.cards.find(c => c.id === cardId);
+                if (card) {
+                    document.getElementById('cardModalTitle').textContent = 'Taak Bewerken';
+                    document.getElementById('cardId').value = card.id;
+                    document.getElementById('cardTitleInput').value = card.title;
+                    document.getElementById('cardDescInput').value = card.description || '';
+                    document.getElementById('cardEpicSelect').value = card.epicId || '';
+                    document.getElementById('cardStatusSelect').value = card.status;
+                    document.getElementById('cardOwnerSelect').value = card.ownerId || '';
+                    document.getElementById('cardPrioritySelect').value = card.priority || 'medium';
+                    document.getElementById('cardEstimateSelect').value = card.estimate || '';
+                    document.getElementById('cardDueInput').value = card.dueDate || '';
+
+                    document.querySelectorAll('#participantsContainer input[type="checkbox"]').forEach(cb => {
+                        cb.checked = (card.participants || []).includes(cb.value);
+                    });
+
+                    state.currentEditSubtasks = [...(card.subtasks || [])];
+                    renderSubtasks();
+                }
+            } else {
+                document.getElementById('cardModalTitle').textContent = 'Nieuwe Taak';
+                document.getElementById('cardId').value = '';
+                document.getElementById('cardTitleInput').value = '';
+                document.getElementById('cardDescInput').value = '';
+                document.getElementById('cardEpicSelect').value = '';
+                document.getElementById('cardStatusSelect').value = defaultStatus;
+                document.getElementById('cardOwnerSelect').value = '';
+                document.getElementById('cardPrioritySelect').value = 'medium';
+                document.getElementById('cardEstimateSelect').value = '';
+                document.getElementById('cardDueInput').value = '';
+
+                document.querySelectorAll('#participantsContainer input[type="checkbox"]').forEach(cb => cb.checked = false);
+                state.currentEditSubtasks = [];
+                renderSubtasks();
+            }
+
+            document.getElementById('cardModal').classList.add('active');
+        }
+
+        function closeCardModal() {
+            document.getElementById('cardModal').classList.remove('active');
+            document.getElementById('addEpicInline').classList.remove('active');
+        }
+
+        function saveCard() {
+            const id = document.getElementById('cardId').value;
+            const title = document.getElementById('cardTitleInput').value.trim();
+            if (!title) { showToast('Vul een titel in', 'error'); return; }
+
+            const participants = Array.from(document.querySelectorAll('#participantsContainer input[type="checkbox"]:checked')).map(cb => cb.value);
+            let epicId = document.getElementById('cardEpicSelect').value || null;
+            if (epicId === '__new__') epicId = null;
+
+            const cardData = {
+                title,
+                description: document.getElementById('cardDescInput').value.trim(),
+                epicId,
+                status: document.getElementById('cardStatusSelect').value,
+                ownerId: document.getElementById('cardOwnerSelect').value || null,
+                priority: document.getElementById('cardPrioritySelect').value,
+                estimate: document.getElementById('cardEstimateSelect').value || null,
+                dueDate: document.getElementById('cardDueInput').value || null,
+                participants,
+                subtasks: state.currentEditSubtasks
+            };
+
+            if (id) {
+                const index = state.cards.findIndex(c => c.id === id);
+                if (index !== -1) state.cards[index] = { ...state.cards[index], ...cardData };
+                showToast('Taak bijgewerkt');
+            } else {
+                state.cards.push({ id: generateId(), ...cardData });
+                showToast('Taak aangemaakt');
+            }
+
+            saveToStorage();
+            renderBoard();
+            closeCardModal();
+        }
+
+        function deleteCard(cardId) {
+            if (confirm('Weet je zeker dat je deze taak wilt verwijderen?')) {
+                state.cards = state.cards.filter(c => c.id !== cardId);
+                saveToStorage();
+                renderBoard();
+                showToast('Taak verwijderd');
+            }
+        }
+
+        // ============================================
+        // EPIC SELECT HANDLER
+        // ============================================
+
+        function handleEpicSelect() {
+            const select = document.getElementById('cardEpicSelect');
+            const inlineForm = document.getElementById('addEpicInline');
+            if (select.value === '__new__') {
+                inlineForm.classList.add('active');
+                document.getElementById('inlineEpicName').focus();
+            } else {
+                inlineForm.classList.remove('active');
+            }
+        }
+
+        function addEpicInline() {
+            const name = document.getElementById('inlineEpicName').value.trim();
+            const color = document.getElementById('inlineEpicColor').value;
+            if (!name) { showToast('Vul een epic naam in', 'error'); return; }
+
+            const newEpic = { id: generateId(), name, color };
+            state.epics.push(newEpic);
+            document.getElementById('inlineEpicName').value = '';
+            document.getElementById('addEpicInline').classList.remove('active');
+            updateSelects();
+            document.getElementById('cardEpicSelect').value = newEpic.id;
+            saveToStorage();
+            renderFilterChips();
+            showToast('Epic toegevoegd');
+        }
+
+        // ============================================
+        // SUBTASK, TEAM, EPIC, SPRINT OPERATIONS
+        // ============================================
+
+        function addSubtask() {
+            const input = document.getElementById('newSubtaskInput');
+            const text = input.value.trim();
+            if (text) {
+                state.currentEditSubtasks.push({ text, done: false });
+                input.value = '';
+                renderSubtasks();
+            }
+        }
+
+        function toggleSubtask(index) {
+            state.currentEditSubtasks[index].done = !state.currentEditSubtasks[index].done;
+            renderSubtasks();
+        }
+
+        function removeSubtask(index) {
+            state.currentEditSubtasks.splice(index, 1);
+            renderSubtasks();
+        }
+
+        function addTeamMember() {
+            const name = document.getElementById('newMemberName').value.trim();
+            const color = document.getElementById('newMemberColor').value;
+            if (!name) { showToast('Vul een naam in', 'error'); return; }
+
+            const newMember = { id: generateId(), name, color };
+            state.team.push(newMember);
+            state.teamAvailability[newMember.id] = state.sprint.days || 10;
+            document.getElementById('newMemberName').value = '';
+            document.getElementById('newMemberColor').value = AVATAR_COLORS[Math.floor(Math.random() * AVATAR_COLORS.length)];
+            saveToStorage();
+            renderTeamList();
+            renderTeamAvailabilityList();
+            renderFilterChips();
+            updateStats();
+            showToast('Teamlid toegevoegd');
+        }
+
+        function deleteTeamMember(memberId) {
+            if (confirm('Weet je zeker dat je dit teamlid wilt verwijderen?')) {
+                state.team = state.team.filter(t => t.id !== memberId);
+                delete state.teamAvailability[memberId];
+                state.cards.forEach(card => {
+                    if (card.ownerId === memberId) card.ownerId = null;
+                    card.participants = (card.participants || []).filter(p => p !== memberId);
+                });
+                saveToStorage();
+                renderTeamList();
+                renderTeamAvailabilityList();
+                renderFilterChips();
+                renderBoard();
+                showToast('Teamlid verwijderd');
+            }
+        }
+
+        function updateTeamAvailability(memberId, value) {
+            state.teamAvailability[memberId] = parseFloat(value) || 0;
+            saveToStorage();
+            updateStats();
+        }
+
+        function addEpic() {
+            const name = document.getElementById('newEpicName').value.trim();
+            const color = document.getElementById('newEpicColor').value;
+            if (!name) { showToast('Vul een naam in', 'error'); return; }
+
+            state.epics.push({ id: generateId(), name, color });
+            document.getElementById('newEpicName').value = '';
+            document.getElementById('newEpicColor').value = AVATAR_COLORS[Math.floor(Math.random() * AVATAR_COLORS.length)];
+            saveToStorage();
+            renderEpicsList();
+            renderFilterChips();
+            showToast('Epic toegevoegd');
+        }
+
+        function deleteEpic(epicId) {
+            if (confirm('Weet je zeker dat je deze epic wilt verwijderen?')) {
+                state.epics = state.epics.filter(e => e.id !== epicId);
+                state.cards.forEach(card => { if (card.epicId === epicId) card.epicId = null; });
+                saveToStorage();
+                renderEpicsList();
+                renderFilterChips();
+                renderBoard();
+                showToast('Epic verwijderd');
+            }
+        }
+
+        function saveSprint() {
+            state.sprint = {
+                name: document.getElementById('sprintNameInput').value || 'Sprint 1',
+                startDate: document.getElementById('sprintStartInput').value,
+                endDate: document.getElementById('sprintEndInput').value,
+                days: parseInt(document.getElementById('sprintDaysInput').value) || 10,
+                goal: document.getElementById('sprintGoalInput').value
+            };
+            document.getElementById('currentSprintName').textContent = state.sprint.name;
+            saveToStorage();
+            updateStats();
+            showToast('Sprint opgeslagen');
+        }
+
+        function loadSprintSettings() {
+            document.getElementById('sprintNameInput').value = state.sprint.name || '';
+            document.getElementById('sprintStartInput').value = state.sprint.startDate || '';
+            document.getElementById('sprintEndInput').value = state.sprint.endDate || '';
+            document.getElementById('sprintDaysInput').value = state.sprint.days || 10;
+            document.getElementById('sprintGoalInput').value = state.sprint.goal || '';
+            document.getElementById('currentSprintName').textContent = state.sprint.name || 'Sprint 1';
+        }
+
+        // ============================================
+        // PANEL & DROPDOWN
+        // ============================================
+
+        function openPanel(panel) {
+            document.getElementById(`${panel}Overlay`).classList.add('active');
+            document.getElementById(`${panel}Panel`).classList.add('active');
+            if (panel === 'team') renderTeamList();
+            if (panel === 'epics') renderEpicsList();
+            if (panel === 'sprint') { loadSprintSettings(); renderTeamAvailabilityList(); }
+        }
+
+        function closePanel(panel) {
+            document.getElementById(`${panel}Overlay`).classList.remove('active');
+            document.getElementById(`${panel}Panel`).classList.remove('active');
+        }
+
+        function toggleDropdown(id) {
+            document.getElementById(id).classList.toggle('active');
+        }
+
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.dropdown')) document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('active'));
+        });
+
+        // ============================================
+        // EXPORT FUNCTIONS
+        // ============================================
+
+        async function exportAsJPG() {
+            try {
+                showToast('Bezig met exporteren...');
+                const canvas = await html2canvas(document.querySelector('.board-container'), { backgroundColor: '#f1f5f9', scale: 2 });
+                const link = document.createElement('a');
+                link.download = `kanban-bord-${new Date().toISOString().split('T')[0]}.jpg`;
+                link.href = canvas.toDataURL('image/jpeg', 0.9);
+                link.click();
+                showToast('JPG geëxporteerd');
+            } catch (error) { showToast('Export mislukt', 'error'); }
+        }
+
+        async function exportAsPDF() {
+            try {
+                showToast('Bezig met exporteren...');
+                const canvas = await html2canvas(document.querySelector('.board-container'), { backgroundColor: '#f1f5f9', scale: 2 });
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm' });
+                const imgWidth = 280;
+                const imgHeight = (canvas.height * imgWidth) / canvas.width;
+                pdf.addImage(canvas.toDataURL('image/jpeg', 0.9), 'JPEG', 10, 10, imgWidth, imgHeight);
+                pdf.save(`kanban-bord-${new Date().toISOString().split('T')[0]}.pdf`);
+                showToast('PDF geëxporteerd');
+            } catch (error) { showToast('Export mislukt', 'error'); }
+        }
+
+        function exportAsCSV() {
+            try {
+                const headers = ['ID', 'Titel', 'Beschrijving', 'Status', 'Epic', 'Eigenaar', 'Betrokkenen', 'Prioriteit', 'Inschatting', 'Deadline', 'Subtaken'];
+                const rows = state.cards.map(card => {
+                    const epic = state.epics.find(e => e.id === card.epicId);
+                    const owner = state.team.find(t => t.id === card.ownerId);
+                    const participants = (card.participants || []).map(id => state.team.find(t => t.id === id)?.name).filter(Boolean).join('; ');
+                    const subtasks = (card.subtasks || []).map(s => `${s.done ? '✓' : '○'} ${s.text}`).join('; ');
+                    return [card.id, `"${card.title.replace(/"/g, '""')}"`, `"${(card.description || '').replace(/"/g, '""')}"`, card.status, epic?.name || '', owner?.name || '', `"${participants}"`, card.priority, card.estimate || '', card.dueDate || '', `"${subtasks}"`].join(',');
+                });
+                const csv = [headers.join(','), ...rows].join('\n');
+                const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = `kanban-bord-${new Date().toISOString().split('T')[0]}.csv`;
+                link.click();
+                showToast('CSV geëxporteerd');
+            } catch (error) { showToast('Export mislukt', 'error'); }
+        }
+
+        // ============================================
+        // KEYBOARD HANDLERS & INIT
+        // ============================================
+
+        function setupKeyboardHandlers() {
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') { closeCardModal(); closePanel('team'); closePanel('epics'); closePanel('sprint'); }
+                if (e.key === 'n' && e.ctrlKey) { e.preventDefault(); openCardModal(); }
+            });
+            document.getElementById('newSubtaskInput').addEventListener('keypress', (e) => { if (e.key === 'Enter') { e.preventDefault(); addSubtask(); } });
+            document.getElementById('newMemberName').addEventListener('keypress', (e) => { if (e.key === 'Enter') { e.preventDefault(); addTeamMember(); } });
+            document.getElementById('newEpicName').addEventListener('keypress', (e) => { if (e.key === 'Enter') { e.preventDefault(); addEpic(); } });
+            document.getElementById('inlineEpicName').addEventListener('keypress', (e) => { if (e.key === 'Enter') { e.preventDefault(); addEpicInline(); } });
+        }
+
+        function init() {
+            loadFromStorage();
+            renderBoard();
+            renderFilterChips();
+            updateStats();
+            loadSprintSettings();
+            setupKeyboardHandlers();
+        }
+
+        init();
+    </script>
+</body>
+</html>
