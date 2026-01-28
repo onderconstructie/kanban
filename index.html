@@ -674,7 +674,8 @@
         }
 
         /* Dashboard Modal */
-        .dashboard-modal {
+        .dashboard-modal,
+        .roadmap-modal {
             position: fixed;
             top: 0;
             left: 0;
@@ -687,8 +688,412 @@
             transition: transform 0.3s ease;
         }
 
-        .dashboard-modal.active {
+        .dashboard-modal.active,
+        .roadmap-modal.active {
             transform: translateY(0);
+        }
+
+        /* Roadmap Specific Styles */
+        .roadmap-content {
+            padding: 1.5rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .roadmap-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .roadmap-nav-btn {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--white);
+            border: 1.5px solid var(--slate-200);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            color: var(--slate-600);
+            transition: all 0.2s ease;
+        }
+
+        .roadmap-nav-btn:hover {
+            background: var(--slate-50);
+            border-color: var(--slate-300);
+        }
+
+        .roadmap-nav-btn svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .roadmap-month {
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: var(--slate-800);
+            min-width: 180px;
+            text-align: center;
+        }
+
+        .roadmap-timeline {
+            background: var(--white);
+            border: 1.5px solid var(--slate-200);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+        }
+
+        .roadmap-header {
+            display: grid;
+            grid-template-columns: repeat(var(--days-count, 31), minmax(28px, 1fr));
+            background: var(--slate-50);
+            border-bottom: 1px solid var(--slate-200);
+            padding: 0.5rem 0;
+            overflow-x: auto;
+        }
+
+        .roadmap-day {
+            text-align: center;
+            font-size: 0.6875rem;
+            font-weight: 600;
+            color: var(--slate-400);
+            padding: 0.25rem;
+        }
+
+        .roadmap-day.today {
+            color: var(--accent);
+        }
+
+        .roadmap-day .day-num {
+            font-size: 0.8125rem;
+            font-weight: 700;
+            color: var(--slate-600);
+        }
+
+        .roadmap-day.today .day-num {
+            background: var(--accent);
+            color: var(--white);
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+        }
+
+        .roadmap-day.weekend {
+            background: var(--slate-100);
+        }
+
+        .roadmap-body {
+            position: relative;
+            min-height: 200px;
+            padding: 1rem;
+        }
+
+        .roadmap-hint {
+            font-size: 0.75rem;
+            color: var(--slate-400);
+            text-align: center;
+            padding: 0.5rem;
+            border-top: 1px solid var(--slate-100);
+        }
+
+        .roadmap-hint svg {
+            width: 14px;
+            height: 14px;
+            vertical-align: middle;
+            margin-right: 0.25rem;
+        }
+
+        .roadmap-sprint-row {
+            position: relative;
+            height: 48px;
+            margin-bottom: 0.5rem;
+        }
+
+        .roadmap-sprint-bar {
+            position: absolute;
+            height: 40px;
+            background: linear-gradient(135deg, var(--accent) 0%, #34d399 100%);
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            padding: 0 0.75rem;
+            cursor: grab;
+            transition: box-shadow 0.2s ease, transform 0.1s ease;
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
+            white-space: nowrap;
+            user-select: none;
+        }
+
+        .roadmap-sprint-bar:hover {
+            box-shadow: var(--shadow-md);
+        }
+
+        .roadmap-sprint-bar.dragging {
+            cursor: grabbing;
+            box-shadow: var(--shadow-lg);
+            opacity: 0.9;
+            z-index: 100;
+        }
+
+        .roadmap-sprint-bar.active {
+            background: linear-gradient(135deg, var(--accent-dark) 0%, var(--accent) 100%);
+        }
+
+        .roadmap-sprint-bar.planned {
+            background: linear-gradient(135deg, var(--blue-500) 0%, var(--blue-400) 100%);
+        }
+
+        .roadmap-sprint-bar.completed {
+            background: linear-gradient(135deg, var(--slate-400) 0%, var(--slate-300) 100%);
+        }
+
+        .roadmap-sprint-bar.no-dates {
+            background: var(--slate-200);
+            border: 2px dashed var(--slate-400);
+            color: var(--slate-600);
+            cursor: pointer;
+        }
+
+        /* Resize handles */
+        .roadmap-resize-handle {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 14px;
+            cursor: ew-resize;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            z-index: 5;
+        }
+
+        .roadmap-sprint-bar:hover .roadmap-resize-handle,
+        .roadmap-sprint-bar.resizing .roadmap-resize-handle {
+            opacity: 1;
+        }
+
+        .roadmap-resize-handle::before {
+            content: '';
+            width: 4px;
+            height: 18px;
+            background: rgba(255,255,255,0.4);
+            border-radius: 2px;
+            transition: background 0.15s ease;
+        }
+
+        .roadmap-resize-handle:hover::before {
+            background: rgba(255,255,255,0.9);
+        }
+
+        .roadmap-resize-handle.left {
+            left: 0;
+            padding-left: 4px;
+            border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+        }
+
+        .roadmap-resize-handle.right {
+            right: 0;
+            padding-right: 4px;
+            border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+        }
+
+        .roadmap-sprint-bar.no-dates .roadmap-resize-handle {
+            display: none;
+        }
+
+        /* Date tooltip shown during drag/resize */
+        .roadmap-date-tooltip {
+            position: absolute;
+            bottom: calc(100% + 6px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--slate-800);
+            color: var(--white);
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.375rem 0.625rem;
+            border-radius: var(--radius-sm);
+            white-space: nowrap;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.15s ease;
+            z-index: 200;
+        }
+
+        .roadmap-date-tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 5px solid transparent;
+            border-top-color: var(--slate-800);
+        }
+
+        .roadmap-sprint-bar.dragging .roadmap-date-tooltip,
+        .roadmap-sprint-bar.resizing .roadmap-date-tooltip {
+            opacity: 1;
+        }
+
+        .roadmap-sprint-name {
+            font-size: 0.8125rem;
+            font-weight: 600;
+            color: var(--white);
+            pointer-events: none;
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .roadmap-sprint-bar.no-dates .roadmap-sprint-name {
+            color: var(--slate-600);
+        }
+
+        .roadmap-sprint-tasks {
+            font-size: 0.6875rem;
+            font-weight: 700;
+            background: rgba(255,255,255,0.2);
+            padding: 0.125rem 0.375rem;
+            border-radius: 999px;
+            margin-left: 0.5rem;
+            pointer-events: none;
+            flex-shrink: 0;
+        }
+
+        .roadmap-sprint-bar.no-dates .roadmap-sprint-tasks {
+            background: var(--slate-300);
+        }
+
+        .roadmap-today-line {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--red-500);
+            z-index: 10;
+        }
+
+        .roadmap-today-line::before {
+            content: 'Vandaag';
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.625rem;
+            font-weight: 700;
+            color: var(--red-500);
+            white-space: nowrap;
+        }
+
+        /* Sprint List in Roadmap */
+        .roadmap-sprint-list {
+            background: var(--white);
+            border: 1.5px solid var(--slate-200);
+            border-radius: var(--radius-lg);
+            padding: 1.25rem;
+        }
+
+        .roadmap-list-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .roadmap-list-header h3 {
+            font-size: 0.9375rem;
+            font-weight: 700;
+            color: var(--slate-700);
+        }
+
+        .roadmap-sprints {
+            display: flex;
+            flex-direction: column;
+            gap: 0.625rem;
+        }
+
+        .roadmap-sprint-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            background: var(--slate-50);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .roadmap-sprint-item:hover {
+            background: var(--accent-light);
+        }
+
+        .roadmap-sprint-item.active {
+            background: var(--accent-light);
+            border-left: 3px solid var(--accent);
+        }
+
+        .roadmap-sprint-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .roadmap-sprint-dot.active { background: var(--green-500); }
+        .roadmap-sprint-dot.planned { background: var(--blue-500); }
+        .roadmap-sprint-dot.completed { background: var(--slate-400); }
+
+        .roadmap-sprint-info {
+            flex: 1;
+        }
+
+        .roadmap-sprint-title {
+            font-weight: 600;
+            color: var(--slate-700);
+            font-size: 0.875rem;
+        }
+
+        .roadmap-sprint-dates {
+            font-size: 0.75rem;
+            color: var(--slate-400);
+        }
+
+        .roadmap-sprint-meta {
+            text-align: right;
+        }
+
+        .roadmap-sprint-count {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            font-size: 0.875rem;
+            color: var(--slate-600);
+        }
+
+        .roadmap-sprint-status {
+            font-size: 0.6875rem;
+            color: var(--slate-400);
+        }
+
+        .roadmap-sprint-actions {
+            display: flex;
+            gap: 0.25rem;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .roadmap-sprint-item:hover .roadmap-sprint-actions {
+            opacity: 1;
         }
 
         .dashboard-header {
@@ -707,6 +1112,15 @@
             font-size: 1.25rem;
             font-weight: 700;
             color: var(--slate-800);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .dashboard-header .dashboard-title svg {
+            width: 24px;
+            height: 24px;
+            color: var(--accent);
         }
 
         .dashboard-close {
@@ -2603,6 +3017,15 @@
                 </svg>
                 Sprint
             </button>
+            <button class="btn btn-secondary" onclick="openRoadmap()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                    <line x1="16" y1="2" x2="16" y2="6"/>
+                    <line x1="8" y1="2" x2="8" y2="6"/>
+                    <line x1="3" y1="10" x2="21" y2="10"/>
+                </svg>
+                Roadmap
+            </button>
             <div class="dropdown">
                 <button class="btn btn-secondary" onclick="toggleDropdown('exportDropdown')">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -2777,7 +3200,7 @@
                 </div>
                 <div class="form-group">
                     <label class="form-label">Deadline</label>
-                    <input type="date" class="form-input" id="cardDueDate">
+                    <input type="text" class="form-input" id="cardDueDate" placeholder="dd/mm/jjjj">
                 </div>
             </div>
             <div class="form-group">
@@ -2905,11 +3328,11 @@
             <div class="form-row">
                 <div class="form-group">
                     <label class="form-label">Startdatum</label>
-                    <input type="date" class="form-input" id="sprintStartInput">
+                    <input type="text" class="form-input" id="sprintStartInput" placeholder="dd/mm/jjjj">
                 </div>
                 <div class="form-group">
                     <label class="form-label">Einddatum</label>
-                    <input type="date" class="form-input" id="sprintEndInput">
+                    <input type="text" class="form-input" id="sprintEndInput" placeholder="dd/mm/jjjj">
                 </div>
             </div>
             <div class="form-group">
@@ -2964,10 +3387,61 @@
         </div>
     </div>
 
+    <!-- Roadmap Modal -->
+    <div class="roadmap-modal" id="roadmapModal">
+        <div class="dashboard-header">
+            <h2 class="dashboard-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                Sprint Roadmap
+            </h2>
+            <button class="dashboard-close" onclick="closeRoadmap()">×</button>
+        </div>
+        <div class="roadmap-content">
+            <div class="roadmap-controls">
+                <button class="roadmap-nav-btn" onclick="roadmapPrevMonth()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+                </button>
+                <span class="roadmap-month" id="roadmapMonth">Januari 2025</span>
+                <button class="roadmap-nav-btn" onclick="roadmapNextMonth()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                </button>
+                <button class="btn btn-secondary" onclick="roadmapToday()" style="margin-left: 1rem;">Vandaag</button>
+            </div>
+            
+            <div class="roadmap-timeline">
+                <div class="roadmap-header" id="roadmapHeader">
+                    <!-- Days will be generated here -->
+                </div>
+                <div class="roadmap-body" id="roadmapBody">
+                    <!-- Sprint bars will be generated here -->
+                </div>
+                <div class="roadmap-hint">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+                    Sleep sprints om te verplaatsen · Versleep de randen om de duur aan te passen · Dubbelklik om te openen
+                </div>
+            </div>
+
+            <div class="roadmap-sprint-list">
+                <div class="roadmap-list-header">
+                    <h3>Sprints</h3>
+                    <button class="dashboard-add-btn" onclick="createNewSprintFromRoadmap()" title="Nieuwe sprint">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    </button>
+                </div>
+                <div class="roadmap-sprints" id="roadmapSprintList">
+                    <!-- Sprint list will be generated here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Dashboard Modal -->
     <div class="dashboard-modal" id="dashboardModal">
         <div class="dashboard-header">
-            <h2 class="dashboard-title">📊 Statistieken Dashboard</h2>
+            <h2 class="dashboard-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
+                Statistieken Dashboard
+            </h2>
             <button class="dashboard-close" onclick="closeDashboard()">×</button>
         </div>
         <div class="dashboard-content">
@@ -3634,6 +4108,468 @@
         }
 
         // ============================================
+        // ROADMAP
+        // ============================================
+
+        let roadmapDate = new Date();
+
+        function openRoadmap() {
+            roadmapDate = new Date();
+            renderRoadmap();
+            document.getElementById('roadmapModal').classList.add('active');
+        }
+
+        function closeRoadmap() {
+            document.getElementById('roadmapModal').classList.remove('active');
+        }
+
+        function roadmapPrevMonth() {
+            roadmapDate.setMonth(roadmapDate.getMonth() - 1);
+            renderRoadmap();
+        }
+
+        function roadmapNextMonth() {
+            roadmapDate.setMonth(roadmapDate.getMonth() + 1);
+            renderRoadmap();
+        }
+
+        function roadmapToday() {
+            roadmapDate = new Date();
+            renderRoadmap();
+        }
+
+        function renderRoadmap() {
+            const project = getActiveProject();
+            if (!project) return;
+
+            const year = roadmapDate.getFullYear();
+            const month = roadmapDate.getMonth();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const today = new Date();
+
+            // Update month label
+            const monthNames = ['Januari', 'Februari', 'Maart', 'April', 'Mei', 'Juni', 
+                              'Juli', 'Augustus', 'September', 'Oktober', 'November', 'December'];
+            document.getElementById('roadmapMonth').textContent = `${monthNames[month]} ${year}`;
+
+            // Set CSS variable for days count
+            document.querySelector('.roadmap-header').style.setProperty('--days-count', daysInMonth);
+
+            // Render header (days)
+            const header = document.getElementById('roadmapHeader');
+            const dayNames = ['Zo', 'Ma', 'Di', 'Wo', 'Do', 'Vr', 'Za'];
+            let headerHTML = '';
+            for (let d = 1; d <= daysInMonth; d++) {
+                const date = new Date(year, month, d);
+                const isToday = date.toDateString() === today.toDateString();
+                const isWeekend = date.getDay() === 0 || date.getDay() === 6;
+                headerHTML += `
+                    <div class="roadmap-day ${isToday ? 'today' : ''} ${isWeekend ? 'weekend' : ''}">
+                        <div>${dayNames[date.getDay()]}</div>
+                        <div class="day-num">${d}</div>
+                    </div>
+                `;
+            }
+            header.innerHTML = headerHTML;
+
+            // Render sprint bars
+            const body = document.getElementById('roadmapBody');
+            body.style.setProperty('--days-count', daysInMonth);
+            
+            let bodyHTML = '';
+            const monthStart = new Date(year, month, 1);
+            const monthEnd = new Date(year, month, daysInMonth, 23, 59, 59);
+
+            // Store for drag calculations
+            window.roadmapData = { year, month, daysInMonth };
+
+            // Add today line
+            if (today.getMonth() === month && today.getFullYear() === year) {
+                const todayPos = ((today.getDate() - 0.5) / daysInMonth) * 100;
+                bodyHTML += `<div class="roadmap-today-line" style="left: ${todayPos}%"></div>`;
+            }
+
+            project.sprints.forEach((sprint, index) => {
+                const taskCount = project.cards.filter(c => c.sprintId === sprint.id).length;
+                const isActive = sprint.id === state.activeSprintId;
+                
+                if (sprint.startDate && sprint.endDate) {
+                    const start = new Date(sprint.startDate);
+                    const end = new Date(sprint.endDate);
+                    
+                    // Check if sprint overlaps with current month
+                    if (end >= monthStart && start <= monthEnd) {
+                        const startDay = start < monthStart ? 1 : start.getDate();
+                        const endDay = end > monthEnd ? daysInMonth : end.getDate();
+                        
+                        const leftPercent = ((startDay - 1) / daysInMonth) * 100;
+                        const widthPercent = ((endDay - startDay + 1) / daysInMonth) * 100;
+                        
+                        bodyHTML += `
+                            <div class="roadmap-sprint-row" data-sprint-id="${sprint.id}">
+                                <div class="roadmap-sprint-bar ${sprint.status || 'active'} ${isActive ? 'active' : ''}" 
+                                     style="left: ${leftPercent}%; width: ${widthPercent}%;"
+                                     data-sprint-id="${sprint.id}"
+                                     data-start="${sprint.startDate}"
+                                     data-end="${sprint.endDate}"
+                                     onmousedown="startSprintDrag(event, '${sprint.id}')"
+                                     ondblclick="goToSprintFromRoadmap('${sprint.id}')">
+                                    <div class="roadmap-resize-handle left" onmousedown="startSprintResize(event, '${sprint.id}', 'left')"></div>
+                                    <span class="roadmap-sprint-name">${sprint.name}</span>
+                                    <span class="roadmap-sprint-tasks">${taskCount}</span>
+                                    <div class="roadmap-resize-handle right" onmousedown="startSprintResize(event, '${sprint.id}', 'right')"></div>
+                                    <div class="roadmap-date-tooltip">${toDisplayDate(sprint.startDate)} — ${toDisplayDate(sprint.endDate)}</div>
+                                </div>
+                            </div>
+                        `;
+                    }
+                } else {
+                    // Sprint without dates - show as dashed bar
+                    bodyHTML += `
+                        <div class="roadmap-sprint-row">
+                            <div class="roadmap-sprint-bar no-dates" 
+                                 style="left: 5%; width: 30%;"
+                                 onclick="editSprintDatesFromRoadmap('${sprint.id}')"
+                                 title="${sprint.name}: Klik om datums in te stellen">
+                                <span class="roadmap-sprint-name">${sprint.name}</span>
+                                <span class="roadmap-sprint-tasks">${taskCount}</span>
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+
+            if (project.sprints.length === 0) {
+                bodyHTML = '<div class="empty-state" style="padding: 2rem;"><p>Nog geen sprints. Maak je eerste sprint aan!</p></div>';
+            }
+
+            body.innerHTML = bodyHTML;
+
+            // Render sprint list
+            renderRoadmapSprintList();
+        }
+
+        function renderRoadmapSprintList() {
+            const project = getActiveProject();
+            if (!project) return;
+
+            const list = document.getElementById('roadmapSprintList');
+            
+            if (project.sprints.length === 0) {
+                list.innerHTML = '<div class="empty-state"><p>Nog geen sprints</p></div>';
+                return;
+            }
+
+            list.innerHTML = project.sprints.map(sprint => {
+                const taskCount = project.cards.filter(c => c.sprintId === sprint.id).length;
+                const doneCount = project.cards.filter(c => c.sprintId === sprint.id && c.status === 'klaar').length;
+                const isActive = sprint.id === state.activeSprintId;
+                const hasDate = sprint.startDate && sprint.endDate;
+                
+                return `
+                    <div class="roadmap-sprint-item ${isActive ? 'active' : ''}" onclick="goToSprintFromRoadmap('${sprint.id}')">
+                        <div class="roadmap-sprint-dot ${sprint.status || 'active'}"></div>
+                        <div class="roadmap-sprint-info">
+                            <div class="roadmap-sprint-title">${sprint.name}</div>
+                            <div class="roadmap-sprint-dates">
+                                ${hasDate ? `${toDisplayDate(sprint.startDate)} - ${toDisplayDate(sprint.endDate)}` : 'Geen datums ingesteld'}
+                            </div>
+                        </div>
+                        <div class="roadmap-sprint-meta">
+                            <div class="roadmap-sprint-count">${doneCount}/${taskCount}</div>
+                            <div class="roadmap-sprint-status">${taskCount === 0 ? 'Leeg' : doneCount === taskCount ? 'Klaar' : 'Actief'}</div>
+                        </div>
+                        <div class="roadmap-sprint-actions">
+                            <button class="card-action-btn" onclick="event.stopPropagation(); editSprintFromRoadmap('${sprint.id}')" title="Bewerken">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                            </button>
+                            <button class="card-action-btn delete" onclick="event.stopPropagation(); deleteSprintFromRoadmap('${sprint.id}')" title="Verwijderen">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function goToSprintFromRoadmap(sprintId) {
+            state.activeSprintId = sprintId;
+            saveToStorage();
+            closeRoadmap();
+            refreshUI();
+            showToast('Sprint geopend');
+        }
+
+        function editSprintFromRoadmap(sprintId) {
+            const project = getActiveProject();
+            const sprint = project?.sprints.find(s => s.id === sprintId);
+            if (!sprint) return;
+
+            const newName = prompt('Sprint naam:', sprint.name);
+            if (newName && newName.trim()) {
+                sprint.name = newName.trim();
+                saveToStorage();
+                renderRoadmap();
+                renderSprintTabs();
+                updateSprintInfo();
+                showToast('Sprint hernoemd');
+            }
+        }
+
+        function editSprintDatesFromRoadmap(sprintId) {
+            const project = getActiveProject();
+            const sprint = project?.sprints.find(s => s.id === sprintId);
+            if (!sprint) return;
+
+            // Date input in dd/mm/jjjj format
+            const currentStart = sprint.startDate ? toDisplayDate(sprint.startDate) : getTodayDisplay();
+            const startInput = prompt('Startdatum (dd/mm/jjjj):', currentStart);
+            if (startInput === null) return;
+            
+            const currentEnd = sprint.endDate ? toDisplayDate(sprint.endDate) : '';
+            const endInput = prompt('Einddatum (dd/mm/jjjj):', currentEnd);
+            if (endInput === null) return;
+
+            // Convert to ISO format for storage
+            const startDate = toIsoDate(startInput);
+            const endDate = toIsoDate(endInput);
+
+            if (startInput && !startDate) {
+                showToast('Ongeldige startdatum. Gebruik dd/mm/jjjj', 'error');
+                return;
+            }
+            if (endInput && !endDate) {
+                showToast('Ongeldige einddatum. Gebruik dd/mm/jjjj', 'error');
+                return;
+            }
+
+            if (startDate) sprint.startDate = startDate;
+            if (endDate) sprint.endDate = endDate;
+            
+            saveToStorage();
+            renderRoadmap();
+            updateSprintInfo();
+            showToast('Sprint datums bijgewerkt');
+        }
+
+        function deleteSprintFromRoadmap(sprintId) {
+            const project = getActiveProject();
+            if (!project) return;
+
+            if (project.sprints.length <= 1) {
+                showToast('Je moet minstens één sprint hebben', 'error');
+                return;
+            }
+
+            const sprint = project.sprints.find(s => s.id === sprintId);
+            const taskCount = project.cards.filter(c => c.sprintId === sprintId).length;
+
+            if (confirm(`Weet je zeker dat je "${sprint.name}" wilt verwijderen?${taskCount > 0 ? `\n\nLet op: ${taskCount} taken worden verplaatst naar de eerste sprint.` : ''}`)) {
+                // Move tasks to first sprint
+                const firstSprint = project.sprints.find(s => s.id !== sprintId);
+                project.cards.forEach(card => {
+                    if (card.sprintId === sprintId) {
+                        card.sprintId = firstSprint.id;
+                    }
+                });
+
+                project.sprints = project.sprints.filter(s => s.id !== sprintId);
+                
+                if (state.activeSprintId === sprintId) {
+                    state.activeSprintId = firstSprint.id;
+                }
+
+                saveToStorage();
+                renderRoadmap();
+                renderSprintTabs();
+                showToast('Sprint verwijderd');
+            }
+        }
+
+        function createNewSprintFromRoadmap() {
+            const project = getActiveProject();
+            if (!project) return;
+
+            const sprintNum = project.sprints.length + 1;
+            const name = prompt('Sprint naam:', `Sprint ${sprintNum}`);
+            if (name && name.trim()) {
+                // Calculate suggested dates based on last sprint
+                let startDate = '';
+                let endDate = '';
+                const lastSprint = project.sprints[project.sprints.length - 1];
+                if (lastSprint?.endDate) {
+                    const lastEnd = new Date(lastSprint.endDate);
+                    lastEnd.setDate(lastEnd.getDate() + 1);
+                    startDate = lastEnd.toISOString().split('T')[0];
+                    lastEnd.setDate(lastEnd.getDate() + 13); // 2 weeks
+                    endDate = lastEnd.toISOString().split('T')[0];
+                }
+
+                const newSprint = {
+                    id: generateId(),
+                    name: name.trim(),
+                    startDate,
+                    endDate,
+                    days: 10,
+                    goal: '',
+                    status: 'planned'
+                };
+                project.sprints.push(newSprint);
+                saveToStorage();
+                renderRoadmap();
+                renderSprintTabs();
+                showToast('Sprint aangemaakt');
+            }
+        }
+
+        // ============================================
+        // ROADMAP DRAG & RESIZE
+        // ============================================
+
+        let dragState = null;
+
+        function startSprintDrag(e, sprintId) {
+            // Don't start drag if clicking on resize handle
+            if (e.target.classList.contains('roadmap-resize-handle')) return;
+            
+            e.preventDefault();
+            const bar = e.currentTarget;
+            const body = document.getElementById('roadmapBody');
+            const bodyRect = body.getBoundingClientRect();
+            
+            dragState = {
+                type: 'drag',
+                sprintId,
+                bar,
+                bodyRect,
+                startX: e.clientX,
+                startY: e.clientY,
+                initialLeft: parseFloat(bar.style.left),
+                initialWidth: parseFloat(bar.style.width),
+                hasMoved: false
+            };
+            
+            bar.classList.add('dragging');
+            document.addEventListener('mousemove', handleSprintDrag);
+            document.addEventListener('mouseup', endSprintDrag);
+        }
+
+        function startSprintResize(e, sprintId, side) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const bar = e.target.parentElement;
+            const body = document.getElementById('roadmapBody');
+            const bodyRect = body.getBoundingClientRect();
+            
+            dragState = {
+                type: 'resize',
+                side,
+                sprintId,
+                bar,
+                bodyRect,
+                startX: e.clientX,
+                initialLeft: parseFloat(bar.style.left),
+                initialWidth: parseFloat(bar.style.width),
+                hasMoved: false
+            };
+            
+            bar.classList.add('dragging', 'resizing');
+            document.addEventListener('mousemove', handleSprintDrag);
+            document.addEventListener('mouseup', endSprintDrag);
+        }
+
+        function handleSprintDrag(e) {
+            if (!dragState) return;
+            
+            const { type, side, bar, bodyRect, startX, initialLeft, initialWidth, sprintId } = dragState;
+            const { daysInMonth, year, month } = window.roadmapData;
+            
+            const deltaX = e.clientX - startX;
+            
+            // Mark as moved if significant movement
+            if (Math.abs(deltaX) > 3) {
+                dragState.hasMoved = true;
+            }
+            
+            const deltaPercent = (deltaX / bodyRect.width) * 100;
+            
+            let newLeft = initialLeft;
+            let newWidth = initialWidth;
+            
+            if (type === 'drag') {
+                // Move the entire bar
+                newLeft = Math.max(0, Math.min(100 - initialWidth, initialLeft + deltaPercent));
+            } else if (type === 'resize') {
+                if (side === 'left') {
+                    // Resize from left side
+                    const maxDelta = initialWidth - (100 / daysInMonth); // Min 1 day
+                    const clampedDelta = Math.max(-initialLeft, Math.min(maxDelta, deltaPercent));
+                    newLeft = initialLeft + clampedDelta;
+                    newWidth = initialWidth - clampedDelta;
+                } else {
+                    // Resize from right side
+                    const minWidth = 100 / daysInMonth; // Min 1 day
+                    newWidth = Math.max(minWidth, Math.min(100 - initialLeft, initialWidth + deltaPercent));
+                }
+            }
+            
+            bar.style.left = `${newLeft}%`;
+            bar.style.width = `${newWidth}%`;
+            
+            // Calculate dates from position
+            const startDay = Math.max(1, Math.min(daysInMonth, Math.round((newLeft / 100) * daysInMonth) + 1));
+            const endDay = Math.max(1, Math.min(daysInMonth, Math.round(((newLeft + newWidth) / 100) * daysInMonth)));
+            
+            const newStartDate = new Date(year, month, startDay);
+            const newEndDate = new Date(year, month, endDay);
+            
+            // Update tooltip with dates (tooltip is inside the bar now)
+            const tooltip = bar.querySelector('.roadmap-date-tooltip');
+            if (tooltip) {
+                tooltip.textContent = `${toDisplayDate(formatIsoDate(newStartDate))} — ${toDisplayDate(formatIsoDate(newEndDate))}`;
+            }
+            
+            // Store calculated dates for use when drag ends
+            dragState.newStartDate = formatIsoDate(newStartDate);
+            dragState.newEndDate = formatIsoDate(newEndDate);
+        }
+
+        function endSprintDrag(e) {
+            if (!dragState) return;
+            
+            const { sprintId, bar, newStartDate, newEndDate, hasMoved } = dragState;
+            
+            bar.classList.remove('dragging', 'resizing');
+            
+            // Update sprint dates if moved and changed
+            if (hasMoved && newStartDate && newEndDate) {
+                const project = getActiveProject();
+                const sprint = project?.sprints.find(s => s.id === sprintId);
+                if (sprint && (sprint.startDate !== newStartDate || sprint.endDate !== newEndDate)) {
+                    sprint.startDate = newStartDate;
+                    sprint.endDate = newEndDate;
+                    saveToStorage();
+                    renderRoadmap();
+                    renderRoadmapSprintList();
+                    updateSprintInfo();
+                    showToast('Sprint datums aangepast');
+                }
+            }
+            
+            document.removeEventListener('mousemove', handleSprintDrag);
+            document.removeEventListener('mouseup', endSprintDrag);
+            dragState = null;
+        }
+
+        function formatIsoDate(date) {
+            const y = date.getFullYear();
+            const m = String(date.getMonth() + 1).padStart(2, '0');
+            const d = String(date.getDate()).padStart(2, '0');
+            return `${y}-${m}-${d}`;
+        }
+
+        // ============================================
         // UTILITY FUNCTIONS
         // ============================================
 
@@ -3643,6 +4579,34 @@
 
         function getInitials(name) {
             return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+        }
+
+        // Date format helpers (dd/mm/jjjj <-> YYYY-MM-DD)
+        function toDisplayDate(isoDate) {
+            if (!isoDate) return '';
+            const [year, month, day] = isoDate.split('-');
+            return `${day}/${month}/${year}`;
+        }
+
+        function toIsoDate(displayDate) {
+            if (!displayDate) return '';
+            const parts = displayDate.split('/');
+            if (parts.length !== 3) return '';
+            const day = parseInt(parts[0], 10);
+            const month = parseInt(parts[1], 10);
+            const year = parseInt(parts[2], 10);
+            // Validate
+            if (isNaN(day) || isNaN(month) || isNaN(year)) return '';
+            if (day < 1 || day > 31 || month < 1 || month > 12 || year < 2000 || year > 2100) return '';
+            return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        }
+
+        function getTodayDisplay() {
+            const today = new Date();
+            const d = String(today.getDate()).padStart(2, '0');
+            const m = String(today.getMonth() + 1).padStart(2, '0');
+            const y = today.getFullYear();
+            return `${d}/${m}/${y}`;
         }
 
         function formatDate(dateStr) {
@@ -4223,7 +5187,8 @@
                     document.getElementById('cardEpicSelect').value = card.epicId || '';
                     document.getElementById('cardStatus').value = card.status;
                     document.getElementById('cardOwnerSelect').value = card.ownerId || '';
-                    document.getElementById('cardDueDate').value = card.dueDate || '';
+                    // Convert ISO to dd/mm/jjjj for display
+                    document.getElementById('cardDueDate').value = card.dueDate ? toDisplayDate(card.dueDate) : '';
                     document.getElementById('cardEstimate').value = card.estimate || '';
                     state.currentEditSubtasks = (card.subtasks || []).map(s => ({...s}));
 
@@ -4281,6 +5246,15 @@
             const title = document.getElementById('cardTitle').value.trim();
             if (!title) { showToast('Vul een titel in', 'error'); return; }
 
+            // Convert due date from dd/mm/jjjj to ISO
+            const dueDateInput = document.getElementById('cardDueDate').value;
+            const dueDate = dueDateInput ? toIsoDate(dueDateInput) : null;
+            
+            if (dueDateInput && !dueDate) {
+                showToast('Ongeldige deadline. Gebruik dd/mm/jjjj', 'error');
+                return;
+            }
+
             const cardId = document.getElementById('cardId').value;
             const cardData = {
                 id: cardId || generateId(),
@@ -4289,7 +5263,7 @@
                 epicId: document.getElementById('cardEpicSelect').value || null,
                 status: document.getElementById('cardStatus').value,
                 ownerId: document.getElementById('cardOwnerSelect').value || null,
-                dueDate: document.getElementById('cardDueDate').value || null,
+                dueDate: dueDate,
                 estimate: document.getElementById('cardEstimate').value || null,
                 priority: document.querySelector('.priority-btn.active')?.classList.contains('high') ? 'high' :
                           document.querySelector('.priority-btn.active')?.classList.contains('medium') ? 'medium' :
@@ -4555,9 +5529,26 @@
             const sprint = getActiveSprint();
             if (!sprint) return;
             
+            const startInput = document.getElementById('sprintStartInput').value;
+            const endInput = document.getElementById('sprintEndInput').value;
+            
+            // Convert dd/mm/jjjj to ISO format
+            const startDate = toIsoDate(startInput);
+            const endDate = toIsoDate(endInput);
+            
+            // Validate dates if entered
+            if (startInput && !startDate) {
+                showToast('Ongeldige startdatum. Gebruik dd/mm/jjjj', 'error');
+                return;
+            }
+            if (endInput && !endDate) {
+                showToast('Ongeldige einddatum. Gebruik dd/mm/jjjj', 'error');
+                return;
+            }
+            
             sprint.name = document.getElementById('sprintNameInput').value || 'Sprint 1';
-            sprint.startDate = document.getElementById('sprintStartInput').value;
-            sprint.endDate = document.getElementById('sprintEndInput').value;
+            sprint.startDate = startDate;
+            sprint.endDate = endDate;
             sprint.days = parseFloat(document.getElementById('sprintDaysInput').value) || 10;
             sprint.goal = document.getElementById('sprintGoalInput').value;
             
@@ -4574,8 +5565,9 @@
             if (!sprint) return;
             
             document.getElementById('sprintNameInput').value = sprint.name || '';
-            document.getElementById('sprintStartInput').value = sprint.startDate || '';
-            document.getElementById('sprintEndInput').value = sprint.endDate || '';
+            // Convert ISO to dd/mm/jjjj for display
+            document.getElementById('sprintStartInput').value = sprint.startDate ? toDisplayDate(sprint.startDate) : '';
+            document.getElementById('sprintEndInput').value = sprint.endDate ? toDisplayDate(sprint.endDate) : '';
             document.getElementById('sprintDaysInput').value = sprint.days || 10;
             document.getElementById('sprintGoalInput').value = sprint.goal || '';
             document.getElementById('defaultDaysDisplay').textContent = formatAvailability(sprint.days || 10);
