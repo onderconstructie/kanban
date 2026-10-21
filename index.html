@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SprintFlow — Kanban Board</title>
+    <meta name="theme-color" content="#ffffff">
+    <title>SprintFlow – Onder Constructie</title>
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='4' y='4' width='24' height='24' rx='4' fill='%23f0fdf4' stroke='%2310b981' stroke-width='2'/%3E%3Crect x='8' y='9' width='5' height='14' rx='1' fill='%2310b981' opacity='0.3'/%3E%3Crect x='14' y='9' width='5' height='10' rx='1' fill='%2310b981' opacity='0.5'/%3E%3Crect x='20' y='9' width='5' height='6' rx='1' fill='%2310b981' opacity='0.8'/%3E%3C/svg%3E">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -345,7 +346,7 @@
         }
 
         .stat-label {
-            font-size: 0.625rem;
+            font-size: 0.6875rem;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.05em;
@@ -634,7 +635,7 @@
         .sprint-tab .sprint-status-dot.completed { background: var(--slate-400); }
 
         .sprint-tab .sprint-task-count {
-            font-size: 0.625rem;
+            font-size: 0.6875rem;
             font-weight: 700;
             padding: 0.125rem 0.375rem;
             background: var(--slate-200);
@@ -990,7 +991,7 @@
             top: -20px;
             left: 50%;
             transform: translateX(-50%);
-            font-size: 0.625rem;
+            font-size: 0.6875rem;
             font-weight: 700;
             color: var(--red-500);
             white-space: nowrap;
@@ -1444,7 +1445,7 @@
         }
 
         .filter-group-label {
-            font-size: 0.625rem;
+            font-size: 0.6875rem;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.06em;
@@ -1533,7 +1534,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.5625rem;
+            font-size: 0.6875rem;
             font-weight: 700;
             color: var(--white);
         }
@@ -1562,7 +1563,7 @@
         }
 
         .filter-chip-status .chip-remove {
-            font-size: 0.625rem;
+            font-size: 0.6875rem;
             color: var(--slate-400);
             margin-left: 0.125rem;
         }
@@ -1722,7 +1723,7 @@
         }
 
         .card-epic {
-            font-size: 0.625rem;
+            font-size: 0.6875rem;
             font-weight: 700;
             padding: 0.1875rem 0.5rem;
             border-radius: 4px;
@@ -1732,7 +1733,7 @@
         }
 
         .card-priority-badge {
-            font-size: 0.5625rem;
+            font-size: 0.6875rem;
             font-weight: 700;
             padding: 0.125rem 0.375rem;
             border-radius: 3px;
@@ -1800,7 +1801,7 @@
         .subtasks-percent {
             margin-left: auto;
             font-family: 'JetBrains Mono', monospace;
-            font-size: 0.625rem;
+            font-size: 0.6875rem;
             color: var(--slate-400);
         }
 
@@ -1845,7 +1846,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.5625rem;
+            font-size: 0.6875rem;
             font-weight: 700;
             color: var(--white);
             flex-shrink: 0;
@@ -1904,7 +1905,7 @@
         }
 
         .other-label {
-            font-size: 0.625rem;
+            font-size: 0.6875rem;
             color: var(--slate-400);
             font-weight: 500;
         }
@@ -1916,7 +1917,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.5rem;
+            font-size: 0.6875rem;
             font-weight: 700;
             color: var(--white);
             border: 1.5px solid var(--white);
@@ -1928,7 +1929,7 @@
         }
 
         .more-participants {
-            font-size: 0.5625rem;
+            font-size: 0.6875rem;
             color: var(--slate-400);
             font-weight: 600;
             margin-left: 0.125rem;
@@ -1946,7 +1947,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.5rem;
+            font-size: 0.6875rem;
             font-weight: 700;
             color: var(--white);
             border: 2px solid var(--white);
@@ -2272,7 +2273,7 @@
             display: flex;
             justify-content: space-between;
             padding: 0.25rem 0.25rem 0;
-            font-size: 0.625rem;
+            font-size: 0.6875rem;
             color: var(--slate-400);
             font-family: 'JetBrains Mono', monospace;
         }
@@ -2716,7 +2717,7 @@
         }
 
         .capacity-stat-label {
-            font-size: 0.625rem;
+            font-size: 0.6875rem;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.04em;
@@ -2950,12 +2951,118 @@
             .form-row { grid-template-columns: 1fr; }
             .participants-grid { grid-template-columns: 1fr; }
         }
+    
+        /* Dialoog in de pagina, in plaats van de pop-ups van de browser */
+        .oc-dialog-backdrop {
+            position: fixed; inset: 0; z-index: 10000; display: flex; align-items: center; justify-content: center;
+            padding: 1rem; background: rgba(15, 23, 42, 0.45); backdrop-filter: blur(3px);
+            opacity: 0; transition: opacity 0.15s ease;
+        }
+        .oc-dialog-backdrop.open { opacity: 1; }
+        .oc-dialog {
+            width: 100%; max-width: 400px; background: #ffffff; border-radius: 16px; padding: 1.375rem 1.375rem 1.125rem;
+            box-shadow: 0 20px 50px rgba(15, 23, 42, 0.25); font-family: 'DM Sans', system-ui, sans-serif;
+            transform: translateY(8px) scale(0.98); transition: transform 0.15s ease;
+        }
+        .oc-dialog-backdrop.open .oc-dialog { transform: none; }
+        .oc-dialog-msg { font-size: 0.9375rem; line-height: 1.5; color: #334155; white-space: pre-line; }
+        .oc-dialog-label { display: block; font-size: 0.875rem; font-weight: 600; color: #1e293b; margin-bottom: 0.5rem; }
+        .oc-dialog-input {
+            width: 100%; padding: 0.6875rem 0.875rem; border: 1.5px solid #e2e8f0; border-radius: 10px; font: inherit;
+            font-size: 1rem; color: #1e293b; outline: none; background: #f8fafc;
+        }
+        .oc-dialog-input:focus { border-color: #10b981; background: #ffffff; }
+        .oc-dialog-actions { display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 1.25rem; }
+        .oc-dialog-btn { font: inherit; font-size: 0.9375rem; font-weight: 600; padding: 0.625rem 1rem; border-radius: 10px; border: 0; cursor: pointer; }
+        .oc-dialog-cancel { background: #f1f5f9; color: #475569; }
+        .oc-dialog-cancel:hover { background: #e2e8f0; }
+        .oc-dialog-ok { background: #10b981; color: #ffffff; }
+        .oc-dialog-ok:hover { background: #059669; }
+        .oc-dialog-ok.danger { background: #ef4444; }
+        .oc-dialog-ok.danger:hover { background: #dc2626; }
+
+        .oc-back { width: 32px; height: 40px; margin-right: -0.375rem; display: flex; align-items: center; justify-content: center; color: #94a3b8; border-radius: 8px; transition: color 0.2s; }
+        .oc-back:hover { color: #10b981; }
+        .oc-back svg { width: 22px; height: 22px; }
+
+        /* Onder Constructie: gedeelde footer en quote (huisstijl) */
+        footer.oc-footer {
+            text-align: center;
+            padding: 2rem 1.5rem calc(env(safe-area-inset-bottom, 0px) + 2rem);
+            margin-top: 2rem;
+            border-top: 1px solid #e2e8f0;
+            background: #ffffff;
+            color: #10b981;
+        }
+
+        footer.oc-footer .oc-quote {
+            font-size: 0.8125rem;
+            line-height: 1.5;
+            color: #10b981;
+            opacity: 1;
+            font-style: normal;
+            margin: 0;
+        }
     </style>
 </head>
 <body>
+    <script>
+        /* Vervangt confirm() en prompt() door een dialoog in de pagina. Beide geven een Promise terug. */
+        function ocDialog({ message = '', label = '', value = null, okText = 'OK', danger = false }) {
+            return new Promise(resolve => {
+                const isPrompt = value !== null;
+                document.querySelectorAll('.dropdown-menu.active, .dropdown.active').forEach(d => d.classList.remove('active'));
+                const back = document.createElement('div');
+                back.className = 'oc-dialog-backdrop';
+                back.innerHTML = `<div class="oc-dialog" role="dialog" aria-modal="true">
+                    ${isPrompt ? `<label class="oc-dialog-label"></label><input class="oc-dialog-input" type="text">`
+                               : `<p class="oc-dialog-msg"></p>`}
+                    <div class="oc-dialog-actions">
+                        <button class="oc-dialog-btn oc-dialog-cancel" type="button">Annuleer</button>
+                        <button class="oc-dialog-btn oc-dialog-ok${danger ? ' danger' : ''}" type="button"></button>
+                    </div></div>`;
+                if (isPrompt) { back.querySelector('label').textContent = label; back.querySelector('input').value = value; }
+                else back.querySelector('.oc-dialog-msg').textContent = message;
+                back.querySelector('.oc-dialog-ok').textContent = okText;
+                const prev = document.activeElement;
+                document.body.appendChild(back);
+                requestAnimationFrame(() => back.classList.add('open'));
+                const input = back.querySelector('input');
+                (input || back.querySelector('.oc-dialog-ok')).focus();
+                if (input) input.select();
+                const close = result => {
+                    document.removeEventListener('keydown', onKey, true);
+                    back.remove();
+                    if (prev && prev.focus) prev.focus();
+                    resolve(result);
+                };
+                const ok = () => close(isPrompt ? input.value : true);
+                const cancel = () => close(isPrompt ? null : false);
+                function onKey(e) {
+                    if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); cancel(); }
+                    if (e.key === 'Enter' && (isPrompt || document.activeElement !== back.querySelector('.oc-dialog-cancel'))) { e.preventDefault(); e.stopPropagation(); ok(); }
+                }
+                document.addEventListener('keydown', onKey, true);
+                back.querySelector('.oc-dialog-ok').addEventListener('click', ok);
+                back.querySelector('.oc-dialog-cancel').addEventListener('click', cancel);
+                back.addEventListener('click', e => { if (e.target === back) cancel(); });
+            });
+        }
+        function ocConfirm(message, opts = {}) {
+            const danger = /verwijder|wissen/i.test(message);
+            return ocDialog({ message, danger, okText: opts.ok || (danger ? (/wissen/i.test(message) ? 'Wis alles' : 'Verwijder') : 'OK') });
+        }
+        function ocPrompt(label, value = '') {
+            return ocDialog({ label: label.replace(/:\s*$/, ''), value: value == null ? '' : String(value), okText: 'Bewaar' });
+        }
+    </script>
+
     <!-- Header -->
     <header class="header">
         <div class="header-left">
+            <a href="https://onderconstructie.github.io/projectmanagement/" class="back-link oc-back" aria-label="Terug naar Projectmanagement" title="Projectmanagement">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+            </a>
             <div class="logo">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <rect x="3" y="3" width="18" height="18" rx="3"/>
@@ -3532,6 +3639,10 @@
     <!-- Toast Container -->
     <div class="toast-container" id="toastContainer"></div>
 
+    <footer class="footer oc-footer">
+        <p class="quote oc-quote">Wie overal is, is nergens.</p>
+    </footer>
+
     <script>
         // ============================================
         // DATA STRUCTURES & STATE
@@ -3718,8 +3829,8 @@
             }
         }
 
-        function clearAllData() {
-            if (confirm('Weet je zeker dat je ALLE data wilt wissen? Dit kan niet ongedaan worden gemaakt.')) {
+        async function clearAllData() {
+            if (await ocConfirm('Weet je zeker dat je ALLE data wilt wissen? Dit kan niet ongedaan worden gemaakt.')) {
                 localStorage.removeItem(STORAGE_KEY);
                 location.reload();
             }
@@ -3729,8 +3840,8 @@
         // PROJECT & SPRINT MANAGEMENT
         // ============================================
 
-        function createNewProject() {
-            const name = prompt('Project naam:', 'Nieuw Project');
+        async function createNewProject() {
+            const name = await ocPrompt('Project naam:', 'Nieuw Project');
             if (name && name.trim()) {
                 const newProject = createDefaultProject();
                 newProject.name = name.trim();
@@ -3757,11 +3868,11 @@
             closeDropdown('projectDropdown');
         }
 
-        function editProjectName() {
+        async function editProjectName() {
             const project = getActiveProject();
             if (!project) return;
             
-            const newName = prompt('Project naam:', project.name);
+            const newName = await ocPrompt('Project naam:', project.name);
             if (newName && newName.trim() && newName.trim() !== project.name) {
                 project.name = newName.trim();
                 saveToStorage();
@@ -3770,7 +3881,7 @@
             }
         }
 
-        function deleteCurrentProject() {
+        async function deleteCurrentProject() {
             closeDropdown('projectDropdown');
             const project = getActiveProject();
             if (!project) return;
@@ -3779,7 +3890,7 @@
                 showToast('Je moet minstens één project hebben', 'error');
                 return;
             }
-            if (confirm(`Weet je zeker dat je "${project.name}" en alle bijbehorende data wilt verwijderen?`)) {
+            if (await ocConfirm(`Weet je zeker dat je "${project.name}" en alle bijbehorende data wilt verwijderen?`)) {
                 state.projects = state.projects.filter(p => p.id !== project.id);
                 state.activeProjectId = state.projects[0].id;
                 state.activeSprintId = state.projects[0].sprints[0]?.id;
@@ -3789,12 +3900,12 @@
             }
         }
 
-        function deleteProject(projectId) {
+        async function deleteProject(projectId) {
             if (state.projects.length <= 1) {
                 showToast('Je moet minstens één project hebben', 'error');
                 return;
             }
-            if (confirm('Weet je zeker dat je dit project en alle bijbehorende data wilt verwijderen?')) {
+            if (await ocConfirm('Weet je zeker dat je dit project en alle bijbehorende data wilt verwijderen?')) {
                 state.projects = state.projects.filter(p => p.id !== projectId);
                 if (state.activeProjectId === projectId) {
                     state.activeProjectId = state.projects[0].id;
@@ -3806,12 +3917,12 @@
             }
         }
 
-        function createNewSprint() {
+        async function createNewSprint() {
             const project = getActiveProject();
             if (!project) return;
             
             const sprintNum = project.sprints.length + 1;
-            const name = prompt('Sprint naam:', `Sprint ${sprintNum}`);
+            const name = await ocPrompt('Sprint naam:', `Sprint ${sprintNum}`);
             if (name && name.trim()) {
                 const newSprint = {
                     id: generateId(),
@@ -3838,11 +3949,11 @@
             refreshUI();
         }
 
-        function editSprintInline() {
+        async function editSprintInline() {
             const sprint = getActiveSprint();
             if (!sprint) return;
             
-            const newName = prompt('Sprint naam:', sprint.name);
+            const newName = await ocPrompt('Sprint naam:', sprint.name);
             if (newName && newName.trim() !== '') {
                 sprint.name = newName.trim();
                 saveToStorage();
@@ -3900,12 +4011,12 @@
             }).join('');
         }
 
-        function editSprintName(sprintId) {
+        async function editSprintName(sprintId) {
             const project = getActiveProject();
             const sprint = project?.sprints.find(s => s.id === sprintId);
             if (!sprint) return;
             
-            const newName = prompt('Sprint naam:', sprint.name);
+            const newName = await ocPrompt('Sprint naam:', sprint.name);
             if (newName && newName.trim()) {
                 sprint.name = newName.trim();
                 saveToStorage();
@@ -4073,12 +4184,12 @@
             renderFilterChips();
         }
 
-        function addTeamMemberFromDashboard() {
+        async function addTeamMemberFromDashboard() {
             const project = getActiveProject();
             const sprint = getActiveSprint();
             if (!project) return;
             
-            const name = prompt('Naam van nieuw teamlid:');
+            const name = await ocPrompt('Naam van nieuw teamlid:');
             if (name && name.trim()) {
                 const color = AVATAR_COLORS[Math.floor(Math.random() * AVATAR_COLORS.length)];
                 const newMember = { id: generateId(), name: name.trim(), color };
@@ -4091,11 +4202,11 @@
             }
         }
 
-        function addEpicFromDashboard() {
+        async function addEpicFromDashboard() {
             const project = getActiveProject();
             if (!project) return;
             
-            const name = prompt('Naam van nieuwe epic:');
+            const name = await ocPrompt('Naam van nieuwe epic:');
             if (name && name.trim()) {
                 const color = AVATAR_COLORS[Math.floor(Math.random() * AVATAR_COLORS.length)];
                 const newEpic = { id: generateId(), name: name.trim(), color };
@@ -4300,12 +4411,12 @@
             showToast('Sprint geopend');
         }
 
-        function editSprintFromRoadmap(sprintId) {
+        async function editSprintFromRoadmap(sprintId) {
             const project = getActiveProject();
             const sprint = project?.sprints.find(s => s.id === sprintId);
             if (!sprint) return;
 
-            const newName = prompt('Sprint naam:', sprint.name);
+            const newName = await ocPrompt('Sprint naam:', sprint.name);
             if (newName && newName.trim()) {
                 sprint.name = newName.trim();
                 saveToStorage();
@@ -4316,18 +4427,18 @@
             }
         }
 
-        function editSprintDatesFromRoadmap(sprintId) {
+        async function editSprintDatesFromRoadmap(sprintId) {
             const project = getActiveProject();
             const sprint = project?.sprints.find(s => s.id === sprintId);
             if (!sprint) return;
 
             // Date input in dd/mm/jjjj format
             const currentStart = sprint.startDate ? toDisplayDate(sprint.startDate) : getTodayDisplay();
-            const startInput = prompt('Startdatum (dd/mm/jjjj):', currentStart);
+            const startInput = await ocPrompt('Startdatum (dd/mm/jjjj):', currentStart);
             if (startInput === null) return;
             
             const currentEnd = sprint.endDate ? toDisplayDate(sprint.endDate) : '';
-            const endInput = prompt('Einddatum (dd/mm/jjjj):', currentEnd);
+            const endInput = await ocPrompt('Einddatum (dd/mm/jjjj):', currentEnd);
             if (endInput === null) return;
 
             // Convert to ISO format for storage
@@ -4352,7 +4463,7 @@
             showToast('Sprint datums bijgewerkt');
         }
 
-        function deleteSprintFromRoadmap(sprintId) {
+        async function deleteSprintFromRoadmap(sprintId) {
             const project = getActiveProject();
             if (!project) return;
 
@@ -4364,7 +4475,7 @@
             const sprint = project.sprints.find(s => s.id === sprintId);
             const taskCount = project.cards.filter(c => c.sprintId === sprintId).length;
 
-            if (confirm(`Weet je zeker dat je "${sprint.name}" wilt verwijderen?${taskCount > 0 ? `\n\nLet op: ${taskCount} taken worden verplaatst naar de eerste sprint.` : ''}`)) {
+            if (await ocConfirm(`Weet je zeker dat je "${sprint.name}" wilt verwijderen?${taskCount > 0 ? `\n\nLet op: ${taskCount} taken worden verplaatst naar de eerste sprint.` : ''}`)) {
                 // Move tasks to first sprint
                 const firstSprint = project.sprints.find(s => s.id !== sprintId);
                 project.cards.forEach(card => {
@@ -4386,12 +4497,12 @@
             }
         }
 
-        function createNewSprintFromRoadmap() {
+        async function createNewSprintFromRoadmap() {
             const project = getActiveProject();
             if (!project) return;
 
             const sprintNum = project.sprints.length + 1;
-            const name = prompt('Sprint naam:', `Sprint ${sprintNum}`);
+            const name = await ocPrompt('Sprint naam:', `Sprint ${sprintNum}`);
             if (name && name.trim()) {
                 // Calculate suggested dates based on last sprint
                 let startDate = '';
@@ -4982,7 +5093,7 @@
                 epicGroup.style.display = 'flex';
                 epicChips.innerHTML = getEpics().map(epic => `
                     <button class="filter-chip-epic ${state.filters.epic === epic.id ? 'active' : ''}" style="--epic-color: ${epic.color};" onclick="toggleFilter('epic', '${epic.id}')">
-                        <style>.filter-chip-epic[style*="${epic.color}"]::before { background: ${epic.color}; }</style>
+                        <style>.filter-chip-epic[style*="${epic.color}"]::before { background: ${epic.color}; }            </style>
                         ${epic.name}
                     </button>
                 `).join('');
@@ -5015,7 +5126,7 @@
             container.innerHTML = getTeam().length ? getTeam().map(member => `
                 <label class="participant-item">
                     <input type="checkbox" value="${member.id}">
-                    <div class="avatar" style="background: ${member.color}; width: 22px; height: 22px; font-size: 0.5625rem;">${getInitials(member.name)}</div>
+                    <div class="avatar" style="background: ${member.color}; width: 22px; height: 22px; font-size: 0.6875rem;">${getInitials(member.name)}</div>
                     <span style="font-size: 0.8125rem; color: var(--slate-700);">${member.name}</span>
                 </label>
             `).join('') : '<p style="color: var(--slate-400); font-size: 0.8125rem;">Voeg eerst teamleden toe</p>';
@@ -5290,11 +5401,11 @@
             showToast(cardId ? 'Taak bijgewerkt' : 'Taak aangemaakt');
         }
 
-        function deleteCard(cardId) {
+        async function deleteCard(cardId) {
             const project = getActiveProject();
             if (!project) return;
             
-            if (confirm('Weet je zeker dat je deze taak wilt verwijderen?')) {
+            if (await ocConfirm('Weet je zeker dat je deze taak wilt verwijderen?')) {
                 project.cards = project.cards.filter(c => c.id !== cardId);
                 saveToStorage();
                 renderBoard();
@@ -5418,11 +5529,11 @@
             showToast('Teamlid toegevoegd');
         }
 
-        function deleteTeamMember(memberId) {
+        async function deleteTeamMember(memberId) {
             const project = getActiveProject();
             if (!project) return;
             
-            if (confirm('Weet je zeker dat je dit teamlid wilt verwijderen?')) {
+            if (await ocConfirm('Weet je zeker dat je dit teamlid wilt verwijderen?')) {
                 project.team = project.team.filter(t => t.id !== memberId);
                 delete project.teamAvailability[memberId];
                 project.cards.forEach(card => {
@@ -5465,11 +5576,11 @@
             showToast('Epic toegevoegd');
         }
 
-        function deleteEpic(epicId) {
+        async function deleteEpic(epicId) {
             const project = getActiveProject();
             if (!project) return;
             
-            if (confirm('Weet je zeker dat je deze epic wilt verwijderen?')) {
+            if (await ocConfirm('Weet je zeker dat je deze epic wilt verwijderen?')) {
                 project.epics = project.epics.filter(e => e.id !== epicId);
                 project.cards.forEach(card => { if (card.epicId === epicId) card.epicId = null; });
                 saveToStorage();
@@ -5655,7 +5766,7 @@
             if (!file) return;
 
             const reader = new FileReader();
-            reader.onload = (e) => {
+            reader.onload = async (e) => {
                 try {
                     const imported = JSON.parse(e.target.result);
                     
@@ -5685,7 +5796,7 @@
                     const teamCount = importedProject.team?.length || 0;
                     const epicCount = importedProject.epics?.length || 0;
                     
-                    const action = confirm(`Hoe wil je importeren?\n\n• ${taskCount} taken\n• ${teamCount} teamleden\n• ${epicCount} epics\n\nBackup van: ${imported.exportDate ? new Date(imported.exportDate).toLocaleString('nl-NL') : 'onbekend'}\n\nKlik OK om als NIEUW project te importeren\nKlik Annuleren om te annuleren`);
+                    const action = await ocConfirm(`Hoe wil je importeren?\n\n• ${taskCount} taken\n• ${teamCount} teamleden\n• ${epicCount} epics\n\nBackup van: ${imported.exportDate ? new Date(imported.exportDate).toLocaleString('nl-NL') : 'onbekend'}`, { ok: 'Importeer als nieuw project' });
                     
                     if (!action) {
                         event.target.value = '';
