@@ -15,8 +15,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         :root {
             --slate-50: #f8fafc;
@@ -3160,7 +3158,7 @@
                     <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importFromJSON(event)">
                     <button class="dropdown-item" onclick="exportAsJPG()">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-                        Download als JPG
+                        Download als afbeelding
                     </button>
                     <button class="dropdown-item" onclick="exportAsPDF()">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
@@ -3650,6 +3648,105 @@
     </footer>
 
     <script>
+/* ---------- Download als afbeelding of PDF (gedeeld door de Onder Constructie-tools, v2) ----------
+   Gebruik:
+     ocExport.png(bouwFn, 'bestandsnaam', { landscape:true })
+     ocExport.pdf(bouwFn, 'bestandsnaam', { landscape:true })
+   bouwFn() geeft { node, title, subtitle } terug: een DOM-knoop met inline styles, zonder knoppen of invoervelden.
+   Die komt buiten beeld op een witte pagina met kop (titel, ondertitel, datum) en voet.
+   Zet data-oc-keep op blokken die in een PDF niet over twee pagina's gesplitst mogen worden
+   (een beslissing, een kaartje, een rij); ze schuiven dan door naar de volgende pagina.
+   html2canvas en jsPDF worden pas geladen bij de eerste download, van dezelfde adressen als de
+   andere tools, zodat de app ze offline kan bewaren. */
+const ocExport = (() => {
+  const LIBS = {
+    h2c: 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js',
+    pdf: 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js'
+  };
+  const A4 = { w: 210, h: 297 }, MARGIN = 10;   // mm
+  const loaded = {};
+  function load(url) {
+    if (!loaded[url]) loaded[url] = new Promise((ok, fail) => {
+      const s = document.createElement('script');
+      s.src = url; s.onload = ok; s.onerror = () => { delete loaded[url]; fail(new Error('laden mislukt')); };
+      document.head.appendChild(s);
+    });
+    return loaded[url];
+  }
+  const today = () => new Date().toLocaleDateString('nl-BE', { day: 'numeric', month: 'long', year: 'numeric' });
+  function page(content, { title, subtitle, width }) {
+    const wrap = document.createElement('div');
+    wrap.style.cssText = `position:fixed;left:-20000px;top:0;width:${width}px;background:#fff;padding:36px 40px 28px;
+      font-family:'DM Sans',system-ui,-apple-system,sans-serif;color:#1e293b;-webkit-font-smoothing:antialiased;box-sizing:border-box;`;
+    const head = document.createElement('div');
+    head.style.cssText = 'display:flex;align-items:flex-end;justify-content:space-between;gap:24px;border-bottom:2px solid #10b981;padding-bottom:12px;margin-bottom:20px;';
+    head.innerHTML = `<div><div style="font-size:22px;font-weight:700;letter-spacing:-0.02em;color:#1e293b"></div>
+      <div style="font-size:14px;color:#64748b;margin-top:2px"></div></div>
+      <div style="font-size:12px;color:#94a3b8;white-space:nowrap">${today()}</div>`;
+    head.children[0].children[0].textContent = title || '';
+    head.children[0].children[1].textContent = subtitle || '';
+    const foot = document.createElement('div');
+    foot.style.cssText = 'margin-top:22px;padding-top:10px;border-top:1px solid #e2e8f0;font-size:11px;color:#94a3b8;display:flex;justify-content:space-between;';
+    foot.innerHTML = '<span>Onder Constructie</span><span>onderconstructie.github.io</span>';
+    wrap.append(head, content, foot);
+    document.body.appendChild(wrap);
+    return wrap;
+  }
+  // Schuift blokken met data-oc-keep die over een paginagrens zouden vallen naar de volgende pagina.
+  function keepTogether(wrap, pageH) {
+    const top0 = () => wrap.getBoundingClientRect().top;
+    for (const el of wrap.querySelectorAll('[data-oc-keep]')) {
+      const r = el.getBoundingClientRect(), t = r.top - top0(), b = t + r.height;
+      if (r.height > pageH * 0.85) continue;            // te groot om heel te houden
+      const boundary = Math.ceil(t / pageH) * pageH;     // eerstvolgende grens na de bovenkant
+      if (t % pageH !== 0 && b > boundary && t < boundary) {
+        const gap = document.createElement('div');
+        gap.style.cssText = `height:${boundary - t + 6}px;`;
+        el.parentNode.insertBefore(gap, el);
+      }
+    }
+  }
+  async function canvasOf(build, opts) {
+    await load(LIBS.h2c);
+    const built = build();
+    const node = page(built.node, { title: built.title, subtitle: built.subtitle, width: opts.width });
+    try {
+      if (document.fonts && document.fonts.ready) await document.fonts.ready;
+      if (opts.pageH) keepTogether(node, opts.pageH);
+      return await window.html2canvas(node, { scale: 2, backgroundColor: '#ffffff', logging: false, useCORS: true });
+    } finally { node.remove(); }
+  }
+  function save(blob, name) {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob); a.download = name;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+  }
+  const widthFor = opts => opts.width || (opts.landscape ? 1120 : 800);
+  async function png(build, name, opts = {}) {
+    const c = await canvasOf(build, { width: widthFor(opts) });
+    await new Promise(ok => c.toBlob(b => { save(b, name + '.png'); ok(); }, 'image/png'));
+  }
+  async function pdf(build, name, opts = {}) {
+    const landscape = !!opts.landscape, width = widthFor(opts);
+    const pw = landscape ? A4.h : A4.w, ph = landscape ? A4.w : A4.h, w = pw - 2 * MARGIN;
+    const pageCss = (ph - 2 * MARGIN) / w * width;       // paginahoogte in CSS-pixels van de exportknoop
+    const [c] = await Promise.all([canvasOf(build, { width, pageH: pageCss }), load(LIBS.pdf)]);
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ orientation: landscape ? 'landscape' : 'portrait', unit: 'mm', format: 'a4' });
+    const scale = w / c.width, pageH = (ph - 2 * MARGIN) / scale;   // paginahoogte in canvaspixels
+    for (let y = 0, i = 0; y < c.height - 2; y += pageH, i++) {
+      const h = Math.min(pageH, c.height - y);
+      const part = document.createElement('canvas'); part.width = c.width; part.height = h;
+      part.getContext('2d').drawImage(c, 0, y, c.width, h, 0, 0, c.width, h);
+      if (i) doc.addPage();
+      doc.addImage(part.toDataURL('image/jpeg', 0.92), 'JPEG', MARGIN, MARGIN, w, h * scale);
+    }
+    save(doc.output('blob'), name + '.pdf');
+  }
+  return { png, pdf };
+})();
+
         // ============================================
         // DATA STRUCTURES & STATE
         // ============================================
@@ -5836,31 +5933,79 @@
             reader.readAsText(file);
         }
 
-        async function exportAsJPG() {
-            try {
-                showToast('Bezig met exporteren...');
-                const canvas = await html2canvas(document.querySelector('.board-container'), { backgroundColor: '#f1f5f9', scale: 2 });
-                const link = document.createElement('a');
-                link.download = `kanban-bord-${new Date().toISOString().split('T')[0]}.jpg`;
-                link.href = canvas.toDataURL('image/jpeg', 0.9);
-                link.click();
-                showToast('JPG geëxporteerd');
-            } catch (error) { showToast('Export mislukt', 'error'); }
+        // ---------- Download als afbeelding of PDF, in de gedeelde Onder Constructie-layout ----------
+        const escX = v => String(v == null ? '' : v).replace(/[&<>"]/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[c]));
+        const PRIO = { high: ['Hoog', '#dc2626', '#fef2f2'], medium: ['Middel', '#d97706', '#fffbeb'], low: ['Laag', '#64748b', '#f1f5f9'] };
+
+        function exportBaseName() {
+            const project = getActiveProject();
+            const slug = (project?.name || 'project').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+                .replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'project';
+            return `sprintflow-${slug}-${new Date().toISOString().slice(0, 10)}`;
         }
 
-        async function exportAsPDF() {
-            try {
-                showToast('Bezig met exporteren...');
-                const canvas = await html2canvas(document.querySelector('.board-container'), { backgroundColor: '#f1f5f9', scale: 2 });
-                const { jsPDF } = window.jspdf;
-                const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm' });
-                const imgWidth = 280;
-                const imgHeight = (canvas.height * imgWidth) / canvas.width;
-                pdf.addImage(canvas.toDataURL('image/jpeg', 0.9), 'JPEG', 10, 10, imgWidth, imgHeight);
-                pdf.save(`kanban-bord-${new Date().toISOString().split('T')[0]}.pdf`);
-                showToast('PDF geëxporteerd');
-            } catch (error) { showToast('Export mislukt', 'error'); }
+        function buildBoardExport() {
+            const project = getActiveProject(), sprint = getActiveSprint();
+            const team = getTeam(), epics = getEpics();
+            const cards = getFilteredCards();
+            const f = state.filters || {};
+            const filtered = !!(f.search || f.epic || f.owner || f.status);
+            const dates = sprint && (sprint.startDate || sprint.endDate)
+                ? [sprint.startDate && toDisplayDate(sprint.startDate), sprint.endDate && toDisplayDate(sprint.endDate)].filter(Boolean).join(' – ') : '';
+            const subtitle = [project?.name, sprint?.name, dates, filtered ? 'gefilterd' : ''].filter(Boolean).join(' · ');
+
+            const node = document.createElement('div');
+            if (sprint && sprint.goal) {
+                const goal = document.createElement('div');
+                goal.style.cssText = 'font-size:14px;color:#475569;margin:-4px 0 18px;';
+                goal.innerHTML = `<span style="font-weight:600;color:#1e293b">Sprintdoel:</span> ${escX(sprint.goal)}`;
+                node.appendChild(goal);
+            }
+            const board = document.createElement('div');
+            board.style.cssText = `display:grid;grid-template-columns:repeat(${COLUMNS.length}, minmax(0, 1fr));gap:14px;align-items:start;`;
+            board.innerHTML = COLUMNS.map(col => {
+                const list = cards.filter(c => c.status === col.id);
+                return `<div>
+                    <div style="display:flex;align-items:center;gap:8px;padding:0 2px 8px;margin-bottom:10px;border-bottom:3px solid ${col.color}">
+                        <span style="font-size:15px;font-weight:700;color:#1e293b">${escX(col.name)}</span>
+                        <span style="margin-left:auto;font-size:12px;font-weight:600;color:#64748b;background:#f1f5f9;border-radius:999px;padding:1px 8px">${list.length}</span>
+                    </div>
+                    ${list.length ? list.map(card => {
+                        const epic = epics.find(e => e.id === card.epicId);
+                        const owner = team.find(t => t.id === card.ownerId);
+                        const prio = PRIO[card.priority];
+                        const subs = card.subtasks || [];
+                        const meta = [
+                            owner ? escX(owner.name) : '',
+                            card.estimate ? escX(formatEstimate(card.estimate)) : '',
+                            card.dueDate ? 'tegen ' + escX(formatDate(card.dueDate)) : '',
+                            subs.length ? `${subs.filter(x => x.done).length}/${subs.length} subtaken` : ''
+                        ].filter(Boolean).join(' · ');
+                        return `<div data-oc-keep style="border:1px solid #e2e8f0;border-left:4px solid ${epic?.color || '#cbd5e1'};border-radius:8px;padding:9px 10px;margin-bottom:8px;background:#fff">
+                            ${epic ? `<div style="font-size:11px;font-weight:600;color:${epic.color};margin-bottom:2px">${escX(epic.name)}</div>` : ''}
+                            <div style="font-size:13.5px;font-weight:600;color:${card.status === 'klaar' ? '#64748b' : '#1e293b'};line-height:1.35">${escX(card.title)}</div>
+                            ${meta || prio ? `<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:6px;font-size:11.5px;color:#64748b">
+                                ${prio ? `<span style="font-weight:600;color:${prio[1]};background:${prio[2]};border-radius:999px;padding:0 7px">${prio[0]}</span>` : ''}
+                                <span>${meta}</span></div>` : ''}
+                        </div>`;
+                    }).join('') : '<div style="font-size:12px;color:#94a3b8;padding:6px 2px">Leeg</div>'}
+                </div>`;
+            }).join('');
+            node.appendChild(board);
+            return { node, title: 'SprintFlow', subtitle };
         }
+
+        async function exportBoard(kind) {
+            if (!getFilteredCards().length) { showToast('Het bord is nog leeg', 'error'); return; }
+            showToast('Bezig…');
+            try {
+                const opts = { landscape: true, width: 1400 };
+                await (kind === 'png' ? ocExport.png(buildBoardExport, exportBaseName(), opts) : ocExport.pdf(buildBoardExport, exportBaseName(), opts));
+                showToast(kind === 'png' ? 'Afbeelding gedownload' : 'PDF gedownload');
+            } catch (error) { showToast('Downloaden lukt nu niet: geen verbinding?', 'error'); }
+        }
+        function exportAsJPG() { return exportBoard('png'); }   // oude naam, blijft bruikbaar
+        function exportAsPDF() { return exportBoard('pdf'); }
 
         function exportAsCSV() {
             try {
