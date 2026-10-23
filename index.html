@@ -569,7 +569,26 @@
 
         .project-item-info {
             flex: 1;
+            min-width: 0;
         }
+
+        /* Elk project in de kiezer: rij met een eigen verwijderknop */
+        .project-row { display: flex; align-items: stretch; }
+        .project-row .project-item { flex: 1; min-width: 0; }
+        .project-del {
+            flex: 0 0 44px; min-height: 44px; display: flex; align-items: center; justify-content: center;
+            background: transparent; border: 0; border-radius: var(--radius-sm); color: var(--slate-500); cursor: pointer;
+            margin-right: 0.25rem;
+        }
+        .project-del svg { width: 17px; height: 17px; }
+        .project-del:hover { background: #fef2f2; color: #b91c1c; }
+        .project-del[aria-disabled="true"] { color: var(--slate-400); cursor: not-allowed; }
+        .project-del[aria-disabled="true"]:hover { background: var(--slate-50); color: var(--slate-500); }
+        .toast .toast-undo {
+            font: inherit; font-size: 0.875rem; font-weight: 700; color: #047857; background: transparent; border: 0;
+            min-height: 44px; padding: 0 0.625rem; margin: -0.5rem -0.5rem -0.5rem 0.25rem; border-radius: var(--radius-sm); cursor: pointer;
+        }
+        .toast .toast-undo:hover { background: #ecfdf5; }
 
         .project-item-name {
             font-weight: 600;
@@ -4195,6 +4214,7 @@ const ocExport = (() => {
         // ============================================
 
         function saveToStorage() {
+            ocSaveCount++;
             // Show saving indicator
             const indicator = document.getElementById('saveIndicator');
             indicator.classList.add('saving');
@@ -4279,13 +4299,42 @@ const ocExport = (() => {
             }
         }
 
+        /* Alles wissen: bevestigen in de pagina, daarna nog Ongedaan zolang er niets anders bewaard werd. */
+        let ocSaveCount = 0;
+        function ocStoreKeys() {
+            const spec = (document.querySelector('meta[name="oc:opslag"]')?.content || '').split(',').map(x => x.trim()).filter(Boolean);
+            const keys = [];
+            try {
+                for (let i = 0; i < localStorage.length; i++) {
+                    const k = localStorage.key(i);
+                    if (spec.some(p => p.endsWith('*') ? k.startsWith(p.slice(0, -1)) : k === p)) keys.push(k);
+                }
+            } catch {}
+            return keys;
+        }
         async function clearAllData() {
-            if (await ocConfirm('Weet je zeker dat je ALLE data wilt wissen? Dit kan niet ongedaan worden gemaakt.')) {
-                clearTimeout(saveTimeout);
-                try { localStorage.removeItem(STORAGE_KEY); } catch {}
-                ocShare.clear('kanban');
-                location.reload();
-            }
+            if (!await ocConfirm('Alles wissen? Al je projecten, sprints, taken en teamleden verdwijnen. Je kan dit nog ongedaan maken tot je iets anders doet.')) return;
+            clearTimeout(saveTimeout);
+            const stored = {};
+            ocStoreKeys().forEach(k => { try { stored[k] = localStorage.getItem(k); localStorage.removeItem(k); } catch {} });
+            ocShare.clear('kanban');
+            const copy = { projects: state.projects, activeProjectId: state.activeProjectId, activeSprintId: state.activeSprintId };
+            const fresh = createDefaultProject();
+            state.projects = [fresh];
+            state.activeProjectId = fresh.id;
+            state.activeSprintId = fresh.sprints[0].id;
+            state.filters = { search: '', epic: null, owner: null, status: null };
+            document.getElementById('searchInput').value = '';
+            refreshUI();
+            const mark = ocSaveCount;
+            showToast('Alles gewist', 'success', () => {
+                if (ocSaveCount !== mark) { showToast('Ongedaan maken kan niet meer: er is intussen iets veranderd', 'error'); return; }
+                Object.entries(stored).forEach(([k, v]) => { try { if (v != null) localStorage.setItem(k, v); } catch {} });
+                Object.assign(state, copy);
+                state.filters = { search: '', epic: null, owner: null, status: null };
+                refreshUI();
+                showToast('Alles teruggezet');
+            });
         }
 
         // ============================================
@@ -4333,40 +4382,45 @@ const ocExport = (() => {
             }
         }
 
-        async function deleteCurrentProject() {
+        function deleteCurrentProject() {
             closeDropdown('projectDropdown');
             const project = getActiveProject();
-            if (!project) return;
-            
-            if (state.projects.length <= 1) {
-                showToast('Je moet minstens één project hebben', 'error');
-                return;
-            }
-            if (await ocConfirm(`Weet je zeker dat je "${project.name}" en alle bijbehorende data wilt verwijderen?`)) {
-                state.projects = state.projects.filter(p => p.id !== project.id);
-                state.activeProjectId = state.projects[0].id;
-                state.activeSprintId = state.projects[0].sprints[0]?.id;
-                saveToStorage();
-                refreshUI();
-                showToast('Project verwijderd');
-            }
+            if (project) deleteProject(project.id);
         }
 
-        async function deleteProject(projectId) {
+        /* Project verwijderen: meteen, zonder vraag, met Ongedaan (zet het terug op dezelfde plaats). */
+        function deleteProject(projectId) {
+            const idx = state.projects.findIndex(p => p.id === projectId);
+            if (idx < 0) return;
             if (state.projects.length <= 1) {
-                showToast('Je moet minstens één project hebben', 'error');
+                showToast('Je laatste project kan niet weg. Maak eerst een nieuw project.', 'error');
                 return;
             }
-            if (await ocConfirm('Weet je zeker dat je dit project en alle bijbehorende data wilt verwijderen?')) {
-                state.projects = state.projects.filter(p => p.id !== projectId);
-                if (state.activeProjectId === projectId) {
-                    state.activeProjectId = state.projects[0].id;
-                    state.activeSprintId = state.projects[0].sprints[0]?.id;
+            const project = state.projects[idx];
+            const prev = { activeProjectId: state.activeProjectId, activeSprintId: state.activeSprintId };
+            state.projects.splice(idx, 1);
+            if (state.activeProjectId === projectId) {
+                const next = state.projects[Math.min(idx, state.projects.length - 1)];
+                state.activeProjectId = next.id;
+                state.activeSprintId = next.sprints.find(s => s.status === 'active')?.id || next.sprints[0]?.id;
+                state.filters = { search: '', epic: null, owner: null, status: null };
+                document.getElementById('searchInput').value = '';
+            }
+            saveToStorage();
+            refreshUI();
+            showToast(`${project.name} verwijderd`, 'success', () => {
+                if (state.projects.some(p => p.id === project.id)) return;
+                state.projects.splice(Math.min(idx, state.projects.length), 0, project);
+                if (prev.activeProjectId === project.id) {
+                    state.activeProjectId = prev.activeProjectId;
+                    state.activeSprintId = prev.activeSprintId;
+                    state.filters = { search: '', epic: null, owner: null, status: null };
+                    document.getElementById('searchInput').value = '';
                 }
                 saveToStorage();
                 refreshUI();
-                showToast('Project verwijderd');
-            }
+                showToast('Project teruggezet');
+            });
         }
 
         async function createNewSprint() {
@@ -4431,7 +4485,10 @@ const ocExport = (() => {
             list.innerHTML = state.projects.map(project => {
                 const taskCount = project.cards.length;
                 const teamCount = project.team.length;
+                const last = state.projects.length <= 1;
+                const delLabel = last ? `${project.name} kan niet weg: het is je laatste project. Maak eerst een nieuw project.` : `Verwijder ${project.name}`;
                 return `
+                    <div class="project-row">
                     <button type="button" class="project-item ${project.id === state.activeProjectId ? 'active' : ''}" data-act="switchProject" data-id="${esc(project.id)}">
                         <div class="project-icon">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="3"/><line x1="8" y1="7" x2="8" y2="17"/><line x1="12" y1="7" x2="12" y2="14"/><line x1="16" y1="7" x2="16" y2="11"/></svg>
@@ -4441,6 +4498,8 @@ const ocExport = (() => {
                             <div class="project-item-meta">${taskCount} taken · ${teamCount} teamleden</div>
                         </div>
                     </button>
+                    <button type="button" class="project-del" data-act="deleteProject" data-id="${esc(project.id)}" aria-label="${esc(delLabel)}" title="${esc(delLabel)}"${last ? ' aria-disabled="true"' : ''}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>
+                    </div>
                 `;
             }).join('');
         }
@@ -5227,7 +5286,7 @@ const ocExport = (() => {
             return new Date(dateStr) < today;
         }
 
-        function showToast(message, type = 'success') {
+        function showToast(message, type = 'success', undo) {
             const container = document.getElementById('toastContainer');
             const toast = document.createElement('div');
             toast.className = `toast ${type}`;
@@ -5238,8 +5297,17 @@ const ocExport = (() => {
                 <span>${esc(message)}</span>
             `;
             toast.setAttribute('role', type === 'error' ? 'alert' : 'status');
+            if (typeof undo === 'function') {
+                // één melding met Ongedaan tegelijk: een oudere vervalt
+                container.querySelectorAll('.toast.has-undo').forEach(t => t.remove());
+                toast.classList.add('has-undo');
+                const b = document.createElement('button');
+                b.type = 'button'; b.className = 'toast-undo'; b.textContent = 'Ongedaan';
+                b.addEventListener('click', () => { toast.remove(); undo(); });
+                toast.appendChild(b);
+            }
             container.appendChild(toast);
-            setTimeout(() => toast.remove(), 3000);
+            setTimeout(() => toast.remove(), typeof undo === 'function' ? 6000 : 3000);
         }
 
         function hexToRgba(hex, alpha) {
@@ -5906,17 +5974,28 @@ const ocExport = (() => {
             showToast(cardId ? 'Taak bijgewerkt' : 'Taak aangemaakt');
         }
 
-        async function deleteCard(cardId) {
+        function deleteCard(cardId) {
             const project = getActiveProject();
             if (!project) return;
             
-            if (await ocConfirm('Weet je zeker dat je deze taak wilt verwijderen?')) {
-                project.cards = project.cards.filter(c => c.id !== cardId);
+            // meteen weg, met Ongedaan (zelfde plaats in de lijst)
+            const idx = project.cards.findIndex(c => c.id === cardId);
+            if (idx < 0) return;
+            const card = project.cards[idx];
+            project.cards.splice(idx, 1);
+            saveToStorage();
+            renderBoard();
+            renderSprintTabs();
+            updateStats();
+            showToast(`${card.title || 'Taak'} verwijderd`, 'success', () => {
+                if (!state.projects.includes(project) || project.cards.some(c => c.id === card.id)) return;
+                project.cards.splice(Math.min(idx, project.cards.length), 0, card);
                 saveToStorage();
                 renderBoard();
                 renderSprintTabs();
-                showToast('Taak verwijderd');
-            }
+                updateStats();
+                showToast('Taak teruggezet');
+            });
         }
 
         function setPriority(priority) {
@@ -6459,6 +6538,7 @@ const ocExport = (() => {
         let lastTabClick = {};
         const ACTIONS = {
             switchProject: el => switchProject(el.dataset.id),
+            deleteProject: el => deleteProject(el.dataset.id),
             // dubbelklik zelf herkennen: de eerste klik tekent de tabs opnieuw, dus een gewone dblclick valt weg
             switchSprint: el => {
                 const id = el.dataset.id, now = Date.now();
