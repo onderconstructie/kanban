@@ -59,6 +59,9 @@
             --accent: #10b981;
             --accent-light: #d1fae5;
             --accent-dark: #0d9668;
+            --accent-text: #047857;
+            --accent-strong: #047857;
+            --accent-strong-hover: #065f46;
 
             --radius-sm: 8px;
             --radius-md: 12px;
@@ -152,7 +155,7 @@
             padding: 0.375rem 0.75rem;
             font-size: 0.75rem;
             font-weight: 500;
-            color: var(--accent);
+            color: var(--accent-text);
             background: var(--accent-light);
             border-radius: 9999px;
             transition: all 0.3s ease;
@@ -201,12 +204,13 @@
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
+            background: var(--accent-strong);
             color: var(--white);
             box-shadow: 0 2px 8px rgba(16, 185, 129, 0.25);
         }
 
         .btn-primary:hover {
+            background: var(--accent-strong-hover);
             transform: translateY(-1px);
             box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35);
         }
@@ -282,7 +286,7 @@
         .edit-hint {
             width: 14px;
             height: 14px;
-            color: var(--slate-400);
+            color: var(--slate-500);
             opacity: 0;
             transition: opacity 0.2s ease;
         }
@@ -356,7 +360,7 @@
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.05em;
-            color: var(--slate-400);
+            color: var(--slate-500);
         }
 
         /* Capacity Bar */
@@ -380,13 +384,12 @@
             border-color: var(--accent);
             box-shadow: var(--shadow-md);
         }
-        }
 
         .capacity-label {
             font-size: 0.6875rem;
             font-weight: 700;
             text-transform: uppercase;
-            color: var(--slate-400);
+            color: var(--slate-500);
             letter-spacing: 0.04em;
         }
 
@@ -416,7 +419,7 @@
             font-family: 'JetBrains Mono', monospace;
         }
 
-        .capacity-text.under { color: var(--accent); }
+        .capacity-text.under { color: var(--accent-text); }
         .capacity-text.warning { color: var(--orange-600); }
         .capacity-text.over { color: var(--red-600); }
 
@@ -455,7 +458,7 @@
 
         .project-selector-btn .project-name:hover {
             background: var(--accent-light);
-            color: var(--accent-dark);
+            color: var(--accent-text);
         }
 
         .project-selector-btn .edit-hint-small {
@@ -473,7 +476,7 @@
         .project-selector-btn .dropdown-arrow {
             width: 16px;
             height: 16px;
-            color: var(--slate-400);
+            color: var(--slate-500);
         }
 
         .project-dropdown {
@@ -505,7 +508,7 @@
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.05em;
-            color: var(--slate-400);
+            color: var(--slate-500);
         }
 
         .dropdown-divider {
@@ -537,7 +540,7 @@
 
         .project-item.active {
             background: var(--accent-light);
-            color: var(--accent-dark);
+            color: var(--accent-text);
         }
 
         .project-item .project-icon {
@@ -574,7 +577,7 @@
 
         .project-item-meta {
             font-size: 0.6875rem;
-            color: var(--slate-400);
+            color: var(--slate-500);
         }
 
         /* Sprint Tabs */
@@ -627,7 +630,7 @@
 
         .sprint-tab.active {
             background: var(--accent-light);
-            color: var(--accent-dark);
+            color: var(--accent-text);
         }
 
         .sprint-tab .sprint-status-dot {
@@ -650,7 +653,7 @@
         }
 
         .sprint-tab.active .sprint-task-count {
-            background: var(--accent);
+            background: var(--accent-strong);
             color: var(--white);
         }
 
@@ -663,7 +666,7 @@
             background: transparent;
             border: 1.5px dashed var(--slate-300);
             border-radius: var(--radius-sm);
-            color: var(--slate-400);
+            color: var(--slate-500);
             cursor: pointer;
             transition: all 0.2s ease;
             flex-shrink: 0;
@@ -672,7 +675,7 @@
         .sprint-add-btn:hover {
             border-color: var(--accent);
             background: var(--accent-light);
-            color: var(--accent);
+            color: var(--accent-text);
         }
 
         .sprint-add-btn svg {
@@ -767,12 +770,12 @@
             text-align: center;
             font-size: 0.6875rem;
             font-weight: 600;
-            color: var(--slate-400);
+            color: var(--slate-500);
             padding: 0.25rem;
         }
 
         .roadmap-day.today {
-            color: var(--accent);
+            color: var(--accent-text);
         }
 
         .roadmap-day .day-num {
@@ -782,7 +785,7 @@
         }
 
         .roadmap-day.today .day-num {
-            background: var(--accent);
+            background: var(--accent-strong);
             color: var(--white);
             width: 24px;
             height: 24px;
@@ -805,7 +808,7 @@
 
         .roadmap-hint {
             font-size: 0.75rem;
-            color: var(--slate-400);
+            color: var(--slate-500);
             text-align: center;
             padding: 0.5rem;
             border-top: 1px solid var(--slate-100);
@@ -1073,7 +1076,7 @@
 
         .roadmap-sprint-dates {
             font-size: 0.75rem;
-            color: var(--slate-400);
+            color: var(--slate-500);
         }
 
         .roadmap-sprint-meta {
@@ -1089,7 +1092,7 @@
 
         .roadmap-sprint-status {
             font-size: 0.6875rem;
-            color: var(--slate-400);
+            color: var(--slate-500);
         }
 
         .roadmap-sprint-actions {
@@ -1196,7 +1199,7 @@
         }
 
         .dashboard-add-btn:hover {
-            background: var(--accent);
+            background: var(--accent-strong);
             color: var(--white);
         }
 
@@ -1231,7 +1234,7 @@
 
         .dashboard-big-label {
             font-size: 0.75rem;
-            color: var(--slate-400);
+            color: var(--slate-500);
             margin-top: 0.375rem;
         }
 
@@ -1362,7 +1365,7 @@
 
         .team-stat-meta {
             font-size: 0.75rem;
-            color: var(--slate-400);
+            color: var(--slate-500);
         }
 
         .team-stat-bar {
@@ -1413,7 +1416,6 @@
             background: var(--white);
             border: 1.5px solid var(--slate-200);
             border-radius: var(--radius-sm);
-            outline: none;
             transition: all 0.2s ease;
         }
 
@@ -1433,7 +1435,7 @@
             transform: translateY(-50%);
             width: 15px;
             height: 15px;
-            color: var(--slate-400);
+            color: var(--slate-500);
         }
 
         /* Filter Groups */
@@ -1455,7 +1457,7 @@
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.06em;
-            color: var(--slate-400);
+            color: var(--slate-500);
             padding-left: 0.25rem;
         }
 
@@ -1570,7 +1572,7 @@
 
         .filter-chip-status .chip-remove {
             font-size: 0.6875rem;
-            color: var(--slate-400);
+            color: var(--slate-500);
             margin-left: 0.125rem;
         }
 
@@ -1587,7 +1589,7 @@
             padding: 0.375rem 0.75rem;
             font-size: 0.6875rem;
             font-weight: 600;
-            color: var(--slate-400);
+            color: var(--slate-500);
             background: transparent;
             border: 1.5px dashed var(--slate-300);
             border-radius: var(--radius-sm);
@@ -1801,14 +1803,14 @@
         .card-subtasks-header svg {
             width: 12px;
             height: 12px;
-            color: var(--slate-400);
+            color: var(--slate-500);
         }
 
         .subtasks-percent {
             margin-left: auto;
             font-family: 'JetBrains Mono', monospace;
             font-size: 0.6875rem;
-            color: var(--slate-400);
+            color: var(--slate-500);
         }
 
         .card-subtasks-bar {
@@ -1879,7 +1881,7 @@
             align-items: center;
             gap: 0.25rem;
             font-size: 0.6875rem;
-            color: var(--slate-400);
+            color: var(--slate-500);
             font-weight: 500;
         }
 
@@ -1912,7 +1914,7 @@
 
         .other-label {
             font-size: 0.6875rem;
-            color: var(--slate-400);
+            color: var(--slate-500);
             font-weight: 500;
         }
 
@@ -1936,7 +1938,7 @@
 
         .more-participants {
             font-size: 0.6875rem;
-            color: var(--slate-400);
+            color: var(--slate-500);
             font-weight: 600;
             margin-left: 0.125rem;
         }
@@ -1989,7 +1991,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--slate-400);
+            color: var(--slate-500);
             transition: all 0.2s ease;
         }
 
@@ -2020,7 +2022,7 @@
             font-size: 0.8125rem;
             font-weight: 600;
             font-family: inherit;
-            color: var(--slate-400);
+            color: var(--slate-500);
             background: transparent;
             border: 1.5px dashed var(--slate-200);
             border-radius: var(--radius-md);
@@ -2032,7 +2034,7 @@
         .add-card-btn:hover {
             background: var(--accent-light);
             border-color: var(--accent);
-            color: var(--accent-dark);
+            color: var(--accent-text);
         }
 
         .add-card-btn svg {
@@ -2104,7 +2106,7 @@
             border-radius: 8px;
             cursor: pointer;
             font-size: 1.25rem;
-            color: var(--slate-400);
+            color: var(--slate-500);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -2196,7 +2198,6 @@
             background: var(--white);
             border: 1.5px solid var(--slate-200);
             border-radius: var(--radius-sm);
-            outline: none;
             transition: all 0.2s ease;
         }
 
@@ -2222,7 +2223,7 @@
 
         .form-hint {
             font-size: 0.6875rem;
-            color: var(--slate-400);
+            color: var(--slate-500);
             margin-top: 0.375rem;
             font-style: italic;
         }
@@ -2230,7 +2231,7 @@
         /* Estimate Slider */
         .estimate-display {
             font-weight: 700;
-            color: var(--accent);
+            color: var(--accent-text);
             font-family: 'JetBrains Mono', monospace;
         }
 
@@ -2245,7 +2246,6 @@
             appearance: none;
             background: var(--slate-200);
             border-radius: 4px;
-            outline: none;
             cursor: pointer;
         }
 
@@ -2280,7 +2280,7 @@
             justify-content: space-between;
             padding: 0.25rem 0.25rem 0;
             font-size: 0.6875rem;
-            color: var(--slate-400);
+            color: var(--slate-500);
             font-family: 'JetBrains Mono', monospace;
         }
 
@@ -2305,7 +2305,6 @@
             background: var(--white);
             border: 1.5px solid var(--slate-200);
             border-radius: var(--radius-sm);
-            outline: none;
             transition: all 0.2s ease;
         }
 
@@ -2347,11 +2346,11 @@
         .estimate-btn:hover {
             background: var(--accent-light);
             border-color: var(--accent);
-            color: var(--accent-dark);
+            color: var(--accent-text);
         }
 
         .estimate-btn.active {
-            background: var(--accent);
+            background: var(--accent-strong);
             border-color: var(--accent);
             color: var(--white);
         }
@@ -2413,7 +2412,7 @@
 
         .checklist-item.done span {
             text-decoration: line-through;
-            color: var(--slate-400);
+            color: var(--slate-500);
         }
 
         .checklist-item input[type="checkbox"] {
@@ -2468,7 +2467,7 @@
 
         .item-sub {
             font-size: 0.75rem;
-            color: var(--slate-400);
+            color: var(--slate-500);
         }
 
         /* Epic Items with Expandable Tasks */
@@ -2511,7 +2510,7 @@
 
         .epic-progress {
             font-size: 0.75rem;
-            color: var(--slate-400);
+            color: var(--slate-500);
         }
 
         .epic-actions {
@@ -2523,7 +2522,7 @@
         .expand-icon {
             width: 18px;
             height: 18px;
-            color: var(--slate-400);
+            color: var(--slate-500);
             transition: transform 0.2s ease;
             margin-left: 0.25rem;
         }
@@ -2596,7 +2595,7 @@
             gap: 0.5rem;
             margin-top: 0.25rem;
             font-size: 0.6875rem;
-            color: var(--slate-400);
+            color: var(--slate-500);
         }
 
         .epic-task-status-label {
@@ -2646,7 +2645,6 @@
             background: var(--white);
             border: 1.5px solid var(--slate-200);
             border-radius: var(--radius-sm);
-            outline: none;
             text-align: center;
             transition: all 0.2s ease;
         }
@@ -2658,7 +2656,7 @@
 
         .availability-label {
             font-size: 0.75rem;
-            color: var(--slate-400);
+            color: var(--slate-500);
             font-weight: 500;
         }
 
@@ -2667,7 +2665,7 @@
             font-size: 0.6875rem;
             font-weight: 600;
             font-family: inherit;
-            color: var(--accent);
+            color: var(--accent-text);
             background: var(--accent-light);
             border: none;
             border-radius: 4px;
@@ -2676,7 +2674,7 @@
         }
 
         .availability-sync-btn:hover {
-            background: var(--accent);
+            background: var(--accent-strong);
             color: var(--white);
         }
 
@@ -2699,7 +2697,7 @@
         .capacity-title {
             font-size: 0.8125rem;
             font-weight: 700;
-            color: var(--accent-dark);
+            color: var(--accent-text);
         }
 
         .capacity-stats {
@@ -2718,7 +2716,7 @@
         .capacity-stat-value {
             font-size: 1.25rem;
             font-weight: 700;
-            color: var(--accent-dark);
+            color: var(--accent-text);
             font-family: 'JetBrains Mono', monospace;
         }
 
@@ -2868,7 +2866,7 @@
         .dropdown-item svg {
             width: 15px;
             height: 15px;
-            color: var(--slate-400);
+            color: var(--slate-500);
         }
 
         .dropdown-item:hover svg {
@@ -2893,7 +2891,7 @@
         .empty-state {
             text-align: center;
             padding: 1.5rem;
-            color: var(--slate-400);
+            color: var(--slate-500);
             font-size: 0.875rem;
         }
 
@@ -2975,21 +2973,20 @@
         .oc-dialog-label { display: block; font-size: 0.875rem; font-weight: 600; color: #1e293b; margin-bottom: 0.5rem; }
         .oc-dialog-input {
             width: 100%; padding: 0.6875rem 0.875rem; border: 1.5px solid #e2e8f0; border-radius: 10px; font: inherit;
-            font-size: 1rem; color: #1e293b; outline: none; background: #f8fafc;
+            font-size: 1rem; color: #1e293b; background: #f8fafc;
         }
         .oc-dialog-input:focus { border-color: #10b981; background: #ffffff; }
         .oc-dialog-actions { display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 1.25rem; }
         .oc-dialog-btn { font: inherit; font-size: 0.9375rem; font-weight: 600; padding: 0.625rem 1rem; border-radius: 10px; border: 0; cursor: pointer; }
         .oc-dialog-cancel { background: #f1f5f9; color: #475569; }
         .oc-dialog-cancel:hover { background: #e2e8f0; }
-        .oc-dialog-ok { background: #10b981; color: #ffffff; }
+        .oc-dialog-ok { background: var(--accent-strong); color: #ffffff; }
         .oc-dialog-ok:hover { background: #059669; }
-        .oc-dialog-ok.danger { background: #ef4444; }
-        .oc-dialog-ok.danger:hover { background: #dc2626; }
+        .oc-dialog-ok.danger { background: #dc2626; }
+        .oc-dialog-ok.danger:hover { background: #b91c1c; }
 
-        .oc-back { width: 32px; height: 40px; margin-right: -0.375rem; display: flex; align-items: center; justify-content: center; color: #94a3b8; border-radius: 8px; transition: color 0.2s; }
-        .oc-back:hover { color: #10b981; }
-        .oc-back svg { width: 22px; height: 22px; }
+        .oc-back { min-height: 44px; min-width: 44px; display: inline-flex; align-items: center; justify-content: center; gap: 0.375rem; padding: 0 0.5rem 0 0.25rem; color: #64748b; font-size: 0.875rem; font-weight: 500; text-decoration: none; border-radius: 8px; transition: color 0.2s; flex-shrink: 0; }
+        .oc-back:hover { color: #047857; }
 
         /* Onder Constructie: gedeelde footer en quote (huisstijl) */
         footer.oc-footer {
@@ -2998,16 +2995,168 @@
             margin-top: 2rem;
             border-top: 1px solid #e2e8f0;
             background: #ffffff;
-            color: #10b981;
+            color: var(--accent-text);
         }
 
         footer.oc-footer .oc-quote {
             font-size: 0.8125rem;
             line-height: 1.5;
-            color: #10b981;
+            color: var(--accent-text);
             opacity: 1;
             font-style: normal;
             margin: 0;
+        }
+
+        /* ===== Huisstijl-fix oktober 2026: toegankelijkheid, tikdoelen, smalle schermen ===== */
+        .visually-hidden { position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+        :focus-visible { outline: 2px solid #047857; outline-offset: 2px; }
+        .card:focus-visible, .epic-header:focus-visible, .epic-task-item:focus-visible, .status-row:focus-visible,
+        .team-stat-item:focus-visible, .roadmap-sprint-item:focus-visible { outline-offset: -2px; }
+
+        /* knoppen die vroeger divs waren */
+        button.sprint-info, button.stat-item, button.capacity-container { font: inherit; color: inherit; text-align: left; }
+        button.sprint-info { background: none; border: 0; margin: 0; min-height: 44px; padding: 0.25rem 0.5rem 0.25rem 0; }
+        button.stat-item { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 44px; text-align: center; }
+        .capacity-label { font-size: 0.6875rem; font-weight: 700; text-transform: uppercase; color: var(--slate-500); letter-spacing: 0.04em; }
+        .capacity-container { min-height: 44px; }
+        .capacity-bar { display: block; }
+        .capacity-fill { display: block; }
+
+        /* tikdoelen van minstens 44px */
+        .btn { min-height: 44px; min-width: 44px; }
+        .btn-primary { background: var(--accent-strong); box-shadow: 0 2px 8px rgba(4, 120, 87, 0.25); }
+        .project-selector-btn { min-height: 44px; }
+        .sprint-tab { min-height: 44px; }
+        .sprint-add-btn { width: 44px; height: 44px; }
+        .add-card-btn { min-height: 44px; }
+        .modal-close, .dashboard-close { width: 44px; height: 44px; flex-shrink: 0; }
+        .modal-close { color: var(--slate-600); }
+        .roadmap-nav-btn { width: 44px; height: 44px; flex-shrink: 0; }
+        .dashboard-add-btn { width: 44px; height: 44px; flex-shrink: 0; }
+        .sync-all-btn, .availability-sync-btn, .clear-filters-btn { min-height: 44px; min-width: 44px; }
+        .clear-filters-btn { display: inline-flex; align-items: center; font-size: 0.75rem; }
+        .dropdown-item { min-height: 44px; }
+        .priority-btn { min-height: 44px; }
+        .filter-chip-epic, .filter-chip-team, .filter-chip-status { min-height: 44px; }
+        .filter-chip-epic::before { background: var(--epic-color, var(--slate-400)); }
+        .participant-item { min-height: 44px; }
+        .epic-header, .epic-task-item, .status-row, .team-stat-item, .roadmap-sprint-item { min-height: 44px; }
+        .roadmap-today-btn { margin-left: 0.25rem; }
+        /* kleine pictogramknoppen: 44px raakvlak, het zichtbare vlakje blijft compact */
+        .card-action-btn { width: 44px; height: 44px; border: 0; background: transparent; position: relative; border-radius: 10px; flex-shrink: 0; }
+        .card-action-btn::before { content: ''; position: absolute; inset: 9px; border-radius: 7px; background: var(--white); border: 1px solid var(--slate-200); transition: all 0.2s ease; }
+        .card-action-btn svg { position: relative; width: 13px; height: 13px; }
+        .card-action-btn:hover { background: transparent; border: 0; }
+        .card-action-btn:hover::before { background: var(--slate-50); border-color: var(--slate-300); }
+        .card-action-btn.delete:hover::before { background: var(--red-50); border-color: var(--red-200); }
+        .card-actions { top: 0; right: 0; gap: 0; }
+        .card:focus-within .card-actions { opacity: 1; }
+        @media (hover: none) { .card-actions { opacity: 1; } }
+        .card { padding-right: 2.75rem; }
+
+        /* invoervelden */
+        .add-row { display: flex; gap: 0.5rem; align-items: stretch; }
+        .add-row .form-input { flex: 1; min-width: 0; }
+        .color-input { width: 44px; height: 44px; flex-shrink: 0; border: 1.5px solid var(--slate-200); border-radius: var(--radius-sm); cursor: pointer; padding: 2px; background: var(--white); }
+        .add-epic-inline .form-input { flex: 1; min-width: 0; }
+        .search-box input { min-height: 44px; }
+        .search-box input::-webkit-search-cancel-button { cursor: pointer; }
+
+        /* koppen die h2 werden, ogen zoals voorheen */
+        .column-count { color: var(--slate-600); }
+        h2.column-name { margin: 0; line-height: 1.4; }
+        h2.modal-title { margin: 0; }
+
+        /* gesloten vensters en menu's: onzichtbaar, niet bereikbaar met Tab, geen schaduw langs de rand */
+        .sidebar-panel { visibility: hidden; box-shadow: none; transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), visibility 0s linear 0.35s; }
+        .sidebar-panel.active { visibility: visible; box-shadow: var(--shadow-lg); transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), visibility 0s; }
+        .modal { visibility: hidden; transition: opacity 0.3s ease, transform 0.3s ease, visibility 0s linear 0.3s; }
+        .modal.active { visibility: visible; transition: opacity 0.3s ease, transform 0.3s ease, visibility 0s; }
+        .dashboard-modal, .roadmap-modal { visibility: hidden; transition: transform 0.3s ease, visibility 0s linear 0.3s; }
+        .dashboard-modal.active, .roadmap-modal.active { visibility: visible; transition: transform 0.3s ease, visibility 0s; }
+        .dropdown-menu { visibility: hidden; }
+        .dropdown.active .dropdown-menu, .dropdown-menu.active { visibility: visible; }
+        .dropdown-menu { max-height: calc(100vh - 80px); overflow-y: auto; }
+
+        /* kop */
+        .header { gap: 0.75rem; }
+        .header-left { min-width: 0; gap: 0.625rem; }
+        .project-selector { min-width: 0; }
+        .project-selector-btn { max-width: 100%; min-width: 0; }
+        .project-selector-btn .project-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+        .header-tools { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+        .more-menu { display: none; }
+        .more-btn { font-size: 1.25rem; line-height: 1; padding: 0 0.75rem; letter-spacing: 0.05em; }
+        .footer.oc-footer, footer.oc-footer .oc-quote { color: #047857; }
+
+        /* capaciteit en sprintbalk op smalle schermen */
+        .capacity-text { min-width: 0; white-space: nowrap; }
+        .header { flex-wrap: nowrap; }
+        .header-left { flex: 1; }
+        .header-actions { flex-wrap: nowrap; flex-shrink: 0; }
+        @media (max-width: 1100px) {
+            .header-tools { display: none; }
+            .more-menu { display: block; }
+        }
+        @media (max-width: 768px) {
+            .header-actions { width: auto; }
+            .sprint-stats { gap: 0.5rem; }
+            .capacity-container { flex: 1 1 100%; min-width: 0; }
+            .capacity-bar { flex: 1; min-width: 40px; width: auto; }
+            .filter-groups { width: 100%; }
+            .clear-filters-btn { align-self: flex-start; }
+        }
+        @media (max-width: 600px) {
+            .header { flex-wrap: nowrap; padding: 0.375rem 0.75rem; gap: 0.375rem; }
+            .header-left { flex: 1; gap: 0.25rem; }
+            .header-actions { width: auto; flex-wrap: nowrap; gap: 0.375rem; flex-shrink: 0; }
+            .header .logo, .save-indicator, .header-tools { display: none; }
+            .more-menu { display: block; }
+            .project-selector-btn { padding: 0.375rem 0.375rem; gap: 0.25rem; }
+            .project-selector-btn .edit-hint-small { display: none; }
+            .btn-new { padding-left: 0.75rem; padding-right: 0.75rem; }
+            .project-dropdown { position: fixed; left: 0.75rem; right: 0.75rem; top: 3.5rem; min-width: 0; }
+            #moreDropdown { min-width: 240px; }
+            .sprint-bar { padding: 0.75rem 1rem; gap: 0.75rem; }
+            .sprint-tabs-container, .filter-bar { padding-left: 1rem; padding-right: 1rem; }
+            .stat-item { flex: 1; }
+        }
+        @media (max-width: 480px) {
+            .oc-back-text { display: none; }
+            .oc-back { font-size: 1.25rem; padding: 0; }
+        }
+        @media (max-width: 359px) {
+            .btn-new-text { display: none; }
+        }
+
+
+        /* contrast: tekst op lichte of gekleurde vlakken */
+        .card-meta.overdue { color: var(--red-600); }
+        .dropdown-item.danger { color: var(--red-600); }
+        .dropdown-item.danger:hover { color: #b91c1c; }
+        .project-item-meta, .epic-task-status-label, .roadmap-sprint-dates, .roadmap-sprint-status, .dashboard-close, .sprint-duration-info p { color: var(--slate-600); }
+        .roadmap-day.weekend { color: var(--slate-600); }
+        .priority-btn.high.active { color: #b91c1c; }
+        .priority-btn.medium.active { color: #c2410c; }
+        .priority-btn.low.active { color: #15803d; }
+        .roadmap-sprint-bar { height: 44px; background: var(--accent-strong); }
+        .roadmap-sprint-bar.active { background: var(--accent-strong); box-shadow: 0 0 0 2px #ffffff, 0 0 0 4px var(--accent-strong); }
+        .roadmap-sprint-bar.planned { background: #1d4ed8; }
+        .roadmap-sprint-bar.completed { background: var(--slate-600); }
+        .roadmap-sprint-bar.no-dates { background: var(--slate-100); }
+        .roadmap-sprint-bar.no-dates .roadmap-sprint-tasks { color: var(--slate-700); }
+        .card-priority-badge.high { color: #b91c1c; }
+        .card-priority-badge.medium { color: #c2410c; }
+        .card-priority-badge.low { color: #15803d; }
+        .header { background: #ffffff; backdrop-filter: none; }
+        .capacity-stat-label { color: var(--slate-600); }
+        .roadmap-sprint-tasks { color: #ffffff; background: rgba(15, 23, 42, 0.28); }
+        .roadmap-sprint-bar.no-dates .roadmap-sprint-tasks { background: var(--slate-300); color: var(--slate-800); }
+        .oc-dialog-btn { min-height: 44px; min-width: 44px; }
+        @media (max-width: 600px) {
+            .roadmap-content, .dashboard-content { padding: 1rem; }
+            .roadmap-controls { gap: 0.5rem; }
+            .roadmap-month { min-width: 0; flex: 1; font-size: 1rem; }
         }
     </style>
 </head>
@@ -3066,10 +3215,11 @@
     <!-- Header -->
     <header class="header">
         <div class="header-left">
-            <a href="https://onderconstructie.github.io/projectmanagement/" class="back-link oc-back" aria-label="Terug naar Projectmanagement" title="Projectmanagement">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+            <a href="https://onderconstructie.github.io/projectmanagement/" class="back-link oc-back" aria-label="Terug naar Projectmanagement">
+                <span aria-hidden="true">←</span><span class="oc-back-text">Projectmanagement</span>
             </a>
-            <div class="logo">
+            <h1 class="visually-hidden">SprintFlow</h1>
+            <div class="logo" aria-hidden="true">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <rect x="3" y="3" width="18" height="18" rx="3"/>
                     <line x1="8" y1="7" x2="8" y2="17"/>
@@ -3078,7 +3228,7 @@
                 </svg>
             </div>
             <div class="project-selector">
-                <button class="project-selector-btn" onclick="toggleDropdown('projectDropdown')">
+                <button type="button" class="project-selector-btn" onclick="toggleDropdown('projectDropdown')" aria-haspopup="true" aria-controls="projectDropdown" title="Project kiezen; klik op de naam om ze te wijzigen">
                     <span class="project-name" id="activeProjectName" onclick="event.stopPropagation(); editProjectName()">Mijn Project</span>
                     <svg class="edit-hint-small" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                     <svg class="dropdown-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
@@ -3087,11 +3237,11 @@
                     <div class="dropdown-header">Projecten</div>
                     <div id="projectList"></div>
                     <div class="dropdown-divider"></div>
-                    <button class="dropdown-item" onclick="createNewProject()">
+                    <button type="button" class="dropdown-item" onclick="createNewProject()">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                         Nieuw project
                     </button>
-                    <button class="dropdown-item danger" onclick="deleteCurrentProject()">
+                    <button type="button" class="dropdown-item danger" onclick="deleteCurrentProject()">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
                         Project verwijderen
                     </button>
@@ -3099,92 +3249,60 @@
             </div>
         </div>
         <div class="header-actions">
-            <div class="save-indicator" id="saveIndicator">
+            <div class="save-indicator" id="saveIndicator" role="status">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
                     <polyline points="22 4 12 14.01 9 11.01"/>
                 </svg>
                 <span>Opgeslagen</span>
             </div>
-            <button class="btn btn-secondary" onclick="openPanel('team')">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-                    <circle cx="9" cy="7" r="4"/>
-                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-                    <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-                </svg>
-                Team
-            </button>
-            <button class="btn btn-secondary" onclick="openPanel('epics')">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <polygon points="12 2 2 7 12 12 22 7 12 2"/>
-                    <polyline points="2 17 12 22 22 17"/>
-                    <polyline points="2 12 12 17 22 12"/>
-                </svg>
-                Epics
-            </button>
-            <button class="btn btn-secondary" onclick="openPanel('sprint')">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="12" cy="12" r="10"/>
-                    <polyline points="12 6 12 12 16 14"/>
-                </svg>
-                Sprint
-            </button>
-            <button class="btn btn-secondary" onclick="openRoadmap()">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-                    <line x1="16" y1="2" x2="16" y2="6"/>
-                    <line x1="8" y1="2" x2="8" y2="6"/>
-                    <line x1="3" y1="10" x2="21" y2="10"/>
-                </svg>
-                Roadmap
-            </button>
-            <div class="dropdown">
-                <button class="btn btn-secondary" onclick="toggleDropdown('exportDropdown')">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                        <polyline points="7 10 12 15 17 10"/>
-                        <line x1="12" y1="15" x2="12" y2="3"/>
-                    </svg>
-                    Export
-                </button>
-                <div class="dropdown-menu" id="exportDropdown">
-                    <button class="dropdown-item" onclick="exportAsJSON()" style="border-bottom: 1px solid var(--slate-100); margin-bottom: 0.25rem; padding-bottom: 0.625rem;">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                        Backup opslaan (JSON)
-                    </button>
-                    <button class="dropdown-item" onclick="document.getElementById('importFile').click()" style="border-bottom: 1px solid var(--slate-100); margin-bottom: 0.25rem; padding-bottom: 0.625rem;">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                        Backup laden (JSON)
-                    </button>
-                    <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importFromJSON(event)">
-                    <button class="dropdown-item" onclick="exportAsJPG()">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-                        Download als afbeelding
-                    </button>
-                    <button class="dropdown-item" onclick="exportAsPDF()">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                        Download als PDF
-                    </button>
-                    <button class="dropdown-item" onclick="exportAsCSV()">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-                        Download als CSV
-                    </button>
+            <div class="header-tools">
+                <button type="button" class="btn btn-secondary" onclick="openPanel('team')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Team</button>
+                <button type="button" class="btn btn-secondary" onclick="openPanel('epics')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>Epics</button>
+                <button type="button" class="btn btn-secondary" onclick="openPanel('sprint')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Sprint</button>
+                <button type="button" class="btn btn-secondary" onclick="openRoadmap()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Roadmap</button>
+                <div class="dropdown">
+                    <button type="button" class="btn btn-secondary" onclick="toggleDropdown('exportDropdown')" aria-haspopup="true" aria-controls="exportDropdown"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Bestand</button>
+                    <div class="dropdown-menu" id="exportDropdown">
+                        <button type="button" class="dropdown-item" onclick="exportAsJSON()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Backup opslaan (JSON)</button>
+                        <button type="button" class="dropdown-item" onclick="document.getElementById('importFile').click()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Backup laden (JSON)</button>
+                        <div class="dropdown-divider"></div>
+                        <button type="button" class="dropdown-item" onclick="exportAsJPG()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>Download als afbeelding</button>
+                        <button type="button" class="dropdown-item" onclick="exportAsPDF()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Download als PDF</button>
+                        <button type="button" class="dropdown-item" onclick="exportAsCSV()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>Download als CSV</button>
+                        <div class="dropdown-divider"></div>
+                        <button type="button" class="dropdown-item danger" onclick="clearAllData()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>Alles wissen</button>
+                    </div>
                 </div>
             </div>
-            <button class="btn btn-primary" onclick="openCardModal()">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <line x1="12" y1="5" x2="12" y2="19"/>
-                    <line x1="5" y1="12" x2="19" y2="12"/>
-                </svg>
-                Nieuwe Taak
+            <input type="file" id="importFile" accept=".json,application/json" hidden onchange="importFromJSON(event)">
+            <button type="button" class="btn btn-primary btn-new" onclick="openCardModal()" aria-label="Nieuwe taak">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                <span class="btn-new-text">Nieuwe taak</span>
             </button>
+            <div class="dropdown more-menu">
+                <button type="button" class="btn btn-secondary more-btn" onclick="toggleDropdown('moreDropdown')" aria-haspopup="true" aria-controls="moreDropdown" aria-label="Meer: team, epics, sprint, roadmap en bestand">⋯</button>
+                <div class="dropdown-menu" id="moreDropdown">
+                    <button type="button" class="dropdown-item" onclick="closeDropdown('moreDropdown'); openPanel('team')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Team</button>
+                    <button type="button" class="dropdown-item" onclick="closeDropdown('moreDropdown'); openPanel('epics')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>Epics</button>
+                    <button type="button" class="dropdown-item" onclick="closeDropdown('moreDropdown'); openPanel('sprint')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Sprint</button>
+                    <button type="button" class="dropdown-item" onclick="closeDropdown('moreDropdown'); openRoadmap()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Roadmap</button>
+                    <div class="dropdown-divider"></div>
+                    <button type="button" class="dropdown-item" onclick="closeDropdown('moreDropdown'); exportAsJSON()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Backup opslaan (JSON)</button>
+                    <button type="button" class="dropdown-item" onclick="closeDropdown('moreDropdown'); document.getElementById('importFile').click()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Backup laden (JSON)</button>
+                    <button type="button" class="dropdown-item" onclick="closeDropdown('moreDropdown'); exportAsJPG()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>Download als afbeelding</button>
+                    <button type="button" class="dropdown-item" onclick="closeDropdown('moreDropdown'); exportAsPDF()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Download als PDF</button>
+                    <button type="button" class="dropdown-item" onclick="closeDropdown('moreDropdown'); exportAsCSV()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>Download als CSV</button>
+                    <div class="dropdown-divider"></div>
+                    <button type="button" class="dropdown-item danger" onclick="closeDropdown('moreDropdown'); clearAllData()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>Alles wissen</button>
+                </div>
+            </div>
         </div>
     </header>
 
     <!-- Sprint Bar -->
     <div class="sprint-bar">
-        <div class="sprint-info" onclick="editSprintInline()" title="Klik om sprint te bewerken">
+        <button type="button" class="sprint-info" onclick="editSprintInline()" title="Klik om de sprintnaam te wijzigen">
             <div class="sprint-icon">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
@@ -3197,32 +3315,32 @@
                 </div>
                 <div class="sprint-dates" id="sprintDates">Geen datums ingesteld</div>
             </div>
-        </div>
+        </button>
         <div class="sprint-stats">
-            <div class="stat-item clickable" onclick="showTasksOverview('all')" title="Bekijk alle taken">
-                <div class="stat-value" id="statTotalTasks">0</div>
-                <div class="stat-label">Totaal</div>
-            </div>
-            <div class="stat-item clickable" onclick="showTasksOverview('done')" title="Bekijk voltooide taken">
-                <div class="stat-value" id="statCompletedTasks">0</div>
-                <div class="stat-label">Klaar</div>
-            </div>
-            <div class="capacity-container clickable" onclick="openDashboard()" title="Bekijk statistieken dashboard">
+            <button type="button" class="stat-item clickable" onclick="showTasksOverview('all')" title="Toon alle taken">
+                <span class="stat-value" id="statTotalTasks">0</span>
+                <span class="stat-label">Totaal</span>
+            </button>
+            <button type="button" class="stat-item clickable" onclick="showTasksOverview('done')" title="Toon de afgewerkte taken">
+                <span class="stat-value" id="statCompletedTasks">0</span>
+                <span class="stat-label">Klaar</span>
+            </button>
+            <button type="button" class="capacity-container clickable" onclick="openDashboard()" title="Open de statistieken">
                 <span class="capacity-label">Capaciteit</span>
-                <div class="capacity-bar">
-                    <div class="capacity-fill under" id="capacityFill" style="width: 0%"></div>
-                </div>
+                <span class="capacity-bar" aria-hidden="true">
+                    <span class="capacity-fill under" id="capacityFill" style="width: 0%"></span>
+                </span>
                 <span class="capacity-text under" id="capacityText">0 / 0 dagen</span>
-            </div>
+            </button>
         </div>
     </div>
 
     <!-- Sprint Tabs -->
     <div class="sprint-tabs-container">
-        <div class="sprint-tabs" id="sprintTabs">
+        <div class="sprint-tabs" id="sprintTabs" role="group" aria-label="Sprints">
             <!-- Sprint tabs worden hier dynamisch gegenereerd -->
         </div>
-        <button class="sprint-add-btn" onclick="createNewSprint()" title="Nieuwe sprint">
+        <button type="button" class="sprint-add-btn" onclick="createNewSprint()" title="Nieuwe sprint" aria-label="Nieuwe sprint">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         </button>
     </div>
@@ -3230,11 +3348,11 @@
     <!-- Filter Bar -->
     <div class="filter-bar">
         <div class="search-box">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                 <circle cx="11" cy="11" r="8"/>
                 <line x1="21" y1="21" x2="16.65" y2="16.65"/>
             </svg>
-            <input type="text" id="searchInput" placeholder="Zoeken..." oninput="filterCards()">
+            <input type="search" id="searchInput" placeholder="Zoeken..." aria-label="Zoek in taken" oninput="filterCards()">
         </div>
         <div class="filter-groups">
             <div class="filter-group" id="statusFilterGroup" style="display: none;">
@@ -3250,7 +3368,7 @@
                 <div class="filter-group-chips" id="teamFilterChips"></div>
             </div>
         </div>
-        <button class="clear-filters-btn" id="clearFiltersBtn" onclick="clearAllFilters()" style="display: none;">
+        <button type="button" class="clear-filters-btn" id="clearFiltersBtn" onclick="clearAllFilters()" style="display: none;">
             ✕ Filters wissen
         </button>
     </div>
@@ -3262,41 +3380,41 @@
 
     <!-- Card Modal -->
     <div class="modal-overlay" id="cardModalOverlay" onclick="closeCardModal()"></div>
-    <div class="modal" id="cardModal">
+    <div class="modal" id="cardModal" role="dialog" aria-modal="true" aria-labelledby="cardModalTitle">
         <div class="modal-header">
-            <h3 class="modal-title" id="cardModalTitle">Nieuwe Taak</h3>
-            <button class="modal-close" onclick="closeCardModal()">×</button>
+            <h2 class="modal-title" id="cardModalTitle">Nieuwe taak</h2>
+            <button type="button" class="modal-close" onclick="closeCardModal()" aria-label="Sluiten">×</button>
         </div>
         <div class="modal-body">
             <input type="hidden" id="cardId">
             <div class="form-group">
-                <label class="form-label">Titel *</label>
+                <label class="form-label" for="cardTitle">Titel *</label>
                 <input type="text" class="form-input" id="cardTitle" placeholder="Wat moet er gedaan worden?">
             </div>
             <div class="form-group">
-                <label class="form-label">Beschrijving</label>
+                <label class="form-label" for="cardDescription">Beschrijving</label>
                 <textarea class="form-textarea" id="cardDescription" placeholder="Voeg details toe..."></textarea>
             </div>
             <div class="form-group">
                 <label class="form-label">Subtaken</label>
                 <div id="subtasksContainer"></div>
                 <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
-                    <input type="text" class="form-input" id="newSubtaskInput" placeholder="Nieuwe subtaak...">
-                    <button class="btn btn-secondary" onclick="addSubtask()">+</button>
+                    <input type="text" class="form-input" id="newSubtaskInput" placeholder="Nieuwe subtaak..." aria-label="Nieuwe subtaak">
+                    <button type="button" class="btn btn-secondary" onclick="addSubtask()" aria-label="Subtaak toevoegen">+</button>
                 </div>
             </div>
             <div class="form-row">
                 <div class="form-group">
-                    <label class="form-label">Epic</label>
+                    <label class="form-label" for="cardEpicSelect">Epic</label>
                     <select class="form-select" id="cardEpicSelect" onchange="handleEpicSelect(this)"></select>
                     <div class="add-epic-inline" id="addEpicInline">
-                        <input type="text" class="form-input" id="inlineEpicName" placeholder="Epic naam...">
-                        <input type="color" id="inlineEpicColor" value="#a855f7" style="width: 36px; height: 36px; border: 1.5px solid var(--slate-200); border-radius: var(--radius-sm); cursor: pointer; padding: 2px;">
-                        <button class="btn btn-primary btn-sm" onclick="addEpicInline()">+</button>
+                        <input type="text" class="form-input" id="inlineEpicName" placeholder="Epic naam..." aria-label="Naam van de nieuwe epic">
+                        <input type="color" id="inlineEpicColor" class="color-input" value="#a855f7" aria-label="Kleur van de nieuwe epic">
+                        <button type="button" class="btn btn-primary btn-sm" onclick="addEpicInline()" aria-label="Epic aanmaken">+</button>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Status</label>
+                    <label class="form-label" for="cardStatus">Status</label>
                     <select class="form-select" id="cardStatus">
                         <option value="backlog">Backlog</option>
                         <option value="todo">Te Doen</option>
@@ -3308,21 +3426,21 @@
             </div>
             <div class="form-row">
                 <div class="form-group">
-                    <label class="form-label">Eigenaar</label>
+                    <label class="form-label" for="cardOwnerSelect">Eigenaar</label>
                     <select class="form-select" id="cardOwnerSelect" onchange="onOwnerChange(this.value)"></select>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Deadline</label>
+                    <label class="form-label" for="cardDueDate">Deadline</label>
                     <input type="text" class="form-input" id="cardDueDate" placeholder="dd/mm/jjjj">
                 </div>
             </div>
             <div class="form-group">
-                <label class="form-label">Betrokkenen</label>
-                <div class="participants-grid" id="participantsContainer"></div>
+                <div class="form-label" id="participantsLabel">Betrokkenen</div>
+                <div class="participants-grid" id="participantsContainer" role="group" aria-labelledby="participantsLabel"></div>
             </div>
             <div class="form-group">
-                <label class="form-label">Prioriteit</label>
-                <div class="priority-options">
+                <div class="form-label" id="priorityLabel">Prioriteit</div>
+                <div class="priority-options" role="group" aria-labelledby="priorityLabel">
                     <button type="button" class="priority-btn high" onclick="setPriority('high')">
                         <span class="priority-dot"></span>
                         Hoog
@@ -3338,10 +3456,10 @@
                 </div>
             </div>
             <div class="form-group">
-                <label class="form-label">Inschatting (mensdagen): <span id="estimateDisplay" class="estimate-display">-</span></label>
+                <label class="form-label" for="cardEstimateSlider">Inschatting (mensdagen): <span id="estimateDisplay" class="estimate-display">-</span></label>
                 <div class="estimate-slider-container">
                     <input type="range" class="estimate-slider" id="cardEstimateSlider" min="0" max="40" step="0.5" value="0" oninput="updateEstimateFromSlider(this.value)">
-                    <div class="estimate-markers">
+                    <div class="estimate-markers" aria-hidden="true">
                         <span>0</span>
                         <span>10</span>
                         <span>20</span>
@@ -3350,7 +3468,7 @@
                     </div>
                 </div>
                 <div class="estimate-input-row">
-                    <span class="estimate-input-label">Of voer exact in:</span>
+                    <label class="estimate-input-label" for="estimateCustomInput">Of voer exact in:</label>
                     <input type="number" class="estimate-custom-input" id="estimateCustomInput" placeholder="bv. 2.5" min="0" max="100" step="0.5" oninput="setEstimateFromInput(this.value)">
                     <span class="estimate-input-suffix">dagen</span>
                 </div>
@@ -3358,25 +3476,25 @@
             </div>
         </div>
         <div class="modal-footer">
-            <button class="btn btn-ghost" onclick="closeCardModal()">Annuleren</button>
-            <button class="btn btn-primary" onclick="saveCard()">Opslaan</button>
+            <button type="button" class="btn btn-ghost" onclick="closeCardModal()">Annuleren</button>
+            <button type="button" class="btn btn-primary" onclick="saveCard()">Opslaan</button>
         </div>
     </div>
 
     <!-- Team Panel -->
     <div class="sidebar-overlay" id="teamOverlay" onclick="closePanel('team')"></div>
-    <div class="sidebar-panel" id="teamPanel">
+    <div class="sidebar-panel" id="teamPanel" role="dialog" aria-modal="true" aria-labelledby="teamPanelTitle">
         <div class="modal-header">
-            <h3 class="modal-title">Teamleden</h3>
-            <button class="modal-close" onclick="closePanel('team')">×</button>
+            <h2 class="modal-title" id="teamPanelTitle">Teamleden</h2>
+            <button type="button" class="modal-close" onclick="closePanel('team')" aria-label="Sluiten">×</button>
         </div>
         <div class="panel-content">
             <div class="form-group">
-                <label class="form-label">Nieuw teamlid toevoegen</label>
-                <div style="display: flex; gap: 0.5rem;">
-                    <input type="text" class="form-input" id="newMemberName" placeholder="Naam..." style="flex: 1;">
-                    <input type="color" id="newMemberColor" value="#10b981" style="width: 40px; height: 38px; border: 1.5px solid var(--slate-200); border-radius: var(--radius-sm); cursor: pointer; padding: 2px;">
-                    <button class="btn btn-primary" onclick="addTeamMember()">+</button>
+                <label class="form-label" for="newMemberName">Nieuw teamlid toevoegen</label>
+                <div class="add-row">
+                    <input type="text" class="form-input" id="newMemberName" placeholder="Naam...">
+                    <input type="color" id="newMemberColor" class="color-input" value="#10b981" aria-label="Kleur van het teamlid">
+                    <button type="button" class="btn btn-primary" onclick="addTeamMember()" aria-label="Teamlid toevoegen">+</button>
                 </div>
                 <div class="form-hint">Druk op Enter of klik + om toe te voegen</div>
             </div>
@@ -3386,18 +3504,18 @@
 
     <!-- Epics Panel -->
     <div class="sidebar-overlay" id="epicsOverlay" onclick="closePanel('epics')"></div>
-    <div class="sidebar-panel" id="epicsPanel">
+    <div class="sidebar-panel" id="epicsPanel" role="dialog" aria-modal="true" aria-labelledby="epicsPanelTitle">
         <div class="modal-header">
-            <h3 class="modal-title">Epics</h3>
-            <button class="modal-close" onclick="closePanel('epics')">×</button>
+            <h2 class="modal-title" id="epicsPanelTitle">Epics</h2>
+            <button type="button" class="modal-close" onclick="closePanel('epics')" aria-label="Sluiten">×</button>
         </div>
         <div class="panel-content">
             <div class="form-group">
-                <label class="form-label">Nieuwe epic toevoegen</label>
-                <div style="display: flex; gap: 0.5rem;">
-                    <input type="text" class="form-input" id="newEpicName" placeholder="Epic naam..." style="flex: 1;">
-                    <input type="color" id="newEpicColor" value="#a855f7" style="width: 40px; height: 38px; border: 1.5px solid var(--slate-200); border-radius: var(--radius-sm); cursor: pointer; padding: 2px;">
-                    <button class="btn btn-primary" onclick="addEpic()">+</button>
+                <label class="form-label" for="newEpicName">Nieuwe epic toevoegen</label>
+                <div class="add-row">
+                    <input type="text" class="form-input" id="newEpicName" placeholder="Epic naam...">
+                    <input type="color" id="newEpicColor" class="color-input" value="#a855f7" aria-label="Kleur van de epic">
+                    <button type="button" class="btn btn-primary" onclick="addEpic()" aria-label="Epic toevoegen">+</button>
                 </div>
                 <div class="form-hint">Druk op Enter of klik + om toe te voegen</div>
             </div>
@@ -3407,10 +3525,10 @@
 
     <!-- Sprint Panel -->
     <div class="sidebar-overlay" id="sprintOverlay" onclick="closePanel('sprint')"></div>
-    <div class="sidebar-panel" id="sprintPanel">
+    <div class="sidebar-panel" id="sprintPanel" role="dialog" aria-modal="true" aria-labelledby="sprintPanelTitle">
         <div class="modal-header">
-            <h3 class="modal-title">Sprint Instellingen</h3>
-            <button class="modal-close" onclick="closePanel('sprint')">×</button>
+            <h2 class="modal-title" id="sprintPanelTitle">Sprintinstellingen</h2>
+            <button type="button" class="modal-close" onclick="closePanel('sprint')" aria-label="Sluiten">×</button>
         </div>
         <div class="panel-content">
             <!-- Capacity Overview -->
@@ -3435,29 +3553,29 @@
             </div>
 
             <div class="form-group">
-                <label class="form-label">Sprint Naam</label>
+                <label class="form-label" for="sprintNameInput">Sprintnaam</label>
                 <input type="text" class="form-input" id="sprintNameInput" placeholder="Sprint 1">
             </div>
             <div class="form-row">
                 <div class="form-group">
-                    <label class="form-label">Startdatum</label>
+                    <label class="form-label" for="sprintStartInput">Startdatum</label>
                     <input type="text" class="form-input" id="sprintStartInput" placeholder="dd/mm/jjjj">
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Einddatum</label>
+                    <label class="form-label" for="sprintEndInput">Einddatum</label>
                     <input type="text" class="form-input" id="sprintEndInput" placeholder="dd/mm/jjjj">
                 </div>
             </div>
             <div class="form-group">
-                <label class="form-label">Werkdagen in sprint</label>
+                <label class="form-label" for="sprintDaysInput">Werkdagen in sprint</label>
                 <input type="number" class="form-input" id="sprintDaysInput" placeholder="10" min="1" max="60" step="0.5" onchange="onSprintDaysChange()">
                 <div class="form-hint">Aantal werkdagen (excl. weekenden/feestdagen). Dit bepaalt de standaard beschikbaarheid per teamlid.</div>
             </div>
             <div class="form-group">
-                <label class="form-label">Sprint Doel</label>
+                <label class="form-label" for="sprintGoalInput">Sprintdoel</label>
                 <textarea class="form-textarea" id="sprintGoalInput" placeholder="Wat wil je bereiken deze sprint?"></textarea>
             </div>
-            <button class="btn btn-primary" onclick="saveSprint()" style="width: 100%;">Sprint Opslaan</button>
+            <button type="button" class="btn btn-primary" onclick="saveSprint()" style="width: 100%;">Sprint opslaan</button>
 
             <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--slate-200);">
                 <div class="sprint-duration-link">
@@ -3471,7 +3589,7 @@
                         <strong>Team Beschikbaarheid</strong>
                         <p>Standaard <span id="defaultDaysDisplay">10</span> dagen per persoon (sprintduur)</p>
                     </div>
-                    <button class="sync-all-btn" onclick="syncAllAvailability()">Alles synchroniseren</button>
+                    <button type="button" class="sync-all-btn" onclick="syncAllAvailability()">Iedereen gelijkzetten</button>
                 </div>
                 <div class="item-list" id="teamAvailabilityList"></div>
             </div>
@@ -3501,24 +3619,24 @@
     </div>
 
     <!-- Roadmap Modal -->
-    <div class="roadmap-modal" id="roadmapModal">
+    <div class="roadmap-modal" id="roadmapModal" role="dialog" aria-modal="true" aria-labelledby="roadmapTitle">
         <div class="dashboard-header">
-            <h2 class="dashboard-title">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            <h2 class="dashboard-title" id="roadmapTitle">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
                 Sprint Roadmap
             </h2>
-            <button class="dashboard-close" onclick="closeRoadmap()">×</button>
+            <button type="button" class="dashboard-close" onclick="closeRoadmap()" aria-label="Roadmap sluiten">×</button>
         </div>
         <div class="roadmap-content">
             <div class="roadmap-controls">
-                <button class="roadmap-nav-btn" onclick="roadmapPrevMonth()">
+                <button type="button" class="roadmap-nav-btn" onclick="roadmapPrevMonth()" aria-label="Vorige maand">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
                 </button>
-                <span class="roadmap-month" id="roadmapMonth">Januari 2025</span>
-                <button class="roadmap-nav-btn" onclick="roadmapNextMonth()">
+                <span class="roadmap-month" id="roadmapMonth" aria-live="polite">Januari 2025</span>
+                <button type="button" class="roadmap-nav-btn" onclick="roadmapNextMonth()" aria-label="Volgende maand">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
                 </button>
-                <button class="btn btn-secondary" onclick="roadmapToday()" style="margin-left: 1rem;">Vandaag</button>
+                <button type="button" class="btn btn-secondary roadmap-today-btn" onclick="roadmapToday()">Vandaag</button>
             </div>
             
             <div class="roadmap-timeline">
@@ -3537,7 +3655,7 @@
             <div class="roadmap-sprint-list">
                 <div class="roadmap-list-header">
                     <h3>Sprints</h3>
-                    <button class="dashboard-add-btn" onclick="createNewSprintFromRoadmap()" title="Nieuwe sprint">
+                    <button type="button" class="dashboard-add-btn" onclick="createNewSprintFromRoadmap()" title="Nieuwe sprint" aria-label="Nieuwe sprint">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                     </button>
                 </div>
@@ -3549,13 +3667,13 @@
     </div>
 
     <!-- Dashboard Modal -->
-    <div class="dashboard-modal" id="dashboardModal">
+    <div class="dashboard-modal" id="dashboardModal" role="dialog" aria-modal="true" aria-labelledby="dashboardTitle">
         <div class="dashboard-header">
-            <h2 class="dashboard-title">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
-                Statistieken Dashboard
+            <h2 class="dashboard-title" id="dashboardTitle">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
+                Statistieken
             </h2>
-            <button class="dashboard-close" onclick="closeDashboard()">×</button>
+            <button type="button" class="dashboard-close" onclick="closeDashboard()" aria-label="Statistieken sluiten">×</button>
         </div>
         <div class="dashboard-content">
             <div class="dashboard-grid">
@@ -3619,7 +3737,7 @@
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
                         Team Werkbelasting
                     </div>
-                    <button class="dashboard-add-btn" onclick="addTeamMemberFromDashboard()" title="Teamlid toevoegen">
+                    <button type="button" class="dashboard-add-btn" onclick="addTeamMemberFromDashboard()" title="Teamlid toevoegen" aria-label="Teamlid toevoegen">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                     </button>
                 </div>
@@ -3633,7 +3751,7 @@
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
                         Epic Voortgang
                     </div>
-                    <button class="dashboard-add-btn" onclick="addEpicFromDashboard()" title="Epic toevoegen">
+                    <button type="button" class="dashboard-add-btn" onclick="addEpicFromDashboard()" title="Epic toevoegen" aria-label="Epic toevoegen">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                     </button>
                 </div>
@@ -3643,14 +3761,14 @@
     </div>
 
     <!-- Toast Container -->
-    <div class="toast-container" id="toastContainer"></div>
+    <div class="toast-container" id="toastContainer" aria-live="polite"></div>
 
     <footer class="footer oc-footer">
         <p class="quote oc-quote">Wie overal is, is nergens.</p>
     </footer>
 
     <script>
-/* ---------- Overnemen tussen tools (gedeeld door de Onder Constructie-tools, v1) ----------
+/* ---------- Overnemen tussen tools (gedeeld door de Onder Constructie-tools, v2) ----------
    Alle tools draaien op hetzelfde domein en delen dus localStorage. Elke tool legt wat hij te bieden
    heeft klaar onder 'oc.share.<tool-id>', in een vaste vorm, zodat andere tools het kunnen overnemen
    zonder elkaars binnenkant te kennen.
@@ -3688,20 +3806,23 @@ const ocShare = (() => {
   }
   function clear(id) { try { localStorage.removeItem(PREFIX + id); } catch {} }
 
+  // Elke bron apart: één kapotte sleutel mag de andere niet verbergen.
   function sources(types, self) {
     const out = [];
-    try {
-      for (let i = 0; i < localStorage.length; i++) {
-        const k = localStorage.key(i);
-        if (!k || !k.startsWith(PREFIX) || k === PREFIX + self) continue;
+    let keys = [];
+    try { for (let i = 0; i < localStorage.length; i++) keys.push(localStorage.key(i)); } catch { return out; }
+    keys.forEach(k => {
+      if (!k || !k.startsWith(PREFIX) || k === PREFIX + self) return;
+      try {
         const d = JSON.parse(localStorage.getItem(k));
-        if (!d || !Array.isArray(d.lists)) continue;
+        if (!d || !Array.isArray(d.lists)) return;
         d.lists.forEach(l => {
-          const items = l.items.filter(it => types.includes(it.type));
-          if (items.length) out.push({ tool: d.tool || d.id, id: d.id, updated: d.updated, list: l.name, items });
+          if (!l || !Array.isArray(l.items)) return;
+          const items = l.items.filter(it => it && types.includes(it.type) && typeof it.text === 'string');
+          if (items.length) out.push({ tool: String(d.tool || d.id || k.slice(PREFIX.length)), id: d.id, updated: +d.updated || 0, list: String(l.name || ''), items });
         });
-      }
-    } catch {}
+      } catch {}
+    });
     return out.sort((a, b) => (b.updated || 0) - (a.updated || 0));
   }
 
@@ -3725,18 +3846,19 @@ const ocShare = (() => {
       .ocs-src{margin-top:.875rem}
       .ocs-src-head{display:flex;align-items:center;gap:.5rem;padding:.375rem 0}
       .ocs-src-head b{font-size:.9375rem}
-      .ocs-src-head span{font-size:.75rem;color:#94a3b8}
-      .ocs-all{margin-left:auto;font:inherit;font-size:.8125rem;color:#059669;background:none;border:0;cursor:pointer;padding:.25rem .375rem;border-radius:6px}
+      .ocs-src-head span{font-size:.75rem;color:#64748b}
+      .ocs-all{margin-left:auto;font:inherit;font-size:.8125rem;color:#047857;background:none;border:0;cursor:pointer;padding:.25rem .5rem;min-height:44px;border-radius:6px}
       .ocs-all:hover{background:#d1fae5}
-      .ocs-item{display:flex;align-items:flex-start;gap:.625rem;padding:.5rem .25rem;border-top:1px solid #f1f5f9;cursor:pointer;font-size:.9375rem;line-height:1.4}
+      .ocs-item{display:flex;align-items:flex-start;gap:.625rem;padding:.625rem .25rem;min-height:44px;box-sizing:border-box;border-top:1px solid #f1f5f9;cursor:pointer;font-size:.9375rem;line-height:1.4}
       .ocs-item input{width:18px;height:18px;margin-top:.125rem;accent-color:#10b981;flex:none}
-      .ocs-item small{display:block;font-size:.75rem;color:#94a3b8}
+      .ocs-item small{display:block;font-size:.75rem;color:#64748b}
       .ocs-empty{padding:1.5rem .25rem;color:#64748b;font-size:.9375rem;line-height:1.5}
       .ocs-foot{display:flex;gap:.5rem;justify-content:flex-end;padding:.875rem 1.25rem calc(.875rem + env(safe-area-inset-bottom,0px));border-top:1px solid #e2e8f0}
-      .ocs-btn{font:inherit;font-size:.9375rem;font-weight:600;padding:.625rem 1rem;border-radius:10px;border:0;cursor:pointer}
+      .ocs-btn{font:inherit;font-size:.9375rem;font-weight:600;padding:.625rem 1rem;min-height:44px;border-radius:10px;border:0;cursor:pointer}
       .ocs-cancel{background:#f1f5f9;color:#475569}
-      .ocs-ok{background:#10b981;color:#fff}
-      .ocs-ok:disabled{background:#a7f3d0;cursor:default}`;
+      .ocs-ok{background:#047857;color:#fff}.ocs-ok:hover{background:#065f46}
+      .ocs-ok:disabled{background:#cbd5e1;color:#334155;cursor:default}
+      .ocs-back :focus-visible{outline:2px solid #047857;outline-offset:2px}`;
     document.head.appendChild(s);
   }
 
@@ -3783,7 +3905,7 @@ const ocShare = (() => {
 
   // Hoeveel er klaarligt voor deze soorten (om een knop te tonen of een teller te zetten).
   const count = (types, self) => sources(types, self).reduce((n, s) => n + s.items.length, 0);
-  return { publish, clear, pick, count, sources };
+  return { publish, clear, pick, count, sources, esc };
 })();
 
         /* De open taken van het actieve project klaarleggen voor andere tools. */
@@ -3911,6 +4033,78 @@ const ocExport = (() => {
             { id: 'klaar', name: 'Klaar', color: '#22c55e' }
         ];
 
+        // Alles wat uit opslag of een geïmporteerd bestand komt, gaat langs esc() voor het in HTML belandt.
+        const esc = ocShare.esc;
+        const ID_RE = /^[\w-]+$/, COLOR_RE = /^#[0-9a-f]{3,8}$/i, DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+        const SPRINT_STATUSES = ['active', 'planned', 'completed'];
+        const PRIORITIES = ['high', 'medium', 'low'];
+        const safeColor = (c, fallback = '#64748b') => (typeof c === 'string' && COLOR_RE.test(c)) ? c : fallback;
+
+        /* Maakt een project uit opslag of uit een backup veilig: geldige ids, kleuren, datums en statussen,
+           tekstvelden als tekst. Ongeldige ids krijgen een nieuw id; verwijzingen ernaar volgen mee. */
+        function sanitizeProject(raw) {
+            const p = (raw && typeof raw === 'object') ? raw : {};
+            const arr = v => Array.isArray(v) ? v.filter(x => x && typeof x === 'object') : [];
+            const str = (v, max = 5000) => (v == null ? '' : String(v)).slice(0, max);
+            const num = v => { const n = parseFloat(v); return Number.isFinite(n) ? n : null; };
+            const date = v => (typeof v === 'string' && DATE_RE.test(v)) ? v : '';
+            const remap = new Map();
+            const fixId = v => {
+                const k = v == null ? '' : String(v);
+                if (ID_RE.test(k)) return k;
+                if (k && remap.has(k)) return remap.get(k);
+                const n = generateId();
+                if (k) remap.set(k, n);
+                return n;
+            };
+            const ref = (v, set) => {
+                if (v == null || v === '') return null;
+                const k = String(v);
+                const id = ID_RE.test(k) ? k : remap.get(k);
+                return id && set.has(id) ? id : null;
+            };
+
+            const team = arr(p.team).map(m => ({ id: fixId(m.id), name: str(m.name, 200) || 'Naamloos', color: safeColor(m.color, '#10b981') }));
+            const epics = arr(p.epics).map(e => ({ id: fixId(e.id), name: str(e.name, 200) || 'Naamloos', color: safeColor(e.color, '#a855f7') }));
+            let sprints = arr(p.sprints).map(sp => ({
+                id: fixId(sp.id),
+                name: str(sp.name, 200) || 'Sprint',
+                startDate: date(sp.startDate),
+                endDate: date(sp.endDate),
+                days: num(sp.days) > 0 ? num(sp.days) : 10,
+                goal: str(sp.goal),
+                status: SPRINT_STATUSES.includes(sp.status) ? sp.status : 'active'
+            }));
+            if (!sprints.length) sprints = [{ id: generateId(), name: 'Sprint 1', startDate: '', endDate: '', days: 10, goal: '', status: 'active' }];
+            const teamIds = new Set(team.map(m => m.id)), epicIds = new Set(epics.map(e => e.id)), sprintIds = new Set(sprints.map(x => x.id));
+            const statusIds = COLUMNS.map(c => c.id);
+            const cards = arr(p.cards).map(c => {
+                const est = num(c.estimate);
+                return {
+                    id: fixId(c.id),
+                    title: str(c.title, 500) || 'Zonder titel',
+                    description: str(c.description),
+                    epicId: ref(c.epicId, epicIds),
+                    status: statusIds.includes(c.status) ? c.status : 'backlog',
+                    ownerId: ref(c.ownerId, teamIds),
+                    dueDate: date(c.dueDate) || null,
+                    estimate: est != null && est > 0 ? String(est) : null,
+                    priority: PRIORITIES.includes(c.priority) ? c.priority : null,
+                    participants: (Array.isArray(c.participants) ? c.participants : []).map(x => ref(x, teamIds)).filter(Boolean),
+                    subtasks: arr(c.subtasks).map(t => ({ text: str(t.text, 500), done: !!t.done })),
+                    sprintId: ref(c.sprintId, sprintIds) || sprints[0].id
+                };
+            });
+            const teamAvailability = {};
+            if (p.teamAvailability && typeof p.teamAvailability === 'object') {
+                Object.keys(p.teamAvailability).forEach(k => {
+                    const id = ref(k, teamIds), v = num(p.teamAvailability[k]);
+                    if (id && v != null) teamAvailability[id] = v;
+                });
+            }
+            return { id: fixId(p.id), name: str(p.name, 200) || 'Naamloos project', sprints, cards, team, epics, teamAvailability };
+        }
+
         const AVATAR_COLORS = [
             '#10b981', '#3b82f6', '#a855f7', '#f97316', '#ef4444',
             '#ec4899', '#14b8a6', '#8b5cf6', '#06b6d4', '#84cc16'
@@ -4027,6 +4221,7 @@ const ocExport = (() => {
                     console.error('Fout bij opslaan:', e);
                     indicator.classList.remove('saving');
                     indicator.querySelector('span').textContent = 'Fout bij opslaan';
+                    showToast('Opslaan lukt niet: is de opslag van je browser vol of geblokkeerd?', 'error');
                 }
             }, 300);
         }
@@ -4035,12 +4230,12 @@ const ocExport = (() => {
             try {
                 const saved = localStorage.getItem(STORAGE_KEY);
                 if (saved) {
-                    const data = JSON.parse(saved);
-                    if (data.projects && data.projects.length > 0) {
+                    const data = JSON.parse(saved) || {};
+                    if (Array.isArray(data.projects) && data.projects.length > 0) {
                         // New multi-project format
-                        state.projects = data.projects;
-                        state.activeProjectId = data.activeProjectId || data.projects[0].id;
-                        state.activeSprintId = data.activeSprintId;
+                        state.projects = data.projects.map(sanitizeProject);
+                        state.activeProjectId = state.projects.some(p => p.id === data.activeProjectId) ? data.activeProjectId : state.projects[0].id;
+                        state.activeSprintId = typeof data.activeSprintId === 'string' ? data.activeSprintId : null;
                         // Ensure activeSprintId is valid
                         const project = getActiveProject();
                         if (project && project.sprints.length > 0) {
@@ -4058,9 +4253,10 @@ const ocExport = (() => {
                         if (data.sprint) {
                             defaultProject.sprints[0] = {...defaultProject.sprints[0], ...data.sprint};
                         }
-                        state.projects = [defaultProject];
-                        state.activeProjectId = defaultProject.id;
-                        state.activeSprintId = defaultProject.sprints[0].id;
+                        const migrated = sanitizeProject(defaultProject);
+                        state.projects = [migrated];
+                        state.activeProjectId = migrated.id;
+                        state.activeSprintId = migrated.sprints[0].id;
                         // Save migrated data
                         saveToStorage();
                     }
@@ -4085,7 +4281,8 @@ const ocExport = (() => {
 
         async function clearAllData() {
             if (await ocConfirm('Weet je zeker dat je ALLE data wilt wissen? Dit kan niet ongedaan worden gemaakt.')) {
-                localStorage.removeItem(STORAGE_KEY);
+                clearTimeout(saveTimeout);
+                try { localStorage.removeItem(STORAGE_KEY); } catch {}
                 ocShare.clear('kanban');
                 location.reload();
             }
@@ -4235,12 +4432,12 @@ const ocExport = (() => {
                 const taskCount = project.cards.length;
                 const teamCount = project.team.length;
                 return `
-                    <button class="project-item ${project.id === state.activeProjectId ? 'active' : ''}" onclick="switchProject('${project.id}')">
+                    <button type="button" class="project-item ${project.id === state.activeProjectId ? 'active' : ''}" data-act="switchProject" data-id="${esc(project.id)}">
                         <div class="project-icon">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="3"/><line x1="8" y1="7" x2="8" y2="17"/><line x1="12" y1="7" x2="12" y2="14"/><line x1="16" y1="7" x2="16" y2="11"/></svg>
                         </div>
                         <div class="project-item-info">
-                            <div class="project-item-name">${project.name}</div>
+                            <div class="project-item-name">${esc(project.name)}</div>
                             <div class="project-item-meta">${taskCount} taken · ${teamCount} teamleden</div>
                         </div>
                     </button>
@@ -4257,10 +4454,10 @@ const ocExport = (() => {
                 const taskCount = project.cards.filter(c => c.sprintId === sprint.id).length;
                 const isActive = sprint.id === state.activeSprintId;
                 return `
-                    <button class="sprint-tab ${isActive ? 'active' : ''}" onclick="switchSprint('${sprint.id}')" ondblclick="editSprintName('${sprint.id}')">
-                        <span class="sprint-status-dot ${sprint.status || 'active'}"></span>
-                        <span>${sprint.name}</span>
-                        <span class="sprint-task-count">${taskCount}</span>
+                    <button type="button" class="sprint-tab ${isActive ? 'active' : ''}" data-act="switchSprint" data-id="${esc(sprint.id)}" ${isActive ? 'aria-current="true"' : ''} title="Dubbelklik om de naam te wijzigen">
+                        <span class="sprint-status-dot ${esc(sprint.status || 'active')}"></span>
+                        <span>${esc(sprint.name)}</span>
+                        <span class="sprint-task-count" aria-label="${taskCount} taken">${taskCount}</span>
                     </button>
                 `;
             }).join('');
@@ -4300,13 +4497,36 @@ const ocExport = (() => {
         // DASHBOARD
         // ============================================
 
+        /* Focus naar een venster brengen bij openen en terug naar de knop bij sluiten. */
+        const focusBack = {};
+        function focusInto(key, el, selector) {
+            if (!el.contains(document.activeElement)) focusBack[key] = document.activeElement;
+            setTimeout(() => {
+                if (el.contains(document.activeElement)) return;   // iemand is al aan het typen
+                const first = selector.split(',').map(q => el.querySelector(q.trim())).find(Boolean);
+                first?.focus();
+            }, 60);
+        }
+        function focusOut(key, el) {
+            if (el.contains(document.activeElement)) {
+                const back = focusBack[key];
+                if (back && document.contains(back) && back.offsetParent !== null) back.focus();
+                else document.activeElement.blur();
+            }
+        }
+
         function openDashboard() {
             updateDashboard();
-            document.getElementById('dashboardModal').classList.add('active');
+            const el = document.getElementById('dashboardModal');
+            el.classList.add('active');
+            focusInto('dashboard', el, '.dashboard-close');
         }
 
         function closeDashboard() {
-            document.getElementById('dashboardModal').classList.remove('active');
+            const el = document.getElementById('dashboardModal');
+            if (!el.classList.contains('active')) return;
+            focusOut('dashboard', el);
+            el.classList.remove('active');
         }
 
         function updateDashboard() {
@@ -4344,7 +4564,7 @@ const ocExport = (() => {
                 const count = cards.filter(c => c.status === col.id).length;
                 const percent = total > 0 ? Math.round((count / total) * 100) : 0;
                 return `
-                    <div class="status-row" onclick="filterFromDashboard('status', '${col.id}')">
+                    <div class="status-row" role="button" tabindex="0" data-act="filterFromDashboard" data-type="status" data-id="${esc(col.id)}">
                         <span class="status-dot" style="background: ${col.color}"></span>
                         <span class="status-name">${col.name}</span>
                         <div class="status-bar"><div class="status-bar-fill" style="width: ${percent}%; background: ${col.color}"></div></div>
@@ -4386,10 +4606,10 @@ const ocExport = (() => {
                     const barColor = workloadPercent > 100 ? 'var(--red-500)' : workloadPercent > 80 ? 'var(--orange-500)' : 'var(--accent)';
                     
                     return `
-                        <div class="team-stat-item" onclick="filterFromDashboard('owner', '${member.id}')">
-                            <div class="team-stat-avatar" style="background: ${member.color}">${getInitials(member.name)}</div>
+                        <div class="team-stat-item" role="button" tabindex="0" data-act="filterFromDashboard" data-type="owner" data-id="${esc(member.id)}">
+                            <div class="team-stat-avatar" style="${avatarStyle(member.color)}" aria-hidden="true">${esc(getInitials(member.name))}</div>
                             <div class="team-stat-info">
-                                <div class="team-stat-name">${member.name}</div>
+                                <div class="team-stat-name">${esc(member.name)}</div>
                                 <div class="team-stat-meta">${memberDone}/${memberCards.length} taken · ${memberEstimate}/${memberAvailability} dagen</div>
                             </div>
                             <div class="team-stat-bar">
@@ -4412,16 +4632,16 @@ const ocExport = (() => {
                     const epicPercent = epicCards.length > 0 ? Math.round((epicDone / epicCards.length) * 100) : 0;
                     
                     return `
-                        <div class="team-stat-item" onclick="filterFromDashboard('epic', '${epic.id}')">
-                            <div class="team-stat-avatar" style="background: ${epic.color}; border-radius: var(--radius-sm);">
+                        <div class="team-stat-item" role="button" tabindex="0" data-act="filterFromDashboard" data-type="epic" data-id="${esc(epic.id)}">
+                            <div class="team-stat-avatar" style="${avatarStyle(epic.color)}; border-radius: var(--radius-sm);" aria-hidden="true">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 18px; height: 18px;"><polygon points="12 2 2 7 12 12 22 7 12 2"/></svg>
                             </div>
                             <div class="team-stat-info">
-                                <div class="team-stat-name">${epic.name}</div>
+                                <div class="team-stat-name">${esc(epic.name)}</div>
                                 <div class="team-stat-meta">${epicDone}/${epicCards.length} taken voltooid</div>
                             </div>
                             <div class="team-stat-bar">
-                                <div class="team-stat-bar-fill" style="width: ${epicPercent}%; background: ${epic.color}"></div>
+                                <div class="team-stat-bar-fill" style="width: ${epicPercent}%; background: ${esc(safeColor(epic.color))}"></div>
                             </div>
                             <div class="team-stat-value">${epicPercent}%</div>
                         </div>
@@ -4482,11 +4702,16 @@ const ocExport = (() => {
         function openRoadmap() {
             roadmapDate = new Date();
             renderRoadmap();
-            document.getElementById('roadmapModal').classList.add('active');
+            const el = document.getElementById('roadmapModal');
+            el.classList.add('active');
+            focusInto('roadmap', el, '.dashboard-close');
         }
 
         function closeRoadmap() {
-            document.getElementById('roadmapModal').classList.remove('active');
+            const el = document.getElementById('roadmapModal');
+            if (!el.classList.contains('active')) return;
+            focusOut('roadmap', el);
+            el.classList.remove('active');
         }
 
         function roadmapPrevMonth() {
@@ -4572,19 +4797,18 @@ const ocExport = (() => {
                         const widthPercent = ((endDay - startDay + 1) / daysInMonth) * 100;
                         
                         bodyHTML += `
-                            <div class="roadmap-sprint-row" data-sprint-id="${sprint.id}">
-                                <div class="roadmap-sprint-bar ${sprint.status || 'active'} ${isActive ? 'active' : ''}" 
+                            <div class="roadmap-sprint-row" data-sprint-id="${esc(sprint.id)}">
+                                <div class="roadmap-sprint-bar ${esc(sprint.status || 'active')} ${isActive ? 'active' : ''}"
                                      style="left: ${leftPercent}%; width: ${widthPercent}%;"
-                                     data-sprint-id="${sprint.id}"
-                                     data-start="${sprint.startDate}"
-                                     data-end="${sprint.endDate}"
-                                     onmousedown="startSprintDrag(event, '${sprint.id}')"
-                                     ondblclick="goToSprintFromRoadmap('${sprint.id}')">
-                                    <div class="roadmap-resize-handle left" onmousedown="startSprintResize(event, '${sprint.id}', 'left')"></div>
-                                    <span class="roadmap-sprint-name">${sprint.name}</span>
+                                     data-sprint-id="${esc(sprint.id)}"
+                                     data-dbl="goToSprint" data-id="${esc(sprint.id)}"
+                                     data-start="${esc(sprint.startDate)}"
+                                     data-end="${esc(sprint.endDate)}">
+                                    <div class="roadmap-resize-handle left" data-side="left" data-id="${esc(sprint.id)}"></div>
+                                    <span class="roadmap-sprint-name">${esc(sprint.name)}</span>
                                     <span class="roadmap-sprint-tasks">${taskCount}</span>
-                                    <div class="roadmap-resize-handle right" onmousedown="startSprintResize(event, '${sprint.id}', 'right')"></div>
-                                    <div class="roadmap-date-tooltip">${toDisplayDate(sprint.startDate)} — ${toDisplayDate(sprint.endDate)}</div>
+                                    <div class="roadmap-resize-handle right" data-side="right" data-id="${esc(sprint.id)}"></div>
+                                    <div class="roadmap-date-tooltip">${esc(toDisplayDate(sprint.startDate))} — ${esc(toDisplayDate(sprint.endDate))}</div>
                                 </div>
                             </div>
                         `;
@@ -4593,11 +4817,12 @@ const ocExport = (() => {
                     // Sprint without dates - show as dashed bar
                     bodyHTML += `
                         <div class="roadmap-sprint-row">
-                            <div class="roadmap-sprint-bar no-dates" 
+                            <div class="roadmap-sprint-bar no-dates"
                                  style="left: 5%; width: 30%;"
-                                 onclick="editSprintDatesFromRoadmap('${sprint.id}')"
-                                 title="${sprint.name}: Klik om datums in te stellen">
-                                <span class="roadmap-sprint-name">${sprint.name}</span>
+                                 role="button" tabindex="0"
+                                 data-act="editSprintDates" data-id="${esc(sprint.id)}"
+                                 title="${esc(sprint.name)}: klik om datums in te stellen">
+                                <span class="roadmap-sprint-name">${esc(sprint.name)}</span>
                                 <span class="roadmap-sprint-tasks">${taskCount}</span>
                             </div>
                         </div>
@@ -4633,12 +4858,12 @@ const ocExport = (() => {
                 const hasDate = sprint.startDate && sprint.endDate;
                 
                 return `
-                    <div class="roadmap-sprint-item ${isActive ? 'active' : ''}" onclick="goToSprintFromRoadmap('${sprint.id}')">
-                        <div class="roadmap-sprint-dot ${sprint.status || 'active'}"></div>
+                    <div class="roadmap-sprint-item ${isActive ? 'active' : ''}" role="button" tabindex="0" data-act="goToSprint" data-id="${esc(sprint.id)}">
+                        <div class="roadmap-sprint-dot ${esc(sprint.status || 'active')}"></div>
                         <div class="roadmap-sprint-info">
-                            <div class="roadmap-sprint-title">${sprint.name}</div>
+                            <div class="roadmap-sprint-title">${esc(sprint.name)}</div>
                             <div class="roadmap-sprint-dates">
-                                ${hasDate ? `${toDisplayDate(sprint.startDate)} - ${toDisplayDate(sprint.endDate)}` : 'Geen datums ingesteld'}
+                                ${hasDate ? `${esc(toDisplayDate(sprint.startDate))} - ${esc(toDisplayDate(sprint.endDate))}` : 'Geen datums ingesteld'}
                             </div>
                         </div>
                         <div class="roadmap-sprint-meta">
@@ -4646,10 +4871,10 @@ const ocExport = (() => {
                             <div class="roadmap-sprint-status">${taskCount === 0 ? 'Leeg' : doneCount === taskCount ? 'Klaar' : 'Actief'}</div>
                         </div>
                         <div class="roadmap-sprint-actions">
-                            <button class="card-action-btn" onclick="event.stopPropagation(); editSprintFromRoadmap('${sprint.id}')" title="Bewerken">
+                            <button type="button" class="card-action-btn" data-act="editSprintRm" data-id="${esc(sprint.id)}" title="Bewerken" aria-label="${esc(sprint.name)} hernoemen">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                             </button>
-                            <button class="card-action-btn delete" onclick="event.stopPropagation(); deleteSprintFromRoadmap('${sprint.id}')" title="Verwijderen">
+                            <button type="button" class="card-action-btn delete" data-act="deleteSprintRm" data-id="${esc(sprint.id)}" title="Verwijderen" aria-label="${esc(sprint.name)} verwijderen">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
                             </button>
                         </div>
@@ -4794,12 +5019,11 @@ const ocExport = (() => {
 
         let dragState = null;
 
-        function startSprintDrag(e, sprintId) {
+        function startSprintDrag(e, sprintId, bar) {
             // Don't start drag if clicking on resize handle
             if (e.target.classList.contains('roadmap-resize-handle')) return;
-            
+
             e.preventDefault();
-            const bar = e.currentTarget;
             const body = document.getElementById('roadmapBody');
             const bodyRect = body.getBoundingClientRect();
             
@@ -4820,11 +5044,11 @@ const ocExport = (() => {
             document.addEventListener('mouseup', endSprintDrag);
         }
 
-        function startSprintResize(e, sprintId, side) {
+        function startSprintResize(e, sprintId, side, handle) {
             e.preventDefault();
             e.stopPropagation();
-            
-            const bar = e.target.parentElement;
+
+            const bar = handle.parentElement;
             const body = document.getElementById('roadmapBody');
             const bodyRect = body.getBoundingClientRect();
             
@@ -4944,12 +5168,12 @@ const ocExport = (() => {
         }
 
         function getInitials(name) {
-            return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+            return String(name || '').trim().split(/\s+/).map(n => n[0] || '').join('').toUpperCase().slice(0, 2) || '?';
         }
 
         // Date format helpers (dd/mm/jjjj <-> YYYY-MM-DD)
         function toDisplayDate(isoDate) {
-            if (!isoDate) return '';
+            if (!isoDate || typeof isoDate !== 'string') return '';
             const [year, month, day] = isoDate.split('-');
             return `${day}/${month}/${year}`;
         }
@@ -5011,17 +5235,41 @@ const ocExport = (() => {
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     ${type === 'success' ? '<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>' : '<circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>'}
                 </svg>
-                <span>${message}</span>
+                <span>${esc(message)}</span>
             `;
+            toast.setAttribute('role', type === 'error' ? 'alert' : 'status');
             container.appendChild(toast);
             setTimeout(() => toast.remove(), 3000);
         }
 
         function hexToRgba(hex, alpha) {
-            const r = parseInt(hex.slice(1, 3), 16);
-            const g = parseInt(hex.slice(3, 5), 16);
-            const b = parseInt(hex.slice(5, 7), 16);
+            let h = safeColor(hex).slice(1);
+            if (h.length < 6) h = h.split('').map(c => c + c).join('');
+            const r = parseInt(h.slice(0, 2), 16) || 0;
+            const g = parseInt(h.slice(2, 4), 16) || 0;
+            const b = parseInt(h.slice(4, 6), 16) || 0;
             return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+        }
+
+        /* Achtergrond plus leesbare letterkleur (wit of donker) voor een gekleurd rondje met initialen. */
+        function avatarStyle(color) {
+            const c = safeColor(color, '#64748b');
+            let h = c.slice(1); if (h.length < 6) h = h.split('').map(x => x + x).join('');
+            const l = [0, 2, 4].map(i => { let v = (parseInt(h.slice(i, i + 2), 16) || 0) / 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); });
+            const L = 0.2126 * l[0] + 0.7152 * l[1] + 0.0722 * l[2];
+            const onWhite = 1.05 / (L + 0.05), onDark = (L + 0.05) / (0.0144 + 0.05);   // #0f172a
+            return `background: ${c}; color: ${onWhite >= onDark ? '#ffffff' : '#0f172a'}`;
+        }
+
+        /* Tekstkleur voor een epic-label op een lichte tint van de epic-kleur: donker genoeg voor 4.5:1. */
+        function readableOn(hex) {
+            let h = safeColor(hex).slice(1);
+            if (h.length < 6) h = h.split('').map(c => c + c).join('');
+            let rgb = [0, 2, 4].map(i => parseInt(h.slice(i, i + 2), 16) || 0);
+            const lum = c => { const l = c.map(v => { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); }); return 0.2126 * l[0] + 0.7152 * l[1] + 0.0722 * l[2]; };
+            const bg = rgb.map(v => v * 0.15 + 255 * 0.85);
+            for (let i = 0; i < 20 && (lum(bg) + 0.05) / (lum(rgb) + 0.05) < 4.8; i++) rgb = rgb.map(v => v * 0.85);
+            return '#' + rgb.map(v => Math.round(v).toString(16).padStart(2, '0')).join('');
         }
 
         // ============================================
@@ -5069,7 +5317,7 @@ const ocExport = (() => {
             saveToStorage();
             renderTeamAvailabilityList();
             updateStats();
-            showToast(`Beschikbaarheid gesynchroniseerd naar ${formatAvailability(sprintDays)} dagen`);
+            showToast(`Iedereen staat op ${formatAvailability(sprintDays)} dagen`);
         }
 
         function syncMemberAvailability(memberId) {
@@ -5105,13 +5353,13 @@ const ocExport = (() => {
                     <div class="column-header">
                         <div class="column-title">
                             <div class="column-dot" style="background: ${column.color}"></div>
-                            <span class="column-name">${column.name}</span>
+                            <h2 class="column-name">${esc(column.name)}</h2>
                         </div>
-                        <span class="column-count">${cards.length}</span>
+                        <span class="column-count" aria-label="${cards.length} taken">${cards.length}</span>
                     </div>
                     <div class="column-cards">
                         ${cards.map(renderCard).join('')}
-                        <button class="add-card-btn" onclick="openCardModal(null, '${column.id}')">
+                        <button type="button" class="add-card-btn" data-act="addCard" data-id="${esc(column.id)}" aria-label="Taak toevoegen aan ${esc(column.name)}">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
                             </svg>
@@ -5137,16 +5385,16 @@ const ocExport = (() => {
             const hasMetaInfo = card.dueDate || card.estimate || otherParticipants.length > 0;
 
             return `
-                <div class="card ${card.priority ? 'priority-' + card.priority : ''}" draggable="true" data-id="${card.id}" ondragstart="handleDragStart(event)" ondragend="handleDragEnd(event)" onclick="openCardModal('${card.id}')">
+                <div class="card ${card.priority ? 'priority-' + esc(card.priority) : ''}" draggable="true" data-id="${esc(card.id)}" data-act="openCard" role="button" tabindex="0" aria-label="Taak: ${esc(card.title)}" ondragstart="handleDragStart(event)" ondragend="handleDragEnd(event)">
                     ${hasTopRow ? `
                         <div class="card-top-row">
-                            ${epic ? `<div class="card-epic" style="background: ${hexToRgba(epic.color, 0.15)}; color: ${epic.color}">${epic.name}</div>` : '<div></div>'}
+                            ${epic ? `<div class="card-epic" style="background: ${hexToRgba(epic.color, 0.15)}; color: ${readableOn(epic.color)}">${esc(epic.name)}</div>` : '<div></div>'}
                             ${card.priority ? `<div class="card-priority-badge ${card.priority}">${card.priority === 'high' ? 'Hoog' : card.priority === 'medium' ? 'Middel' : 'Laag'}</div>` : ''}
                         </div>
                     ` : ''}
                     
-                    <div class="card-title">${card.title}</div>
-                    ${card.description ? `<div class="card-description">${card.description}</div>` : ''}
+                    <div class="card-title">${esc(card.title)}</div>
+                    ${card.description ? `<div class="card-description">${esc(card.description)}</div>` : ''}
                     
                     ${subtasksTotal > 0 ? `
                         <div class="card-subtasks-section">
@@ -5162,7 +5410,7 @@ const ocExport = (() => {
                     ` : ''}
                     
                     <div class="card-actions">
-                        <button class="card-action-btn delete" onclick="event.stopPropagation(); deleteCard('${card.id}')" title="Verwijderen">
+                        <button type="button" class="card-action-btn delete" data-act="deleteCard" data-id="${esc(card.id)}" title="Verwijderen" aria-label="Taak verwijderen: ${esc(card.title)}">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
                             </svg>
@@ -5173,20 +5421,20 @@ const ocExport = (() => {
                         <div class="card-footer">
                             ${owner ? `
                                 <div class="card-owner">
-                                    <div class="card-owner-avatar" style="background: ${owner.color}">${getInitials(owner.name)}</div>
-                                    <span class="card-owner-name">${owner.name}</span>
+                                    <div class="card-owner-avatar" style="${avatarStyle(owner.color)}" aria-hidden="true">${esc(getInitials(owner.name))}</div>
+                                    <span class="card-owner-name">${esc(owner.name)}</span>
                                 </div>
                             ` : ''}
                             ${hasMetaInfo ? `
                                 <div class="card-meta-row">
                                     ${card.dueDate ? `<div class="card-meta ${isOverdue(card.dueDate) && card.status !== 'klaar' ? 'overdue' : ''}">
                                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                                        ${formatDate(card.dueDate)}
+                                        ${esc(formatDate(card.dueDate))}
                                     </div>` : ''}
-                                    ${card.estimate ? `<div class="card-estimate">${formatEstimate(card.estimate)}</div>` : ''}
+                                    ${card.estimate ? `<div class="card-estimate">${esc(formatEstimate(card.estimate))}</div>` : ''}
                                     ${otherParticipants.length > 0 ? `<div class="card-other-participants">
                                         <span class="other-label">+</span>
-                                        ${otherParticipants.slice(0, 3).map(p => `<div class="card-avatar-small" style="background: ${p.color}" title="${p.name}">${getInitials(p.name)}</div>`).join('')}
+                                        ${otherParticipants.slice(0, 3).map(p => `<div class="card-avatar-small" style="${avatarStyle(p.color)}" title="${esc(p.name)}">${esc(getInitials(p.name))}</div>`).join('')}
                                         ${otherParticipants.length > 3 ? `<span class="more-participants">+${otherParticipants.length - 3}</span>` : ''}
                                     </div>` : ''}
                                 </div>
@@ -5206,17 +5454,17 @@ const ocExport = (() => {
                 
                 return `
                     <div class="epic-item ${isExpanded ? 'expanded' : ''}">
-                        <div class="epic-header" onclick="toggleTeamExpand('${member.id}')">
-                            <div class="avatar" style="background: ${member.color}; width: 32px; height: 32px;">${getInitials(member.name)}</div>
+                        <div class="epic-header" role="button" tabindex="0" aria-expanded="${isExpanded ? 'true' : 'false'}" data-act="toggleTeam" data-id="${esc(member.id)}">
+                            <div class="avatar" style="${avatarStyle(member.color)}; width: 32px; height: 32px;" aria-hidden="true">${esc(getInitials(member.name))}</div>
                             <div class="epic-info">
-                                <div class="epic-name">${member.name}</div>
+                                <div class="epic-name">${esc(member.name)}</div>
                                 <div class="epic-progress">${doneTasks}/${memberTasks.length} taken voltooid</div>
                             </div>
                             <div class="epic-actions">
-                                <button class="card-action-btn" onclick="event.stopPropagation(); filterByOwner('${member.id}')" title="Filter op dit teamlid">
+                                <button type="button" class="card-action-btn" data-act="filterOwner" data-id="${esc(member.id)}" title="Filter op dit teamlid" aria-label="Filter op ${esc(member.name)}">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
                                 </button>
-                                <button class="card-action-btn delete" onclick="event.stopPropagation(); deleteTeamMember('${member.id}')" title="Verwijderen">
+                                <button type="button" class="card-action-btn delete" data-act="deleteMember" data-id="${esc(member.id)}" title="Verwijderen" aria-label="${esc(member.name)} verwijderen">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
                                 </button>
                                 <svg class="expand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
@@ -5228,14 +5476,14 @@ const ocExport = (() => {
                                     const epic = getEpics().find(e => e.id === task.epicId);
                                     const statusLabel = COLUMNS.find(c => c.id === task.status)?.name || task.status;
                                     return `
-                                        <div class="epic-task-item" onclick="event.stopPropagation(); closePanel('team'); openCardModal('${task.id}')">
-                                            <div class="epic-task-status status-${task.status}"></div>
+                                        <div class="epic-task-item" role="button" tabindex="0" data-act="openTask" data-panel="team" data-id="${esc(task.id)}">
+                                            <div class="epic-task-status status-${esc(task.status)}"></div>
                                             <div class="epic-task-info">
-                                                <div class="epic-task-title">${task.title}</div>
+                                                <div class="epic-task-title">${esc(task.title)}</div>
                                                 <div class="epic-task-meta">
-                                                    <span class="epic-task-status-label">${statusLabel}</span>
-                                                    ${epic ? `<span style="color: ${epic.color}; font-weight: 600;">${epic.name}</span>` : ''}
-                                                    ${task.estimate ? `<span class="epic-task-estimate">${formatEstimate(task.estimate)}</span>` : ''}
+                                                    <span class="epic-task-status-label">${esc(statusLabel)}</span>
+                                                    ${epic ? `<span style="color: ${readableOn(epic.color)}; font-weight: 600;">${esc(epic.name)}</span>` : ''}
+                                                    ${task.estimate ? `<span class="epic-task-estimate">${esc(formatEstimate(task.estimate))}</span>` : ''}
                                                 </div>
                                             </div>
                                         </div>
@@ -5259,12 +5507,12 @@ const ocExport = (() => {
                 const isDefault = availability === sprintDays;
                 return `
                     <div class="item-row">
-                        <div class="avatar" style="background: ${member.color}; width: 28px; height: 28px; font-size: 0.6875rem;">${getInitials(member.name)}</div>
-                        <div class="item-info"><div class="item-name">${member.name}</div></div>
+                        <div class="avatar" style="${avatarStyle(member.color)}; width: 28px; height: 28px; font-size: 0.6875rem;" aria-hidden="true">${esc(getInitials(member.name))}</div>
+                        <div class="item-info"><div class="item-name">${esc(member.name)}</div></div>
                         <div class="team-availability">
-                            <input type="number" class="availability-input" value="${availability}" min="0" max="60" step="0.5" onchange="updateTeamAvailability('${member.id}', this.value)">
+                            <input type="number" class="availability-input" value="${esc(availability)}" min="0" max="60" step="0.5" data-change="availability" data-id="${esc(member.id)}" aria-label="Beschikbare dagen voor ${esc(member.name)}">
                             <span class="availability-label">dagen</span>
-                            ${!isDefault ? `<button class="availability-sync-btn" onclick="syncMemberAvailability('${member.id}')" title="Synchroniseer met sprintduur">↺</button>` : ''}
+                            ${!isDefault ? `<button type="button" class="availability-sync-btn" data-act="syncMember" data-id="${esc(member.id)}" title="Gelijkzetten met de sprintduur" aria-label="Beschikbaarheid van ${esc(member.name)} gelijkzetten met de sprintduur">↺</button>` : ''}
                         </div>
                     </div>
                 `;
@@ -5280,17 +5528,17 @@ const ocExport = (() => {
                 
                 return `
                     <div class="epic-item ${isExpanded ? 'expanded' : ''}">
-                        <div class="epic-header" onclick="toggleEpicExpand('${epic.id}')">
-                            <div class="epic-color" style="background: ${epic.color}"></div>
+                        <div class="epic-header" role="button" tabindex="0" aria-expanded="${isExpanded ? 'true' : 'false'}" data-act="toggleEpic" data-id="${esc(epic.id)}">
+                            <div class="epic-color" style="background: ${esc(safeColor(epic.color))}"></div>
                             <div class="epic-info">
-                                <div class="epic-name">${epic.name}</div>
+                                <div class="epic-name">${esc(epic.name)}</div>
                                 <div class="epic-progress">${doneTasks}/${epicTasks.length} taken voltooid</div>
                             </div>
                             <div class="epic-actions">
-                                <button class="card-action-btn" onclick="event.stopPropagation(); filterByEpic('${epic.id}')" title="Filter op deze epic">
+                                <button type="button" class="card-action-btn" data-act="filterEpic" data-id="${esc(epic.id)}" title="Filter op deze epic" aria-label="Filter op ${esc(epic.name)}">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
                                 </button>
-                                <button class="card-action-btn delete" onclick="event.stopPropagation(); deleteEpic('${epic.id}')" title="Verwijderen">
+                                <button type="button" class="card-action-btn delete" data-act="deleteEpic" data-id="${esc(epic.id)}" title="Verwijderen" aria-label="${esc(epic.name)} verwijderen">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
                                 </button>
                                 <svg class="expand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
@@ -5302,14 +5550,14 @@ const ocExport = (() => {
                                     const owner = getTeam().find(t => t.id === task.ownerId);
                                     const statusLabel = COLUMNS.find(c => c.id === task.status)?.name || task.status;
                                     return `
-                                        <div class="epic-task-item" onclick="event.stopPropagation(); closePanel('epics'); openCardModal('${task.id}')">
-                                            <div class="epic-task-status status-${task.status}"></div>
+                                        <div class="epic-task-item" role="button" tabindex="0" data-act="openTask" data-panel="epics" data-id="${esc(task.id)}">
+                                            <div class="epic-task-status status-${esc(task.status)}"></div>
                                             <div class="epic-task-info">
-                                                <div class="epic-task-title">${task.title}</div>
+                                                <div class="epic-task-title">${esc(task.title)}</div>
                                                 <div class="epic-task-meta">
-                                                    <span class="epic-task-status-label">${statusLabel}</span>
-                                                    ${owner ? `<span class="epic-task-owner">${owner.name}</span>` : ''}
-                                                    ${task.estimate ? `<span class="epic-task-estimate">${formatEstimate(task.estimate)}</span>` : ''}
+                                                    <span class="epic-task-status-label">${esc(statusLabel)}</span>
+                                                    ${owner ? `<span class="epic-task-owner">${esc(owner.name)}</span>` : ''}
+                                                    ${task.estimate ? `<span class="epic-task-estimate">${esc(formatEstimate(task.estimate))}</span>` : ''}
                                                 </div>
                                             </div>
                                         </div>
@@ -5331,10 +5579,10 @@ const ocExport = (() => {
                 const statusName = COLUMNS.find(c => c.id === state.filters.status)?.name || state.filters.status;
                 const statusColor = COLUMNS.find(c => c.id === state.filters.status)?.color || '#64748b';
                 statusChips.innerHTML = `
-                    <button class="filter-chip-status active" style="--status-color: ${statusColor};" onclick="toggleFilter('status', '${state.filters.status}')">
-                        <span class="status-dot" style="background: ${statusColor}"></span>
-                        ${statusName}
-                        <span class="chip-remove">✕</span>
+                    <button type="button" class="filter-chip-status active" style="--status-color: ${esc(statusColor)};" data-act="toggleFilter" data-type="status" data-id="${esc(state.filters.status)}" aria-label="Statusfilter ${esc(statusName)} weghalen">
+                        <span class="status-dot" style="background: ${esc(statusColor)}"></span>
+                        ${esc(statusName)}
+                        <span class="chip-remove" aria-hidden="true">✕</span>
                     </button>
                 `;
             } else {
@@ -5347,9 +5595,8 @@ const ocExport = (() => {
             if (getEpics().length > 0) {
                 epicGroup.style.display = 'flex';
                 epicChips.innerHTML = getEpics().map(epic => `
-                    <button class="filter-chip-epic ${state.filters.epic === epic.id ? 'active' : ''}" style="--epic-color: ${epic.color};" onclick="toggleFilter('epic', '${epic.id}')">
-                        <style>.filter-chip-epic[style*="${epic.color}"]::before { background: ${epic.color}; }            </style>
-                        ${epic.name}
+                    <button type="button" class="filter-chip-epic ${state.filters.epic === epic.id ? 'active' : ''}" style="--epic-color: ${esc(safeColor(epic.color))};" data-act="toggleFilter" data-type="epic" data-id="${esc(epic.id)}" aria-pressed="${state.filters.epic === epic.id ? 'true' : 'false'}">
+                        ${esc(epic.name)}
                     </button>
                 `).join('');
             } else {
@@ -5362,9 +5609,9 @@ const ocExport = (() => {
             if (getTeam().length > 0) {
                 teamGroup.style.display = 'flex';
                 teamChips.innerHTML = getTeam().map(member => `
-                    <button class="filter-chip-team ${state.filters.owner === member.id ? 'active' : ''}" onclick="toggleFilter('owner', '${member.id}')">
-                        <span class="mini-avatar" style="background: ${member.color}">${getInitials(member.name)}</span>
-                        ${member.name}
+                    <button type="button" class="filter-chip-team ${state.filters.owner === member.id ? 'active' : ''}" data-act="toggleFilter" data-type="owner" data-id="${esc(member.id)}" aria-pressed="${state.filters.owner === member.id ? 'true' : 'false'}">
+                        <span class="mini-avatar" style="${avatarStyle(member.color)}" aria-hidden="true">${esc(getInitials(member.name))}</span>
+                        ${esc(member.name)}
                     </button>
                 `).join('');
             } else {
@@ -5373,28 +5620,28 @@ const ocExport = (() => {
 
             // Clear filters button
             const hasActiveFilters = state.filters.epic || state.filters.owner || state.filters.search || state.filters.status;
-            document.getElementById('clearFiltersBtn').style.display = hasActiveFilters ? 'block' : 'none';
+            document.getElementById('clearFiltersBtn').style.display = hasActiveFilters ? 'inline-flex' : 'none';
         }
 
         function renderParticipantCheckboxes() {
             const container = document.getElementById('participantsContainer');
             container.innerHTML = getTeam().length ? getTeam().map(member => `
                 <label class="participant-item">
-                    <input type="checkbox" value="${member.id}">
-                    <div class="avatar" style="background: ${member.color}; width: 22px; height: 22px; font-size: 0.6875rem;">${getInitials(member.name)}</div>
-                    <span style="font-size: 0.8125rem; color: var(--slate-700);">${member.name}</span>
+                    <input type="checkbox" value="${esc(member.id)}">
+                    <div class="avatar" style="${avatarStyle(member.color)}; width: 22px; height: 22px; font-size: 0.6875rem;" aria-hidden="true">${esc(getInitials(member.name))}</div>
+                    <span style="font-size: 0.8125rem; color: var(--slate-700);">${esc(member.name)}</span>
                 </label>
-            `).join('') : '<p style="color: var(--slate-400); font-size: 0.8125rem;">Voeg eerst teamleden toe</p>';
+            `).join('') : '<p style="color: var(--slate-500); font-size: 0.8125rem;">Voeg eerst teamleden toe</p>';
         }
 
         function renderSubtasks() {
             const container = document.getElementById('subtasksContainer');
             container.innerHTML = state.currentEditSubtasks.map((subtask, index) => `
                 <div class="checklist-item ${subtask.done ? 'done' : ''}">
-                    <input type="checkbox" ${subtask.done ? 'checked' : ''} onchange="toggleSubtask(${index})">
-                    <span>${subtask.text}</span>
-                    <button class="card-action-btn" onclick="removeSubtask(${index})" style="width: 20px; height: 20px;">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 10px; height: 10px;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    <input type="checkbox" ${subtask.done ? 'checked' : ''} data-change="subtask" data-index="${index}" aria-label="Subtaak ${index + 1} klaar: ${esc(subtask.text)}">
+                    <span>${esc(subtask.text)}</span>
+                    <button type="button" class="card-action-btn" data-act="removeSubtask" data-index="${index}" aria-label="Subtaak ${index + 1} verwijderen">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                     </button>
                 </div>
             `).join('');
@@ -5443,11 +5690,11 @@ const ocExport = (() => {
 
         function updateSelects() {
             document.getElementById('cardEpicSelect').innerHTML = '<option value="">Geen epic</option>' +
-                getEpics().map(e => `<option value="${e.id}">${e.name}</option>`).join('') +
+                getEpics().map(e => `<option value="${esc(e.id)}">${esc(e.name)}</option>`).join('') +
                 '<option value="__new__">+ Nieuwe epic aanmaken...</option>';
 
             document.getElementById('cardOwnerSelect').innerHTML = '<option value="">Niet toegewezen</option>' +
-                getTeam().map(t => `<option value="${t.id}">${t.name}</option>`).join('');
+                getTeam().map(t => `<option value="${esc(t.id)}">${esc(t.name)}</option>`).join('');
         }
 
         // ============================================
@@ -5546,7 +5793,7 @@ const ocExport = (() => {
             if (cardId) {
                 const card = getCards().find(c => c.id === cardId);
                 if (card) {
-                    document.getElementById('cardModalTitle').textContent = 'Taak Bewerken';
+                    document.getElementById('cardModalTitle').textContent = 'Taak bewerken';
                     document.getElementById('cardId').value = card.id;
                     document.getElementById('cardTitle').value = card.title;
                     document.getElementById('cardDescription').value = card.description || '';
@@ -5560,7 +5807,7 @@ const ocExport = (() => {
 
                     // Set priority buttons
                     document.querySelectorAll('.priority-btn').forEach(btn => btn.classList.remove('active'));
-                    if (card.priority) document.querySelector(`.priority-btn.${card.priority}`).classList.add('active');
+                    if (PRIORITIES.includes(card.priority)) document.querySelector(`.priority-btn.${card.priority}`).classList.add('active');
 
                     // Set estimate slider
                     const estVal = parseFloat(card.estimate) || 0;
@@ -5576,7 +5823,7 @@ const ocExport = (() => {
                     }, 0);
                 }
             } else {
-                document.getElementById('cardModalTitle').textContent = 'Nieuwe Taak';
+                document.getElementById('cardModalTitle').textContent = 'Nieuwe taak';
                 document.getElementById('cardId').value = '';
                 document.getElementById('cardTitle').value = '';
                 document.getElementById('cardDescription').value = '';
@@ -5594,12 +5841,15 @@ const ocExport = (() => {
             }
 
             renderSubtasks();
+            if (!document.getElementById('cardModal').contains(document.activeElement)) focusBack.card = document.activeElement;
             document.getElementById('cardModalOverlay').classList.add('active');
             document.getElementById('cardModal').classList.add('active');
             setTimeout(() => document.getElementById('cardTitle').focus(), 100);
         }
 
         function closeCardModal() {
+            const el = document.getElementById('cardModal');
+            if (el.classList.contains('active')) focusOut('card', el);
             document.getElementById('cardModalOverlay').classList.remove('active');
             document.getElementById('cardModal').classList.remove('active');
         }
@@ -5707,7 +5957,7 @@ const ocExport = (() => {
         function onOwnerChange(ownerId) {
             if (ownerId) {
                 // Vink de eigenaar ook aan als betrokkene
-                const checkbox = document.querySelector(`#participantsContainer input[value="${ownerId}"]`);
+                const checkbox = document.querySelector(`#participantsContainer input[value="${CSS.escape(ownerId)}"]`);
                 if (checkbox) {
                     checkbox.checked = true;
                 }
@@ -5945,13 +6195,17 @@ const ocExport = (() => {
 
         function openPanel(panel) {
             document.getElementById(`${panel}Overlay`).classList.add('active');
-            document.getElementById(`${panel}Panel`).classList.add('active');
+            const el = document.getElementById(`${panel}Panel`);
+            el.classList.add('active');
+            focusInto(panel, el, 'input:not([type=hidden]), .modal-close');
             if (panel === 'team') renderTeamList();
             if (panel === 'epics') renderEpicsList();
             if (panel === 'sprint') { loadSprintSettings(); renderTeamAvailabilityList(); }
         }
 
         function closePanel(panel) {
+            const el = document.getElementById(`${panel}Panel`);
+            if (el.classList.contains('active')) focusOut(panel, el);
             document.getElementById(`${panel}Overlay`).classList.remove('active');
             document.getElementById(`${panel}Panel`).classList.remove('active');
         }
@@ -5980,7 +6234,7 @@ const ocExport = (() => {
         }
 
         document.addEventListener('click', (e) => {
-            if (!e.target.closest('.dropdown') && !e.target.closest('.project-selector')) {
+            if (!e.target.closest('.dropdown') && !e.target.closest('.project-selector') || e.target.closest('.dropdown-item, .project-item')) {
                 document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('active'));
                 document.querySelectorAll('.dropdown-menu').forEach(d => d.classList.remove('active'));
             }
@@ -6024,6 +6278,7 @@ const ocExport = (() => {
             reader.onload = async (e) => {
                 try {
                     const imported = JSON.parse(e.target.result);
+                    if (!imported || typeof imported !== 'object') throw new Error('Ongeldig bestandsformaat');
                     
                     // Handle both old and new format
                     let importedProject;
@@ -6031,7 +6286,7 @@ const ocExport = (() => {
                     if (imported.data?.project) {
                         // New v5 format
                         importedProject = imported.data.project;
-                    } else if (imported.data?.cards) {
+                    } else if (Array.isArray(imported.data?.cards)) {
                         // Old v4 format - convert to project
                         importedProject = createDefaultProject();
                         importedProject.name = 'Geïmporteerd Project';
@@ -6047,9 +6302,9 @@ const ocExport = (() => {
                     }
 
                     // Confirm import
-                    const taskCount = importedProject.cards?.length || 0;
-                    const teamCount = importedProject.team?.length || 0;
-                    const epicCount = importedProject.epics?.length || 0;
+                    const taskCount = Array.isArray(importedProject.cards) ? importedProject.cards.length : 0;
+                    const teamCount = Array.isArray(importedProject.team) ? importedProject.team.length : 0;
+                    const epicCount = Array.isArray(importedProject.epics) ? importedProject.epics.length : 0;
                     
                     const action = await ocConfirm(`Hoe wil je importeren?\n\n• ${taskCount} taken\n• ${teamCount} teamleden\n• ${epicCount} epics\n\nBackup van: ${imported.exportDate ? new Date(imported.exportDate).toLocaleString('nl-NL') : 'onbekend'}`, { ok: 'Importeer als nieuw project' });
                     
@@ -6058,15 +6313,11 @@ const ocExport = (() => {
                         return;
                     }
 
-                    // Import as new project with new ID
+                    // Import as new project with new ID; alles wordt eerst opgeschoond en gevalideerd
+                    importedProject = sanitizeProject(importedProject);
                     importedProject.id = generateId();
-                    importedProject.name = imported.projectName || importedProject.name || 'Geïmporteerd Project';
-                    
-                    // Ensure sprints have IDs
-                    importedProject.sprints.forEach(s => {
-                        if (!s.id) s.id = generateId();
-                    });
-                    
+                    importedProject.name = String(imported.projectName || importedProject.name || 'Geïmporteerd project').slice(0, 200);
+                                        
                     state.projects.push(importedProject);
                     state.activeProjectId = importedProject.id;
                     state.activeSprintId = importedProject.sprints[0]?.id;
@@ -6133,14 +6384,14 @@ const ocExport = (() => {
                             card.dueDate ? 'tegen ' + escX(formatDate(card.dueDate)) : '',
                             subs.length ? `${subs.filter(x => x.done).length}/${subs.length} subtaken` : ''
                         ].filter(Boolean).join(' · ');
-                        return `<div data-oc-keep style="border:1px solid #e2e8f0;border-left:4px solid ${epic?.color || '#cbd5e1'};border-radius:8px;padding:9px 10px;margin-bottom:8px;background:#fff">
-                            ${epic ? `<div style="font-size:11px;font-weight:600;color:${epic.color};margin-bottom:2px">${escX(epic.name)}</div>` : ''}
+                        return `<div data-oc-keep style="border:1px solid #e2e8f0;border-left:4px solid ${epic ? esc(safeColor(epic.color)) : '#cbd5e1'};border-radius:8px;padding:9px 10px;margin-bottom:8px;background:#fff">
+                            ${epic ? `<div style="font-size:11px;font-weight:600;color:${readableOn(epic.color)};margin-bottom:2px">${escX(epic.name)}</div>` : ''}
                             <div style="font-size:13.5px;font-weight:600;color:${card.status === 'klaar' ? '#64748b' : '#1e293b'};line-height:1.35">${escX(card.title)}</div>
                             ${meta || prio ? `<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:6px;font-size:11.5px;color:#64748b">
                                 ${prio ? `<span style="font-weight:600;color:${prio[1]};background:${prio[2]};border-radius:999px;padding:0 7px">${prio[0]}</span>` : ''}
                                 <span>${meta}</span></div>` : ''}
                         </div>`;
-                    }).join('') : '<div style="font-size:12px;color:#94a3b8;padding:6px 2px">Leeg</div>'}
+                    }).join('') : '<div style="font-size:12px;color:#64748b;padding:6px 2px">Leeg</div>'}
                 </div>`;
             }).join('');
             node.appendChild(board);
@@ -6167,7 +6418,8 @@ const ocExport = (() => {
                     const owner = getTeam().find(t => t.id === card.ownerId);
                     const participants = (card.participants || []).map(id => getTeam().find(t => t.id === id)?.name).filter(Boolean).join('; ');
                     const subtasks = (card.subtasks || []).map(s => `${s.done ? '✓' : '○'} ${s.text}`).join('; ');
-                    return [card.id, `"${card.title.replace(/"/g, '""')}"`, `"${(card.description || '').replace(/"/g, '""')}"`, card.status, epic?.name || '', owner?.name || '', `"${participants}"`, card.priority, card.estimate || '', card.dueDate || '', `"${subtasks}"`].join(',');
+                    const cell = v => `"${String(v == null ? '' : v).replace(/"/g, '""')}"`;
+                    return [card.id, card.title, card.description, card.status, epic?.name, owner?.name, participants, card.priority, card.estimate, card.dueDate, subtasks].map(cell).join(',');
                 });
                 const csv = [headers.join(','), ...rows].join('\n');
                 const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
@@ -6185,7 +6437,15 @@ const ocExport = (() => {
 
         function setupKeyboardHandlers() {
             document.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape') { closeCardModal(); closePanel('team'); closePanel('epics'); closePanel('sprint'); }
+                if (e.key === 'Escape') {
+                    const openMenu = document.querySelector('.dropdown-menu.active');
+                    if (openMenu) {   // eerst een open menu sluiten en de focus terug op de knop zetten
+                        document.querySelectorAll('.dropdown, .dropdown-menu').forEach(d => d.classList.remove('active'));
+                        openMenu.parentElement.querySelector('button')?.focus();
+                        return;
+                    }
+                    closeCardModal(); closePanel('team'); closePanel('epics'); closePanel('sprint'); closeRoadmap(); closeDashboard();
+                }
                 if (e.key === 'n' && e.ctrlKey) { e.preventDefault(); openCardModal(); }
             });
             document.getElementById('newSubtaskInput').addEventListener('keypress', (e) => { if (e.key === 'Enter') { e.preventDefault(); addSubtask(); } });
@@ -6194,7 +6454,68 @@ const ocExport = (() => {
             document.getElementById('inlineEpicName').addEventListener('keypress', (e) => { if (e.key === 'Enter') { e.preventDefault(); addEpicInline(); } });
         }
 
+        /* Knoppen en rijen die met data werken, dragen data-act/data-dbl/data-change en een data-id
+           in plaats van een inline onclick. Deze luisteraars sturen alles door. */
+        let lastTabClick = {};
+        const ACTIONS = {
+            switchProject: el => switchProject(el.dataset.id),
+            // dubbelklik zelf herkennen: de eerste klik tekent de tabs opnieuw, dus een gewone dblclick valt weg
+            switchSprint: el => {
+                const id = el.dataset.id, now = Date.now();
+                if (lastTabClick.id === id && now - lastTabClick.t < 450) { lastTabClick = {}; editSprintName(id); return; }
+                lastTabClick = { id, t: now };
+                switchSprint(id);
+            },
+            filterFromDashboard: el => filterFromDashboard(el.dataset.type, el.dataset.id),
+            editSprintDates: el => editSprintDatesFromRoadmap(el.dataset.id),
+            goToSprint: el => goToSprintFromRoadmap(el.dataset.id),
+            editSprintRm: el => editSprintFromRoadmap(el.dataset.id),
+            deleteSprintRm: el => deleteSprintFromRoadmap(el.dataset.id),
+            addCard: el => openCardModal(null, el.dataset.id),
+            openCard: el => openCardModal(el.dataset.id),
+            deleteCard: el => deleteCard(el.dataset.id),
+            toggleTeam: el => toggleTeamExpand(el.dataset.id),
+            filterOwner: el => filterByOwner(el.dataset.id),
+            deleteMember: el => deleteTeamMember(el.dataset.id),
+            toggleEpic: el => toggleEpicExpand(el.dataset.id),
+            filterEpic: el => filterByEpic(el.dataset.id),
+            deleteEpic: el => deleteEpic(el.dataset.id),
+            openTask: el => { closePanel(el.dataset.panel); openCardModal(el.dataset.id); },
+            syncMember: el => syncMemberAvailability(el.dataset.id),
+            toggleFilter: el => toggleFilter(el.dataset.type, el.dataset.id),
+            removeSubtask: el => removeSubtask(+el.dataset.index)
+        };
+        function setupDelegation() {
+            document.addEventListener('click', e => {
+                const el = e.target.closest('[data-act]');
+                if (el && ACTIONS[el.dataset.act]) ACTIONS[el.dataset.act](el, e);
+            });
+            document.addEventListener('dblclick', e => {
+                const el = e.target.closest('[data-dbl]');
+                if (el && ACTIONS[el.dataset.dbl]) ACTIONS[el.dataset.dbl](el, e);
+            });
+            document.addEventListener('keydown', e => {
+                if ((e.key === 'Enter' || e.key === ' ') && e.target.matches('[data-act][role="button"]')) {
+                    e.preventDefault();
+                    e.target.click();
+                }
+            });
+            document.addEventListener('change', e => {
+                const el = e.target.closest('[data-change]');
+                if (!el) return;
+                if (el.dataset.change === 'availability') updateTeamAvailability(el.dataset.id, el.value);
+                if (el.dataset.change === 'subtask') toggleSubtask(+el.dataset.index);
+            });
+            document.addEventListener('mousedown', e => {
+                const handle = e.target.closest('.roadmap-resize-handle[data-id]');
+                if (handle) return startSprintResize(e, handle.dataset.id, handle.dataset.side, handle);
+                const bar = e.target.closest('.roadmap-sprint-bar[data-sprint-id]');
+                if (bar) startSprintDrag(e, bar.dataset.sprintId, bar);
+            });
+        }
+
         function init() {
+            setupDelegation();
             loadFromStorage();
             ocPublishKanban();
             renderProjectList();
