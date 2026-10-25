@@ -9,7 +9,7 @@
     <meta name="oc:groep" content="projecten">
     <meta name="oc:labels" content="">
     <meta name="oc:pdca" content="do, plan">
-    <meta name="oc:kort" content="Kanbanbord voor sprints en taken">
+    <meta name="oc:kort" content="Takenbord: te doen, bezig, klaar">
     <meta name="oc:volgorde" content="20">
     <meta name="oc:traject" content="project:5">
     <meta name="oc:opslag" content="sprintflow_kanban_v5, oc.share.kanban">
@@ -3179,6 +3179,8 @@
 </head>
 <body>
     <script>
+/* Het actieve project uit de app (oc.project): nieuwe projecten, analyses en lijsten krijgen die naam. */
+function ocProject(fb) { try { const p = JSON.parse(localStorage.getItem('oc.project')); return p && typeof p.name === 'string' && p.name.trim() ? p.name.trim().slice(0, 80) : fb; } catch { return fb; } }
         /* Vervangt confirm() en prompt() door een dialoog in de pagina. Beide geven een Promise terug. */
         function ocDialog({ message = '', label = '', value = null, okText = 'OK', danger = false }) {
             return new Promise(resolve => {
@@ -3949,8 +3951,8 @@ const ocShare = (() => {
    andere tools, zodat de app ze offline kan bewaren. */
 const ocExport = (() => {
   const LIBS = {
-    h2c: 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js',
-    pdf: 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js'
+    h2c: '/lib/html2canvas-1.4.1.min.js',
+    pdf: '/lib/jspdf-2.5.1.umd.min.js'
   };
   const A4 = { w: 210, h: 297 }, MARGIN = 10;   // mm
   const loaded = {};
@@ -4170,7 +4172,7 @@ const ocExport = (() => {
         function createDefaultProject() {
             return {
                 id: generateId(),
-                name: 'Mijn Project',
+                name: ocProject('Mijn project'),
                 sprints: [{
                     id: generateId(),
                     name: 'Sprint 1',
@@ -4340,7 +4342,7 @@ const ocExport = (() => {
         // ============================================
 
         async function createNewProject() {
-            const name = await ocPrompt('Project naam:', 'Nieuw Project');
+            const name = await ocPrompt('Project naam:', ocProject('Nieuw project'));
             if (name && name.trim()) {
                 const newProject = createDefaultProject();
                 newProject.name = name.trim();
