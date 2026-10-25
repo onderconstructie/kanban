@@ -3181,6 +3181,7 @@
     <script>
 /* Het actieve project uit de app (oc.project): nieuwe projecten, analyses en lijsten krijgen die naam. */
 function ocProject(fb) { try { const p = JSON.parse(localStorage.getItem('oc.project')); return p && typeof p.name === 'string' && p.name.trim() ? p.name.trim().slice(0, 80) : fb; } catch { return fb; } }
+function ocPickProject(st, arr, cur = 'current') { const p = ocProject(''); if (!p || !st || !Array.isArray(st[arr])) return; const u = st[arr].find(x => x && x.name === p); if (u) st[cur] = u.id; }   // open het actieve project uit de app
         /* Vervangt confirm() en prompt() door een dialoog in de pagina. Beide geven een Promise terug. */
         function ocDialog({ message = '', label = '', value = null, okText = 'OK', danger = false }) {
             return new Promise(resolve => {
@@ -6597,6 +6598,7 @@ const ocExport = (() => {
         function init() {
             setupDelegation();
             loadFromStorage();
+            ocPickProject(state, 'projects', 'activeProjectId');
             ocPublishKanban();
             renderProjectList();
             renderSprintTabs();
