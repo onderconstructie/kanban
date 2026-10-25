@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#ffffff">
-    <title>SprintFlow – Onder Constructie</title>
-    <meta name="description" content="Visueel kanban-bord voor agile projecten. Beheer sprints, taken en teamcapaciteit.">
+    <title>Takenbord – Onder Constructie</title>
+    <meta name="description" content="Je taken op een bord, van later tot klaar. Plan per periode en hou de werklast van je team in het oog.">
     <meta name="oc:groep" content="projecten">
     <meta name="oc:labels" content="">
     <meta name="oc:pdca" content="do, plan">
@@ -13,7 +13,7 @@
     <meta name="oc:volgorde" content="20">
     <meta name="oc:traject" content="project:5">
     <meta name="oc:opslag" content="sprintflow_kanban_v5, oc.share.kanban">
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg viewBox=&quot;0 0 40 40&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;%3E %3Crect x=&quot;5&quot; y=&quot;5&quot; width=&quot;30&quot; height=&quot;30&quot; rx=&quot;5&quot; fill=&quot;%23ecfdf5&quot; stroke=&quot;%2310b981&quot; stroke-width=&quot;1.5&quot;/%3E %3Crect x=&quot;9&quot; y=&quot;11&quot; width=&quot;6&quot; height=&quot;18&quot; rx=&quot;1.5&quot; fill=&quot;%2310b981&quot; opacity=&quot;0.3&quot;/%3E %3Crect x=&quot;17&quot; y=&quot;11&quot; width=&quot;6&quot; height=&quot;13&quot; rx=&quot;1.5&quot; fill=&quot;%2310b981&quot; opacity=&quot;0.5&quot;/%3E %3Crect x=&quot;25&quot; y=&quot;11&quot; width=&quot;6&quot; height=&quot;8&quot; rx=&quot;1.5&quot; fill=&quot;%2310b981&quot; opacity=&quot;0.8&quot;/%3E %3C/svg%3E">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg viewBox=&quot;0 0 40 40&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;%3E%3Ccircle cx=&quot;20&quot; cy=&quot;20&quot; r=&quot;18&quot; fill=&quot;%23f8fafc&quot; stroke=&quot;%23e2e8f0&quot; stroke-width=&quot;1.5&quot;/%3E%3Crect x=&quot;8.5&quot; y=&quot;11&quot; width=&quot;7&quot; height=&quot;5&quot; rx=&quot;1.5&quot; fill=&quot;%23334155&quot;/%3E%3Crect x=&quot;8.5&quot; y=&quot;18&quot; width=&quot;7&quot; height=&quot;5&quot; rx=&quot;1.5&quot; fill=&quot;%23334155&quot;/%3E%3Crect x=&quot;8.5&quot; y=&quot;25&quot; width=&quot;7&quot; height=&quot;5&quot; rx=&quot;1.5&quot; fill=&quot;%2394a3b8&quot;/%3E%3Crect x=&quot;16.5&quot; y=&quot;11&quot; width=&quot;7&quot; height=&quot;5&quot; rx=&quot;1.5&quot; fill=&quot;%23334155&quot;/%3E%3Crect x=&quot;16.5&quot; y=&quot;18&quot; width=&quot;7&quot; height=&quot;5&quot; rx=&quot;1.5&quot; fill=&quot;%2394a3b8&quot;/%3E%3Crect x=&quot;24.5&quot; y=&quot;11&quot; width=&quot;7&quot; height=&quot;5&quot; rx=&quot;1.5&quot; fill=&quot;%2310b981&quot;/%3E%3C/svg%3E">
 <link rel="stylesheet" href="/fonts/fonts.css">
     <style>
         :root {
@@ -34,25 +34,30 @@
             --red-500: #ef4444;
             --red-600: #dc2626;
 
-            --orange-50: #fff7ed;
-            --orange-100: #ffedd5;
-            --orange-500: #f97316;
-            --orange-600: #ea580c;
+            --orange-50: #fffbeb;
+            --orange-100: #fef3c7;
+            --orange-300: #fcd34d;
+            --orange-500: #f59e0b;
+            --orange-600: #b45309;
 
-            --green-50: #f0fdf4;
-            --green-100: #dcfce7;
-            --green-500: #22c55e;
-            --green-600: #16a34a;
+            --green-50: #ecfdf5;
+            --green-100: #d1fae5;
+            --green-500: #10b981;
+            --green-600: #047857;
 
-            --blue-50: #eff6ff;
-            --blue-100: #dbeafe;
-            --blue-500: #3b82f6;
-            --blue-600: #2563eb;
+            /* vroeger blauw en paars: nu neutraal grijs en amber, binnen het palet */
+            --blue-50: #f8fafc;
+            --blue-100: #f1f5f9;
+            --blue-200: #e2e8f0;
+            --blue-300: #cbd5e1;
+            --blue-400: #94a3b8;
+            --blue-500: #64748b;
+            --blue-600: #475569;
 
-            --purple-50: #faf5ff;
-            --purple-100: #f3e8ff;
-            --purple-500: #a855f7;
-            --purple-600: #9333ea;
+            --purple-50: #fffbeb;
+            --purple-100: #fef3c7;
+            --purple-500: #f59e0b;
+            --purple-600: #b45309;
 
             --accent: #10b981;
             --accent-light: #d1fae5;
@@ -350,7 +355,7 @@
             font-size: 1.125rem;
             font-weight: 700;
             color: var(--slate-800);
-            font-family: 'JetBrains Mono', monospace;
+            font-family: inherit; font-variant-numeric: tabular-nums;
         }
 
         .stat-label {
@@ -407,14 +412,14 @@
         }
 
         .capacity-fill.under { background: linear-gradient(90deg, var(--accent) 0%, #34d399 100%); }
-        .capacity-fill.warning { background: linear-gradient(90deg, var(--orange-500) 0%, #fb923c 100%); }
+        .capacity-fill.warning { background: linear-gradient(90deg, var(--orange-500) 0%, #fbbf24 100%); }
         .capacity-fill.over { background: linear-gradient(90deg, var(--red-500) 0%, #f87171 100%); }
 
         .capacity-text {
             font-size: 0.8125rem;
             font-weight: 700;
             min-width: 100px;
-            font-family: 'JetBrains Mono', monospace;
+            font-family: inherit; font-variant-numeric: tabular-nums;
         }
 
         .capacity-text.under { color: var(--accent-text); }
@@ -1101,7 +1106,7 @@
         }
 
         .roadmap-sprint-count {
-            font-family: 'JetBrains Mono', monospace;
+            font-family: inherit; font-variant-numeric: tabular-nums;
             font-weight: 700;
             font-size: 0.875rem;
             color: var(--slate-600);
@@ -1244,7 +1249,7 @@
         .dashboard-big-number {
             font-size: 2.5rem;
             font-weight: 800;
-            font-family: 'JetBrains Mono', monospace;
+            font-family: inherit; font-variant-numeric: tabular-nums;
             color: var(--slate-800);
             line-height: 1;
         }
@@ -1328,7 +1333,7 @@
         }
 
         .status-row .status-count {
-            font-family: 'JetBrains Mono', monospace;
+            font-family: inherit; font-variant-numeric: tabular-nums;
             font-weight: 700;
             font-size: 0.8125rem;
             color: var(--slate-700);
@@ -1400,7 +1405,7 @@
         }
 
         .team-stat-value {
-            font-family: 'JetBrains Mono', monospace;
+            font-family: inherit; font-variant-numeric: tabular-nums;
             font-weight: 700;
             font-size: 0.875rem;
             color: var(--slate-600);
@@ -1637,8 +1642,11 @@
 
         @media (max-width: 1400px) {
             .board {
-                grid-template-columns: repeat(5, minmax(240px, 1fr));
+                grid-template-columns: repeat(5, minmax(200px, 1fr));
             }
+        }
+        @media (max-width: 1100px) {
+            .board { grid-template-columns: repeat(5, minmax(240px, 1fr)); }
         }
 
         /* Columns */
@@ -1693,7 +1701,7 @@
             border-radius: 9999px;
             background: var(--slate-100);
             color: var(--slate-500);
-            font-family: 'JetBrains Mono', monospace;
+            font-family: inherit; font-variant-numeric: tabular-nums;
         }
 
         .column-cards {
@@ -1825,7 +1833,7 @@
 
         .subtasks-percent {
             margin-left: auto;
-            font-family: 'JetBrains Mono', monospace;
+            font-family: inherit; font-variant-numeric: tabular-nums;
             font-size: 0.6875rem;
             color: var(--slate-500);
         }
@@ -1919,7 +1927,7 @@
             border-radius: 4px;
             background: var(--blue-50);
             color: var(--blue-600);
-            font-family: 'JetBrains Mono', monospace;
+            font-family: inherit; font-variant-numeric: tabular-nums;
         }
 
         .card-other-participants {
@@ -2249,7 +2257,7 @@
         .estimate-display {
             font-weight: 700;
             color: var(--accent-text);
-            font-family: 'JetBrains Mono', monospace;
+            font-family: inherit; font-variant-numeric: tabular-nums;
         }
 
         .estimate-slider-container {
@@ -2298,7 +2306,7 @@
             padding: 0.25rem 0.25rem 0;
             font-size: 0.6875rem;
             color: var(--slate-500);
-            font-family: 'JetBrains Mono', monospace;
+            font-family: inherit; font-variant-numeric: tabular-nums;
         }
 
         .estimate-input-row {
@@ -2317,7 +2325,7 @@
             width: 80px;
             padding: 0.5rem 0.625rem;
             font-size: 0.8125rem;
-            font-family: 'JetBrains Mono', monospace;
+            font-family: inherit; font-variant-numeric: tabular-nums;
             color: var(--slate-700);
             background: var(--white);
             border: 1.5px solid var(--slate-200);
@@ -2351,7 +2359,7 @@
             padding: 0.5rem 0.875rem;
             font-size: 0.8125rem;
             font-weight: 600;
-            font-family: 'JetBrains Mono', monospace;
+            font-family: inherit; font-variant-numeric: tabular-nums;
             color: var(--slate-500);
             background: var(--slate-50);
             border: 1.5px solid var(--slate-200);
@@ -2627,7 +2635,7 @@
         }
 
         .epic-task-estimate {
-            font-family: 'JetBrains Mono', monospace;
+            font-family: inherit; font-variant-numeric: tabular-nums;
             font-weight: 600;
             color: var(--blue-600);
         }
@@ -2656,7 +2664,7 @@
             width: 70px;
             padding: 0.375rem 0.5rem;
             font-size: 0.8125rem;
-            font-family: 'JetBrains Mono', monospace;
+            font-family: inherit; font-variant-numeric: tabular-nums;
             font-weight: 600;
             color: var(--slate-700);
             background: var(--white);
@@ -2734,7 +2742,7 @@
             font-size: 1.25rem;
             font-weight: 700;
             color: var(--accent-text);
-            font-family: 'JetBrains Mono', monospace;
+            font-family: inherit; font-variant-numeric: tabular-nums;
         }
 
         .capacity-stat-label {
@@ -3158,7 +3166,7 @@
         .priority-btn.low.active { color: #15803d; }
         .roadmap-sprint-bar { height: 44px; background: var(--accent-strong); }
         .roadmap-sprint-bar.active { background: var(--accent-strong); box-shadow: 0 0 0 2px #ffffff, 0 0 0 4px var(--accent-strong); }
-        .roadmap-sprint-bar.planned { background: #1d4ed8; }
+        .roadmap-sprint-bar.planned { background: #64748b; }
         .roadmap-sprint-bar.completed { background: var(--slate-600); }
         .roadmap-sprint-bar.no-dates { background: var(--slate-100); }
         .roadmap-sprint-bar.no-dates .roadmap-sprint-tasks { color: var(--slate-700); }
@@ -3175,6 +3183,47 @@
             .roadmap-controls { gap: 0.5rem; }
             .roadmap-month { min-width: 0; flex: 1; font-size: 1rem; }
         }
+        /* ===== Panel oktober 2026 ===== */
+        .oc-head { display:block; text-align:center; background:#fff; border-bottom:1px solid #e2e8f0; padding:1.25rem 1.25rem 1.25rem; position:relative; }
+        .oc-head .back-link { position:absolute; top:0.875rem; left:1rem; min-height:44px; display:inline-flex; align-items:center; gap:0.5rem; padding:0 0.5rem; font-size:0.875rem; color:#64748b; text-decoration:none; border-radius:8px; }
+        .oc-head .back-link:hover { color:#047857; }
+        .oc-head .back-link svg { width:16px; height:16px; flex:none; }
+        .oc-head .oc-logo { display:block; width:56px; height:56px; margin:0 auto; }
+        .oc-head .oc-logo svg { display:block; width:56px; height:56px; }
+        .oc-head .title { font-size:1.625rem; font-weight:700; color:#1e293b; letter-spacing:-0.03em; line-height:1.2; margin:0.5rem 0 0.25rem; }
+        .oc-head .subtitle { font-size:0.9375rem; color:#64748b; max-width:520px; margin:0 auto; }
+        @media (max-width:640px) {
+            .oc-head { padding:0.5rem 1rem 1rem; }
+            .oc-head .back-link { position:static; margin:0 auto 0.25rem; }
+            .oc-head .oc-logo, .oc-head .oc-logo svg { width:44px; height:44px; }
+            .oc-head .title { font-size:1.375rem; margin-top:0.25rem; }
+        }
+        .dropdown-menu { min-width: 240px; }
+        .dropdown-item { white-space: nowrap; }
+        .modal { display: flex; flex-direction: column; }
+        .modal-header, .modal-footer { flex-shrink: 0; }
+        .modal-body { flex: 1 1 auto; min-height: 0; max-height: none; }
+        .board-tools { display: flex; gap: 0.5rem; margin-left: auto; flex-shrink: 0; }
+        .board-tools .btn { font-weight: 600; }
+        .board-tools .btn:disabled { opacity: 0.5; cursor: not-allowed; box-shadow: none; }
+        @media (max-width: 768px) { .board-tools { margin-left: 0; width: 100%; } .board-tools .btn { flex: 1; } }
+        .start-bar { display:flex; flex-wrap:wrap; align-items:center; gap:0.5rem 1rem; margin:1rem 1.5rem; padding:0.75rem 1rem; background:#fff; border:1.5px solid var(--slate-200); border-radius:var(--radius-lg); }
+        .start-bar p { flex:1 1 18rem; font-size:0.9375rem; color:var(--slate-700); line-height:1.45; }
+        .start-bar .btn { font-weight:600; }
+        .vb-bar { display:flex; flex-wrap:wrap; align-items:center; gap:0.5rem 0.75rem; margin:1rem 1.5rem 0; padding:0.5rem 0.5rem 0.5rem 0.75rem; background:#fffbeb; border:1px solid #fde68a; border-radius:12px; font-size:0.875rem; line-height:1.4; color:#78350f; }
+        .vb-bar { margin:1rem 1.5rem; }
+        .vb-bar svg { width:18px; height:18px; flex-shrink:0; color:#b45309; }
+        .vb-text { flex:1 1 14rem; min-width:0; display:flex; gap:0.5rem; align-items:flex-start; }
+        .vb-btns { display:flex; flex-wrap:wrap; gap:0.375rem; }
+        .vb-btn { min-height:44px; padding:0.375rem 0.625rem; border-radius:10px; font:inherit; font-size:0.875rem; font-weight:600; background:#fff; border:1px solid var(--slate-200); cursor:pointer; }
+        .vb-wis { color:#b91c1c; border-color:#fecaca; }
+        .vb-eigen { color:#047857; border-color:#a7f3d0; }
+        .vb-tag { font-size:0.6875rem; font-weight:600; padding:0 0.375rem; border-radius:999px; background:#fef3c7; color:#92400e; margin-left:0.375rem; }
+        @media (max-width:600px) { .start-bar, .vb-bar { margin:0.75rem 1rem; } }
+        .card-top-row { flex-wrap: wrap; justify-content: flex-start; min-width: 0; }
+        .card-epic { max-width: 100%; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .card-priority-badge { flex-shrink: 0; }
+        [hidden] { display: none !important; }
     </style>
 </head>
 <body>
@@ -3232,21 +3281,19 @@ function ocPickProject(st, arr, cur = 'current') { const p = ocProject(''); if (
         }
     </script>
 
-    <!-- Header -->
-    <header class="header">
+    <header class="oc-head">
+        <a href="https://onderconstructie.github.io/projectmanagement/" class="back-link" aria-label="Terug naar Projectmanagement">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            <span>Projectmanagement</span>
+        </a>
+        <div class="oc-logo" aria-hidden="true"><svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="20" cy="20" r="18" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1.5"/><rect x="8.5" y="11" width="7" height="5" rx="1.5" fill="#334155"/><rect x="8.5" y="18" width="7" height="5" rx="1.5" fill="#334155"/><rect x="8.5" y="25" width="7" height="5" rx="1.5" fill="#94a3b8"/><rect x="16.5" y="11" width="7" height="5" rx="1.5" fill="#334155"/><rect x="16.5" y="18" width="7" height="5" rx="1.5" fill="#94a3b8"/><rect x="24.5" y="11" width="7" height="5" rx="1.5" fill="#10b981"/></svg></div>
+        <h1 class="title">Takenbord</h1>
+        <p class="subtitle">Je taken op een bord, van later tot klaar</p>
+    </header>
+
+    <!-- Werkbalk -->
+    <div class="header">
         <div class="header-left">
-            <a href="https://onderconstructie.github.io/projectmanagement/" class="back-link oc-back" aria-label="Terug naar Projectmanagement">
-                <span aria-hidden="true">←</span><span class="oc-back-text">Projectmanagement</span>
-            </a>
-            <h1 class="visually-hidden">SprintFlow</h1>
-            <div class="logo" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <rect x="3" y="3" width="18" height="18" rx="3"/>
-                    <line x1="8" y1="7" x2="8" y2="17"/>
-                    <line x1="12" y1="7" x2="12" y2="14"/>
-                    <line x1="16" y1="7" x2="16" y2="11"/>
-                </svg>
-            </div>
             <div class="project-selector">
                 <button type="button" class="project-selector-btn" onclick="toggleDropdown('projectDropdown')" aria-haspopup="true" aria-controls="projectDropdown" title="Project kiezen; klik op de naam om ze te wijzigen">
                     <span class="project-name" id="activeProjectName" onclick="event.stopPropagation(); editProjectName()">Mijn Project</span>
@@ -3278,14 +3325,14 @@ function ocPickProject(st, arr, cur = 'current') { const p = ocProject(''); if (
             </div>
             <div class="header-tools">
                 <button type="button" class="btn btn-secondary" onclick="openPanel('team')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Team</button>
-                <button type="button" class="btn btn-secondary" onclick="openPanel('epics')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>Epics</button>
-                <button type="button" class="btn btn-secondary" onclick="openPanel('sprint')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Sprint</button>
-                <button type="button" class="btn btn-secondary" onclick="openRoadmap()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Roadmap</button>
+                <button type="button" class="btn btn-secondary" onclick="openPanel('epics')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>Thema's</button>
+                <button type="button" class="btn btn-secondary" onclick="openPanel('sprint')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Periode</button>
+                <button type="button" class="btn btn-secondary" onclick="openRoadmap()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Tijdlijn</button>
                 <div class="dropdown">
                     <button type="button" class="btn btn-secondary" onclick="toggleDropdown('exportDropdown')" aria-haspopup="true" aria-controls="exportDropdown"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Bestand</button>
                     <div class="dropdown-menu" id="exportDropdown">
-                        <button type="button" class="dropdown-item" onclick="exportAsJSON()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Backup opslaan (JSON)</button>
-                        <button type="button" class="dropdown-item" onclick="document.getElementById('importFile').click()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Backup laden (JSON)</button>
+                        <button type="button" class="dropdown-item" onclick="exportAsJSON()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Back-up opslaan</button>
+                        <button type="button" class="dropdown-item" onclick="document.getElementById('importFile').click()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Back-up laden</button>
                         <div class="dropdown-divider"></div>
                         <button type="button" class="dropdown-item" onclick="exportAsJPG()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>Download als afbeelding</button>
                         <button type="button" class="dropdown-item" onclick="exportAsPDF()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Download als PDF</button>
@@ -3301,15 +3348,15 @@ function ocPickProject(st, arr, cur = 'current') { const p = ocProject(''); if (
                 <span class="btn-new-text">Nieuwe taak</span>
             </button>
             <div class="dropdown more-menu">
-                <button type="button" class="btn btn-secondary more-btn" onclick="toggleDropdown('moreDropdown')" aria-haspopup="true" aria-controls="moreDropdown" aria-label="Meer: team, epics, sprint, roadmap en bestand">⋯</button>
+                <button type="button" class="btn btn-secondary more-btn" onclick="toggleDropdown('moreDropdown')" aria-haspopup="true" aria-controls="moreDropdown" aria-label="Meer: team, thema's, periode, tijdlijn en bestand">⋯</button>
                 <div class="dropdown-menu" id="moreDropdown">
                     <button type="button" class="dropdown-item" onclick="closeDropdown('moreDropdown'); openPanel('team')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Team</button>
-                    <button type="button" class="dropdown-item" onclick="closeDropdown('moreDropdown'); openPanel('epics')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>Epics</button>
-                    <button type="button" class="dropdown-item" onclick="closeDropdown('moreDropdown'); openPanel('sprint')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Sprint</button>
-                    <button type="button" class="dropdown-item" onclick="closeDropdown('moreDropdown'); openRoadmap()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Roadmap</button>
+                    <button type="button" class="dropdown-item" onclick="closeDropdown('moreDropdown'); openPanel('epics')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>Thema's</button>
+                    <button type="button" class="dropdown-item" onclick="closeDropdown('moreDropdown'); openPanel('sprint')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Periode</button>
+                    <button type="button" class="dropdown-item" onclick="closeDropdown('moreDropdown'); openRoadmap()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Tijdlijn</button>
                     <div class="dropdown-divider"></div>
-                    <button type="button" class="dropdown-item" onclick="closeDropdown('moreDropdown'); exportAsJSON()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Backup opslaan (JSON)</button>
-                    <button type="button" class="dropdown-item" onclick="closeDropdown('moreDropdown'); document.getElementById('importFile').click()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Backup laden (JSON)</button>
+                    <button type="button" class="dropdown-item" onclick="closeDropdown('moreDropdown'); exportAsJSON()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Back-up opslaan</button>
+                    <button type="button" class="dropdown-item" onclick="closeDropdown('moreDropdown'); document.getElementById('importFile').click()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Back-up laden</button>
                     <button type="button" class="dropdown-item" onclick="closeDropdown('moreDropdown'); exportAsJPG()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>Download als afbeelding</button>
                     <button type="button" class="dropdown-item" onclick="closeDropdown('moreDropdown'); exportAsPDF()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Download als PDF</button>
                     <button type="button" class="dropdown-item" onclick="closeDropdown('moreDropdown'); exportAsCSV()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>Download als CSV</button>
@@ -3318,11 +3365,19 @@ function ocPickProject(st, arr, cur = 'current') { const p = ocProject(''); if (
                 </div>
             </div>
         </div>
-    </header>
+    </div>
+    <div class="start-bar" id="startBar" hidden>
+        <p>Zet elke taak in een kolom en schuif ze op tot ze klaar zijn. Wil je eerst zien hoe dat eruitziet?</p>
+        <button type="button" class="btn btn-secondary" onclick="loadVoorbeeld()">Voorbeeld bekijken</button>
+    </div>
+    <div class="vb-bar" id="vbBar" hidden>
+        <div class="vb-text"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v4h1"/></svg><span>Dit is een voorbeeld om de tool te verkennen. Het telt niet mee in andere tools.</span></div>
+        <div class="vb-btns"><button type="button" class="vb-btn vb-wis" onclick="wisVoorbeeld()">Wis voorbeeld</button><button type="button" class="vb-btn vb-eigen" onclick="maakEigen()">Maak er mijn eigen van</button></div>
+    </div>
 
     <!-- Sprint Bar -->
     <div class="sprint-bar">
-        <button type="button" class="sprint-info" onclick="editSprintInline()" title="Klik om de sprintnaam te wijzigen">
+        <button type="button" class="sprint-info" onclick="editSprintInline()" title="Klik om de naam van de periode te wijzigen">
             <div class="sprint-icon">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
@@ -3330,7 +3385,7 @@ function ocPickProject(st, arr, cur = 'current') { const p = ocProject(''); if (
             </div>
             <div class="sprint-info-text">
                 <div class="sprint-name-row">
-                    <span class="sprint-name" id="currentSprintName">Sprint 1</span>
+                    <span class="sprint-name" id="currentSprintName">Periode 1</span>
                     <svg class="edit-hint" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                 </div>
                 <div class="sprint-dates" id="sprintDates">Geen datums ingesteld</div>
@@ -3357,10 +3412,10 @@ function ocPickProject(st, arr, cur = 'current') { const p = ocProject(''); if (
 
     <!-- Sprint Tabs -->
     <div class="sprint-tabs-container">
-        <div class="sprint-tabs" id="sprintTabs" role="group" aria-label="Sprints">
+        <div class="sprint-tabs" id="sprintTabs" role="group" aria-label="Periodes">
             <!-- Sprint tabs worden hier dynamisch gegenereerd -->
         </div>
-        <button type="button" class="sprint-add-btn" onclick="createNewSprint()" title="Nieuwe sprint" aria-label="Nieuwe sprint">
+        <button type="button" class="sprint-add-btn" onclick="createNewSprint()" title="Nieuwe periode" aria-label="Nieuwe periode">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         </button>
     </div>
@@ -3380,7 +3435,7 @@ function ocPickProject(st, arr, cur = 'current') { const p = ocProject(''); if (
                 <div class="filter-group-chips" id="statusFilterChips"></div>
             </div>
             <div class="filter-group" id="epicFilterGroup" style="display: none;">
-                <span class="filter-group-label">Epics</span>
+                <span class="filter-group-label">Thema's</span>
                 <div class="filter-group-chips" id="epicFilterChips"></div>
             </div>
             <div class="filter-group" id="teamFilterGroup" style="display: none;">
@@ -3391,7 +3446,12 @@ function ocPickProject(st, arr, cur = 'current') { const p = ocProject(''); if (
         <button type="button" class="clear-filters-btn" id="clearFiltersBtn" onclick="clearAllFilters()" style="display: none;">
             ✕ Filters wissen
         </button>
+        <div class="board-tools" role="group" aria-label="Bord downloaden">
+            <button type="button" class="btn btn-secondary" id="exportPngBtn" onclick="exportBoard('png')" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>Afbeelding</button>
+            <button type="button" class="btn btn-secondary" id="exportPdfBtn" onclick="exportBoard('pdf')" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>PDF</button>
+        </div>
     </div>
+
 
     <!-- Board -->
     <div class="board-container">
@@ -3425,21 +3485,21 @@ function ocPickProject(st, arr, cur = 'current') { const p = ocProject(''); if (
             </div>
             <div class="form-row">
                 <div class="form-group">
-                    <label class="form-label" for="cardEpicSelect">Epic</label>
+                    <label class="form-label" for="cardEpicSelect">Thema</label>
                     <select class="form-select" id="cardEpicSelect" onchange="handleEpicSelect(this)"></select>
                     <div class="add-epic-inline" id="addEpicInline">
-                        <input type="text" class="form-input" id="inlineEpicName" placeholder="Epic naam..." aria-label="Naam van de nieuwe epic">
-                        <input type="color" id="inlineEpicColor" class="color-input" value="#a855f7" aria-label="Kleur van de nieuwe epic">
-                        <button type="button" class="btn btn-primary btn-sm" onclick="addEpicInline()" aria-label="Epic aanmaken">+</button>
+                        <input type="text" class="form-input" id="inlineEpicName" placeholder="Naam van het thema…" aria-label="Naam van het nieuwe thema">
+                        <input type="color" id="inlineEpicColor" class="color-input" value="#64748b" aria-label="Kleur van het nieuwe thema">
+                        <button type="button" class="btn btn-primary btn-sm" onclick="addEpicInline()" aria-label="Thema aanmaken">+</button>
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="form-label" for="cardStatus">Status</label>
                     <select class="form-select" id="cardStatus">
-                        <option value="backlog">Backlog</option>
-                        <option value="todo">Te Doen</option>
+                        <option value="backlog">Later</option>
+                        <option value="todo">Te doen</option>
                         <option value="bezig">Bezig</option>
-                        <option value="review">Review</option>
+                        <option value="review">Nakijken</option>
                         <option value="klaar">Klaar</option>
                     </select>
                 </div>
@@ -3450,7 +3510,7 @@ function ocPickProject(st, arr, cur = 'current') { const p = ocProject(''); if (
                     <select class="form-select" id="cardOwnerSelect" onchange="onOwnerChange(this.value)"></select>
                 </div>
                 <div class="form-group">
-                    <label class="form-label" for="cardDueDate">Deadline</label>
+                    <label class="form-label" for="cardDueDate">Uiterlijk op</label>
                     <input type="text" class="form-input" id="cardDueDate" placeholder="dd/mm/jjjj">
                 </div>
             </div>
@@ -3526,16 +3586,16 @@ function ocPickProject(st, arr, cur = 'current') { const p = ocProject(''); if (
     <div class="sidebar-overlay" id="epicsOverlay" onclick="closePanel('epics')"></div>
     <div class="sidebar-panel" id="epicsPanel" role="dialog" aria-modal="true" aria-labelledby="epicsPanelTitle">
         <div class="modal-header">
-            <h2 class="modal-title" id="epicsPanelTitle">Epics</h2>
+            <h2 class="modal-title" id="epicsPanelTitle">Thema's</h2>
             <button type="button" class="modal-close" onclick="closePanel('epics')" aria-label="Sluiten">×</button>
         </div>
         <div class="panel-content">
             <div class="form-group">
-                <label class="form-label" for="newEpicName">Nieuwe epic toevoegen</label>
+                <label class="form-label" for="newEpicName">Nieuw thema toevoegen</label>
                 <div class="add-row">
-                    <input type="text" class="form-input" id="newEpicName" placeholder="Epic naam...">
-                    <input type="color" id="newEpicColor" class="color-input" value="#a855f7" aria-label="Kleur van de epic">
-                    <button type="button" class="btn btn-primary" onclick="addEpic()" aria-label="Epic toevoegen">+</button>
+                    <input type="text" class="form-input" id="newEpicName" placeholder="Naam van het thema…">
+                    <input type="color" id="newEpicColor" class="color-input" value="#64748b" aria-label="Kleur van het thema">
+                    <button type="button" class="btn btn-primary" onclick="addEpic()" aria-label="Thema toevoegen">+</button>
                 </div>
                 <div class="form-hint">Druk op Enter of klik + om toe te voegen</div>
             </div>
@@ -3547,14 +3607,14 @@ function ocPickProject(st, arr, cur = 'current') { const p = ocProject(''); if (
     <div class="sidebar-overlay" id="sprintOverlay" onclick="closePanel('sprint')"></div>
     <div class="sidebar-panel" id="sprintPanel" role="dialog" aria-modal="true" aria-labelledby="sprintPanelTitle">
         <div class="modal-header">
-            <h2 class="modal-title" id="sprintPanelTitle">Sprintinstellingen</h2>
+            <h2 class="modal-title" id="sprintPanelTitle">Instellingen van de periode</h2>
             <button type="button" class="modal-close" onclick="closePanel('sprint')" aria-label="Sluiten">×</button>
         </div>
         <div class="panel-content">
             <!-- Capacity Overview -->
             <div class="capacity-section">
                 <div class="capacity-header">
-                    <span class="capacity-title">Sprint Capaciteit</span>
+                    <span class="capacity-title">Capaciteit van de periode</span>
                 </div>
                 <div class="capacity-stats">
                     <div class="capacity-stat">
@@ -3573,8 +3633,8 @@ function ocPickProject(st, arr, cur = 'current') { const p = ocProject(''); if (
             </div>
 
             <div class="form-group">
-                <label class="form-label" for="sprintNameInput">Sprintnaam</label>
-                <input type="text" class="form-input" id="sprintNameInput" placeholder="Sprint 1">
+                <label class="form-label" for="sprintNameInput">Naam van de periode</label>
+                <input type="text" class="form-input" id="sprintNameInput" placeholder="Periode 1">
             </div>
             <div class="form-row">
                 <div class="form-group">
@@ -3587,15 +3647,15 @@ function ocPickProject(st, arr, cur = 'current') { const p = ocProject(''); if (
                 </div>
             </div>
             <div class="form-group">
-                <label class="form-label" for="sprintDaysInput">Werkdagen in sprint</label>
+                <label class="form-label" for="sprintDaysInput">Werkdagen in deze periode</label>
                 <input type="number" class="form-input" id="sprintDaysInput" placeholder="10" min="1" max="60" step="0.5" onchange="onSprintDaysChange()">
                 <div class="form-hint">Aantal werkdagen (excl. weekenden/feestdagen). Dit bepaalt de standaard beschikbaarheid per teamlid.</div>
             </div>
             <div class="form-group">
-                <label class="form-label" for="sprintGoalInput">Sprintdoel</label>
-                <textarea class="form-textarea" id="sprintGoalInput" placeholder="Wat wil je bereiken deze sprint?"></textarea>
+                <label class="form-label" for="sprintGoalInput">Doel van de periode</label>
+                <textarea class="form-textarea" id="sprintGoalInput" placeholder="Wat wil je bereiken in deze periode?"></textarea>
             </div>
-            <button type="button" class="btn btn-primary" onclick="saveSprint()" style="width: 100%;">Sprint opslaan</button>
+            <button type="button" class="btn btn-primary" onclick="saveSprint()" style="width: 100%;">Periode opslaan</button>
 
             <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--slate-200);">
                 <div class="sprint-duration-link">
@@ -3606,8 +3666,8 @@ function ocPickProject(st, arr, cur = 'current') { const p = ocProject(''); if (
                         <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
                     </svg>
                     <div class="sprint-duration-info">
-                        <strong>Team Beschikbaarheid</strong>
-                        <p>Standaard <span id="defaultDaysDisplay">10</span> dagen per persoon (sprintduur)</p>
+                        <strong>Beschikbaarheid van het team</strong>
+                        <p>Standaard <span id="defaultDaysDisplay">10</span> dagen per persoon (duur van de periode)</p>
                     </div>
                     <button type="button" class="sync-all-btn" onclick="syncAllAvailability()">Iedereen gelijkzetten</button>
                 </div>
@@ -3615,10 +3675,10 @@ function ocPickProject(st, arr, cur = 'current') { const p = ocProject(''); if (
             </div>
 
             <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--slate-200);">
-                <div class="form-label" style="margin-bottom: 0.75rem;">Sprint Statistieken</div>
+                <div class="form-label" style="margin-bottom: 0.75rem;">Cijfers van de periode</div>
                 <div class="item-list">
                     <div class="item-row">
-                        <div class="item-info"><div class="item-name">Totaal Taken</div></div>
+                        <div class="item-info"><div class="item-name">Totaal taken</div></div>
                         <div class="item-sub" id="panelStatTotal">0</div>
                     </div>
                     <div class="item-row">
@@ -3626,11 +3686,11 @@ function ocPickProject(st, arr, cur = 'current') { const p = ocProject(''); if (
                         <div class="item-sub" id="panelStatDone">0</div>
                     </div>
                     <div class="item-row">
-                        <div class="item-info"><div class="item-name">Dagen Ingepland</div></div>
+                        <div class="item-info"><div class="item-name">Dagen ingepland</div></div>
                         <div class="item-sub" id="panelStatDays">0</div>
                     </div>
                     <div class="item-row">
-                        <div class="item-info"><div class="item-name">Dagen Afgerond</div></div>
+                        <div class="item-info"><div class="item-name">Dagen afgerond</div></div>
                         <div class="item-sub" id="panelStatDaysDone">0</div>
                     </div>
                 </div>
@@ -3643,9 +3703,9 @@ function ocPickProject(st, arr, cur = 'current') { const p = ocProject(''); if (
         <div class="dashboard-header">
             <h2 class="dashboard-title" id="roadmapTitle">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                Sprint Roadmap
+                Tijdlijn
             </h2>
-            <button type="button" class="dashboard-close" onclick="closeRoadmap()" aria-label="Roadmap sluiten">×</button>
+            <button type="button" class="dashboard-close" onclick="closeRoadmap()" aria-label="Tijdlijn sluiten">×</button>
         </div>
         <div class="roadmap-content">
             <div class="roadmap-controls">
@@ -3668,14 +3728,14 @@ function ocPickProject(st, arr, cur = 'current') { const p = ocProject(''); if (
                 </div>
                 <div class="roadmap-hint">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
-                    Sleep sprints om te verplaatsen · Versleep de randen om de duur aan te passen · Dubbelklik om te openen
+                    Sleep een periode om ze te verplaatsen · Versleep de randen om de duur aan te passen · Dubbelklik om te openen
                 </div>
             </div>
 
             <div class="roadmap-sprint-list">
                 <div class="roadmap-list-header">
-                    <h3>Sprints</h3>
-                    <button type="button" class="dashboard-add-btn" onclick="createNewSprintFromRoadmap()" title="Nieuwe sprint" aria-label="Nieuwe sprint">
+                    <h3>Periodes</h3>
+                    <button type="button" class="dashboard-add-btn" onclick="createNewSprintFromRoadmap()" title="Nieuwe periode" aria-label="Nieuwe periode">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                     </button>
                 </div>
@@ -3701,7 +3761,7 @@ function ocPickProject(st, arr, cur = 'current') { const p = ocProject(''); if (
                 <div class="dashboard-card">
                     <div class="dashboard-card-title">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-                        Sprint Voortgang
+                        Voortgang van de periode
                     </div>
                     <div class="dashboard-big-number" id="dashSprintProgress">0%</div>
                     <div class="dashboard-big-label" id="dashSprintLabel">0 van 0 taken voltooid</div>
@@ -3735,7 +3795,7 @@ function ocPickProject(st, arr, cur = 'current') { const p = ocProject(''); if (
                 <div class="dashboard-card">
                     <div class="dashboard-card-title">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
-                        Taken per Status
+                        Taken per status
                     </div>
                     <div id="dashStatusBreakdown" class="status-breakdown"></div>
                 </div>
@@ -3755,7 +3815,7 @@ function ocPickProject(st, arr, cur = 'current') { const p = ocProject(''); if (
                 <div class="dashboard-card-header">
                     <div class="dashboard-card-title">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-                        Team Werkbelasting
+                        Werklast van het team
                     </div>
                     <button type="button" class="dashboard-add-btn" onclick="addTeamMemberFromDashboard()" title="Teamlid toevoegen" aria-label="Teamlid toevoegen">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
@@ -3769,9 +3829,9 @@ function ocPickProject(st, arr, cur = 'current') { const p = ocProject(''); if (
                 <div class="dashboard-card-header">
                     <div class="dashboard-card-title">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
-                        Epic Voortgang
+                        Voortgang per thema
                     </div>
-                    <button type="button" class="dashboard-add-btn" onclick="addEpicFromDashboard()" title="Epic toevoegen" aria-label="Epic toevoegen">
+                    <button type="button" class="dashboard-add-btn" onclick="addEpicFromDashboard()" title="Thema toevoegen" aria-label="Thema toevoegen">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                     </button>
                 </div>
@@ -3932,10 +3992,10 @@ const ocShare = (() => {
         function ocPublishKanban() {
             try {
                 const p = (state.projects || []).find(x => x.id === state.activeProjectId);
-                if (!p) { ocShare.clear('kanban'); return; }
+                if (!p || p.voorbeeld) { ocShare.clear('kanban'); return; }
                 const who = id => ((p.team || []).find(m => m.id === id) || {}).name;
                 const when = d => { try { return d ? toDisplayDate(d) : undefined; } catch { return d || undefined; } };
-                ocShare.publish('kanban', 'SprintFlow', [{ name: p.name, items: (p.cards || [])
+                ocShare.publish('kanban', 'Takenbord', [{ name: p.name, items: (p.cards || [])
                     .filter(c => c.status !== 'klaar' && c.title)
                     .map(c => ({ type: 'actie', text: c.title, who: who(c.ownerId), when: when(c.dueDate) })) }]);
             } catch {}
@@ -4046,11 +4106,11 @@ const ocExport = (() => {
         const STORAGE_KEY = 'sprintflow_kanban_v5';
 
         const COLUMNS = [
-            { id: 'backlog', name: 'Backlog', color: '#64748b' },
-            { id: 'todo', name: 'Te Doen', color: '#3b82f6' },
-            { id: 'bezig', name: 'Bezig', color: '#f97316' },
-            { id: 'review', name: 'Review', color: '#a855f7' },
-            { id: 'klaar', name: 'Klaar', color: '#22c55e' }
+            { id: 'backlog', name: 'Later', color: '#cbd5e1' },
+            { id: 'todo', name: 'Te doen', color: '#94a3b8' },
+            { id: 'bezig', name: 'Bezig', color: '#475569' },
+            { id: 'review', name: 'Nakijken', color: '#f59e0b' },
+            { id: 'klaar', name: 'Klaar', color: '#10b981' }
         ];
 
         // Alles wat uit opslag of een geïmporteerd bestand komt, gaat langs esc() voor het in HTML belandt.
@@ -4085,17 +4145,17 @@ const ocExport = (() => {
             };
 
             const team = arr(p.team).map(m => ({ id: fixId(m.id), name: str(m.name, 200) || 'Naamloos', color: safeColor(m.color, '#10b981') }));
-            const epics = arr(p.epics).map(e => ({ id: fixId(e.id), name: str(e.name, 200) || 'Naamloos', color: safeColor(e.color, '#a855f7') }));
+            const epics = arr(p.epics).map(e => ({ id: fixId(e.id), name: str(e.name, 200) || 'Naamloos', color: safeColor(e.color, '#64748b') }));
             let sprints = arr(p.sprints).map(sp => ({
                 id: fixId(sp.id),
-                name: str(sp.name, 200) || 'Sprint',
+                name: str(sp.name, 200) || 'Periode',
                 startDate: date(sp.startDate),
                 endDate: date(sp.endDate),
                 days: num(sp.days) > 0 ? num(sp.days) : 10,
                 goal: str(sp.goal),
                 status: SPRINT_STATUSES.includes(sp.status) ? sp.status : 'active'
             }));
-            if (!sprints.length) sprints = [{ id: generateId(), name: 'Sprint 1', startDate: '', endDate: '', days: 10, goal: '', status: 'active' }];
+            if (!sprints.length) sprints = [{ id: generateId(), name: 'Periode 1', startDate: '', endDate: '', days: 10, goal: '', status: 'active' }];
             const teamIds = new Set(team.map(m => m.id)), epicIds = new Set(epics.map(e => e.id)), sprintIds = new Set(sprints.map(x => x.id));
             const statusIds = COLUMNS.map(c => c.id);
             const cards = arr(p.cards).map(c => {
@@ -4122,12 +4182,14 @@ const ocExport = (() => {
                     if (id && v != null) teamAvailability[id] = v;
                 });
             }
-            return { id: fixId(p.id), name: str(p.name, 200) || 'Naamloos project', sprints, cards, team, epics, teamAvailability };
+            const out = { id: fixId(p.id), name: str(p.name, 200) || 'Naamloos project', sprints, cards, team, epics, teamAvailability };
+            if (p.voorbeeld === true) out.voorbeeld = true;
+            return out;
         }
 
         const AVATAR_COLORS = [
-            '#10b981', '#3b82f6', '#a855f7', '#f97316', '#ef4444',
-            '#ec4899', '#14b8a6', '#8b5cf6', '#06b6d4', '#84cc16'
+            '#10b981', '#334155', '#f59e0b', '#047857', '#64748b',
+            '#b45309', '#065f46', '#94a3b8', '#475569', '#d97706'
         ];
 
         let state = {
@@ -4176,7 +4238,7 @@ const ocExport = (() => {
                 name: ocProject('Mijn project'),
                 sprints: [{
                     id: generateId(),
-                    name: 'Sprint 1',
+                    name: 'Periode 1',
                     startDate: '',
                     endDate: '',
                     days: 10,
@@ -4314,7 +4376,7 @@ const ocExport = (() => {
             return keys;
         }
         async function clearAllData() {
-            if (!await ocConfirm('Alles wissen? Al je projecten, sprints, taken en teamleden verdwijnen. Je kan dit nog ongedaan maken tot je iets anders doet.')) return;
+            if (!await ocConfirm('Alles wissen? Al je projecten, periodes, taken en teamleden verdwijnen. Je kan dit nog ongedaan maken tot je iets anders doet.')) return;
             clearTimeout(saveTimeout);
             const stored = {};
             ocStoreKeys().forEach(k => { try { stored[k] = localStorage.getItem(k); localStorage.removeItem(k); } catch {} });
@@ -4429,7 +4491,7 @@ const ocExport = (() => {
             if (!project) return;
             
             const sprintNum = project.sprints.length + 1;
-            const name = await ocPrompt('Sprint naam:', `Sprint ${sprintNum}`);
+            const name = await ocPrompt('Naam van de periode:', `Periode ${sprintNum}`);
             if (name && name.trim()) {
                 const newSprint = {
                     id: generateId(),
@@ -4444,7 +4506,7 @@ const ocExport = (() => {
                 state.activeSprintId = newSprint.id;
                 saveToStorage();
                 refreshUI();
-                showToast('Sprint aangemaakt');
+                showToast('Periode aangemaakt');
             }
         }
 
@@ -4460,12 +4522,12 @@ const ocExport = (() => {
             const sprint = getActiveSprint();
             if (!sprint) return;
             
-            const newName = await ocPrompt('Sprint naam:', sprint.name);
+            const newName = await ocPrompt('Naam van de periode:', sprint.name);
             if (newName && newName.trim() !== '') {
                 sprint.name = newName.trim();
                 saveToStorage();
                 refreshUI();
-                showToast('Sprint hernoemd');
+                showToast('Periode hernoemd');
             }
         }
 
@@ -4495,7 +4557,7 @@ const ocExport = (() => {
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="3"/><line x1="8" y1="7" x2="8" y2="17"/><line x1="12" y1="7" x2="12" y2="14"/><line x1="16" y1="7" x2="16" y2="11"/></svg>
                         </div>
                         <div class="project-item-info">
-                            <div class="project-item-name">${esc(project.name)}</div>
+                            <div class="project-item-name">${esc(project.name)}${project.voorbeeld ? '<span class="vb-tag">voorbeeld</span>' : ''}</div>
                             <div class="project-item-meta">${taskCount} taken · ${teamCount} teamleden</div>
                         </div>
                     </button>
@@ -4528,13 +4590,13 @@ const ocExport = (() => {
             const sprint = project?.sprints.find(s => s.id === sprintId);
             if (!sprint) return;
             
-            const newName = await ocPrompt('Sprint naam:', sprint.name);
+            const newName = await ocPrompt('Naam van de periode:', sprint.name);
             if (newName && newName.trim()) {
                 sprint.name = newName.trim();
                 saveToStorage();
                 renderSprintTabs();
                 updateSprintInfo();
-                showToast('Sprint hernoemd');
+                showToast('Periode hernoemd');
             }
         }
 
@@ -4542,7 +4604,7 @@ const ocExport = (() => {
             const sprint = getActiveSprint();
             const project = getActiveProject();
             
-            document.getElementById('currentSprintName').textContent = sprint?.name || 'Sprint';
+            document.getElementById('currentSprintName').textContent = sprint?.name || 'Periode';
             
             if (sprint?.startDate && sprint?.endDate) {
                 const start = new Date(sprint.startDate).toLocaleDateString('nl-NL', { day: 'numeric', month: 'short' });
@@ -4636,8 +4698,8 @@ const ocExport = (() => {
             // Priority breakdown
             const priorities = [
                 { id: 'high', name: 'Hoog', color: '#ef4444' },
-                { id: 'medium', name: 'Middel', color: '#f97316' },
-                { id: 'low', name: 'Laag', color: '#22c55e' },
+                { id: 'medium', name: 'Middel', color: '#f59e0b' },
+                { id: 'low', name: 'Laag', color: '#94a3b8' },
                 { id: null, name: 'Geen', color: '#94a3b8' }
             ];
             const priorityBreakdown = document.getElementById('dashPriorityBreakdown');
@@ -4708,7 +4770,7 @@ const ocExport = (() => {
                     `;
                 }).join('');
             } else {
-                epicStats.innerHTML = '<div class="empty-state"><p>Voeg epics toe om voortgang te zien</p></div>';
+                epicStats.innerHTML = '<div class="empty-state"><p>Voeg thema\'s toe om de voortgang te zien</p></div>';
             }
         }
 
@@ -4741,7 +4803,7 @@ const ocExport = (() => {
             const project = getActiveProject();
             if (!project) return;
             
-            const name = await ocPrompt('Naam van nieuwe epic:');
+            const name = await ocPrompt('Naam van het nieuwe thema:');
             if (name && name.trim()) {
                 const color = AVATAR_COLORS[Math.floor(Math.random() * AVATAR_COLORS.length)];
                 const newEpic = { id: generateId(), name: name.trim(), color };
@@ -4749,7 +4811,7 @@ const ocExport = (() => {
                 saveToStorage();
                 updateDashboard();
                 renderFilterChips();
-                showToast('Epic toegevoegd');
+                showToast('Thema toegevoegd');
             }
         }
 
@@ -4891,7 +4953,7 @@ const ocExport = (() => {
             });
 
             if (project.sprints.length === 0) {
-                bodyHTML = '<div class="empty-state" style="padding: 2rem;"><p>Nog geen sprints. Maak je eerste sprint aan!</p></div>';
+                bodyHTML = '<div class="empty-state" style="padding: 2rem;"><p>Nog geen periodes. Maak je eerste periode aan.</p></div>';
             }
 
             body.innerHTML = bodyHTML;
@@ -4907,7 +4969,7 @@ const ocExport = (() => {
             const list = document.getElementById('roadmapSprintList');
             
             if (project.sprints.length === 0) {
-                list.innerHTML = '<div class="empty-state"><p>Nog geen sprints</p></div>';
+                list.innerHTML = '<div class="empty-state"><p>Nog geen periodes</p></div>';
                 return;
             }
 
@@ -4948,7 +5010,7 @@ const ocExport = (() => {
             saveToStorage();
             closeRoadmap();
             refreshUI();
-            showToast('Sprint geopend');
+            showToast('Periode geopend');
         }
 
         async function editSprintFromRoadmap(sprintId) {
@@ -4956,14 +5018,14 @@ const ocExport = (() => {
             const sprint = project?.sprints.find(s => s.id === sprintId);
             if (!sprint) return;
 
-            const newName = await ocPrompt('Sprint naam:', sprint.name);
+            const newName = await ocPrompt('Naam van de periode:', sprint.name);
             if (newName && newName.trim()) {
                 sprint.name = newName.trim();
                 saveToStorage();
                 renderRoadmap();
                 renderSprintTabs();
                 updateSprintInfo();
-                showToast('Sprint hernoemd');
+                showToast('Periode hernoemd');
             }
         }
 
@@ -5000,7 +5062,7 @@ const ocExport = (() => {
             saveToStorage();
             renderRoadmap();
             updateSprintInfo();
-            showToast('Sprint datums bijgewerkt');
+            showToast('Datums van de periode bijgewerkt');
         }
 
         async function deleteSprintFromRoadmap(sprintId) {
@@ -5008,14 +5070,14 @@ const ocExport = (() => {
             if (!project) return;
 
             if (project.sprints.length <= 1) {
-                showToast('Je moet minstens één sprint hebben', 'error');
+                showToast('Je hebt minstens één periode nodig', 'error');
                 return;
             }
 
             const sprint = project.sprints.find(s => s.id === sprintId);
             const taskCount = project.cards.filter(c => c.sprintId === sprintId).length;
 
-            if (await ocConfirm(`Weet je zeker dat je "${sprint.name}" wilt verwijderen?${taskCount > 0 ? `\n\nLet op: ${taskCount} taken worden verplaatst naar de eerste sprint.` : ''}`)) {
+            if (await ocConfirm(`Weet je zeker dat je "${sprint.name}" wilt verwijderen?${taskCount > 0 ? `\n\nLet op: ${taskCount} taken gaan naar de eerste periode.` : ''}`)) {
                 // Move tasks to first sprint
                 const firstSprint = project.sprints.find(s => s.id !== sprintId);
                 project.cards.forEach(card => {
@@ -5033,7 +5095,7 @@ const ocExport = (() => {
                 saveToStorage();
                 renderRoadmap();
                 renderSprintTabs();
-                showToast('Sprint verwijderd');
+                showToast('Periode verwijderd');
             }
         }
 
@@ -5042,7 +5104,7 @@ const ocExport = (() => {
             if (!project) return;
 
             const sprintNum = project.sprints.length + 1;
-            const name = await ocPrompt('Sprint naam:', `Sprint ${sprintNum}`);
+            const name = await ocPrompt('Naam van de periode:', `Periode ${sprintNum}`);
             if (name && name.trim()) {
                 // Calculate suggested dates based on last sprint
                 let startDate = '';
@@ -5069,7 +5131,7 @@ const ocExport = (() => {
                 saveToStorage();
                 renderRoadmap();
                 renderSprintTabs();
-                showToast('Sprint aangemaakt');
+                showToast('Periode aangemaakt');
             }
         }
 
@@ -5203,7 +5265,7 @@ const ocExport = (() => {
                     renderRoadmap();
                     renderRoadmapSprintList();
                     updateSprintInfo();
-                    showToast('Sprint datums aangepast');
+                    showToast('Datums van de periode aangepast');
                 }
             }
             
@@ -5405,6 +5467,94 @@ const ocExport = (() => {
         // RENDER FUNCTIONS
         // ============================================
 
+
+        // ============================================
+        // VOORBEELD
+        // ============================================
+        function updateBars() {
+            const project = getActiveProject();
+            const isVb = !!(project && project.voorbeeld);
+            const hasVb = state.projects.some(p => p.voorbeeld);
+            const empty = !project || !project.cards.length;
+            document.getElementById('vbBar').hidden = !isVb;
+            document.getElementById('startBar').hidden = isVb || !empty || hasVb;
+            const none = !getFilteredCards().length;
+            ['exportPngBtn', 'exportPdfBtn'].forEach(id => { document.getElementById(id).disabled = none; });
+            document.querySelector('.board-tools').hidden = none;
+        }
+        function isoPlus(days) { const d = new Date(); d.setDate(d.getDate() + days); return d.toISOString().slice(0, 10); }
+        function loadVoorbeeld() {
+            const bestaand = state.projects.find(p => p.voorbeeld);
+            if (bestaand) { switchProject(bestaand.id); return; }
+            const id = generateId, sp1 = id(), sp2 = id();
+            const t = { pl: id(), lk: id(), ict: id(), com: id() };
+            const e = { form: id(), loket: id(), com: id() };
+            const card = (title, status, extra = {}) => ({ id: id(), title, description: '', epicId: null, status, ownerId: null, dueDate: null, estimate: null, priority: null, participants: [], subtasks: [], sprintId: sp1, ...extra });
+            const p = {
+                id: id(), voorbeeld: true, name: 'Voorbeeld: digitaal premieloket',
+                sprints: [
+                    { id: sp1, name: 'Periode 1', startDate: isoPlus(-7), endDate: isoPlus(6), days: 10, goal: 'Het nieuwe aanvraagformulier staat klaar om te testen aan het loket.', status: 'active' },
+                    { id: sp2, name: 'Periode 2', startDate: isoPlus(7), endDate: isoPlus(20), days: 10, goal: 'Het loket werkt met het nieuwe formulier.', status: 'planned' }
+                ],
+                team: [
+                    { id: t.pl, name: 'Projectleider', color: '#047857' },
+                    { id: t.lk, name: 'Loketverantwoordelijke', color: '#f59e0b' },
+                    { id: t.ict, name: 'Dienst informatica', color: '#334155' },
+                    { id: t.com, name: 'Communicatie', color: '#94a3b8' }
+                ],
+                epics: [
+                    { id: e.form, name: 'Aanvraagformulier', color: '#10b981' },
+                    { id: e.loket, name: 'Werking loket', color: '#f59e0b' },
+                    { id: e.com, name: 'Communicatie', color: '#64748b' }
+                ],
+                teamAvailability: {},
+                cards: [
+                    card('Bewijsstukken voor de renovatiepremie opsommen', 'klaar', { epicId: e.form, ownerId: t.lk, estimate: '1' }),
+                    card('Vragen in het formulier herschrijven in eenvoudige taal', 'review', { epicId: e.form, ownerId: t.com, estimate: '2', priority: 'high', subtasks: [{ text: 'Eerste versie', done: true }, { text: 'Nalezen door het loket', done: false }] }),
+                    card('Koppeling met het registratiesysteem bouwen', 'bezig', { epicId: e.form, ownerId: t.ict, estimate: '5', priority: 'high', dueDate: isoPlus(4), participants: [t.pl] }),
+                    card('Formulier testen met vijf aanvragers', 'todo', { epicId: e.form, ownerId: t.lk, estimate: '2', dueDate: isoPlus(6) }),
+                    card('Loketmedewerkers opleiden', 'todo', { epicId: e.loket, ownerId: t.lk, estimate: '1.5', priority: 'medium' }),
+                    card('Nieuwsbrief over het nieuwe loket schrijven', 'backlog', { epicId: e.com, ownerId: t.com, sprintId: sp2, estimate: '1' }),
+                    card('Veelgestelde vragen op de website zetten', 'backlog', { epicId: e.com, ownerId: t.com, estimate: '1', priority: 'low' })
+                ]
+            };
+            p.teamAvailability[t.pl] = 5; p.teamAvailability[t.lk] = 6; p.teamAvailability[t.ict] = 8; p.teamAvailability[t.com] = 4;
+            state.projects.push(p);
+            state.activeProjectId = p.id;
+            state.activeSprintId = sp1;
+            state.filters = { search: '', epic: null, owner: null, status: null };
+            document.getElementById('searchInput').value = '';
+            saveToStorage();
+            refreshUI();
+            showToast('Voorbeeld geladen');
+        }
+        function wisVoorbeeld() {
+            const idx = state.projects.findIndex(p => p.voorbeeld);
+            if (idx < 0) return;
+            const copy = { projects: state.projects.slice(), activeProjectId: state.activeProjectId, activeSprintId: state.activeSprintId };
+            state.projects.splice(idx, 1);
+            if (!state.projects.length) state.projects.push(createDefaultProject());
+            if (!state.projects.some(p => p.id === state.activeProjectId)) {
+                const next = state.projects[Math.min(idx, state.projects.length - 1)];
+                state.activeProjectId = next.id;
+                state.activeSprintId = next.sprints.find(s => s.status === 'active')?.id || next.sprints[0].id;
+            }
+            state.filters = { search: '', epic: null, owner: null, status: null };
+            document.getElementById('searchInput').value = '';
+            saveToStorage();
+            refreshUI();
+            showToast('Voorbeeld gewist', 'success', () => { Object.assign(state, copy); saveToStorage(); refreshUI(); showToast('Voorbeeld teruggezet'); });
+        }
+        function maakEigen() {
+            const project = getActiveProject();
+            if (!project) return;
+            delete project.voorbeeld;
+            if (/^Voorbeeld: /.test(project.name)) project.name = project.name.replace(/^Voorbeeld: /, '');
+            saveToStorage();
+            refreshUI();
+            showToast('Het voorbeeld is nu van jou');
+        }
+
         function renderBoard() {
             const board = document.getElementById('board');
             board.innerHTML = '';
@@ -5440,6 +5590,7 @@ const ocExport = (() => {
             });
 
             updateStats();
+            updateBars();
         }
 
         function renderCard(card) {
@@ -5581,7 +5732,7 @@ const ocExport = (() => {
                         <div class="team-availability">
                             <input type="number" class="availability-input" value="${esc(availability)}" min="0" max="60" step="0.5" data-change="availability" data-id="${esc(member.id)}" aria-label="Beschikbare dagen voor ${esc(member.name)}">
                             <span class="availability-label">dagen</span>
-                            ${!isDefault ? `<button type="button" class="availability-sync-btn" data-act="syncMember" data-id="${esc(member.id)}" title="Gelijkzetten met de sprintduur" aria-label="Beschikbaarheid van ${esc(member.name)} gelijkzetten met de sprintduur">↺</button>` : ''}
+                            ${!isDefault ? `<button type="button" class="availability-sync-btn" data-act="syncMember" data-id="${esc(member.id)}" title="Gelijkzetten met de duur van de periode" aria-label="Beschikbaarheid van ${esc(member.name)} gelijkzetten met de duur van de periode">↺</button>` : ''}
                         </div>
                     </div>
                 `;
@@ -5604,7 +5755,7 @@ const ocExport = (() => {
                                 <div class="epic-progress">${doneTasks}/${epicTasks.length} taken voltooid</div>
                             </div>
                             <div class="epic-actions">
-                                <button type="button" class="card-action-btn" data-act="filterEpic" data-id="${esc(epic.id)}" title="Filter op deze epic" aria-label="Filter op ${esc(epic.name)}">
+                                <button type="button" class="card-action-btn" data-act="filterEpic" data-id="${esc(epic.id)}" title="Filter op dit thema" aria-label="Filter op ${esc(epic.name)}">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
                                 </button>
                                 <button type="button" class="card-action-btn delete" data-act="deleteEpic" data-id="${esc(epic.id)}" title="Verwijderen" aria-label="${esc(epic.name)} verwijderen">
@@ -5758,9 +5909,9 @@ const ocExport = (() => {
         }
 
         function updateSelects() {
-            document.getElementById('cardEpicSelect').innerHTML = '<option value="">Geen epic</option>' +
+            document.getElementById('cardEpicSelect').innerHTML = '<option value="">Geen thema</option>' +
                 getEpics().map(e => `<option value="${esc(e.id)}">${esc(e.name)}</option>`).join('') +
-                '<option value="__new__">+ Nieuwe epic aanmaken...</option>';
+                '<option value="__new__">+ Nieuw thema aanmaken…</option>';
 
             document.getElementById('cardOwnerSelect').innerHTML = '<option value="">Niet toegewezen</option>' +
                 getTeam().map(t => `<option value="${esc(t.id)}">${esc(t.name)}</option>`).join('');
@@ -5936,7 +6087,7 @@ const ocExport = (() => {
             const dueDate = dueDateInput ? toIsoDate(dueDateInput) : null;
             
             if (dueDateInput && !dueDate) {
-                showToast('Ongeldige deadline. Gebruik dd/mm/jjjj', 'error');
+                showToast('Ongeldige datum bij Uiterlijk op. Gebruik dd/mm/jjjj', 'error');
                 return;
             }
 
@@ -6058,7 +6209,7 @@ const ocExport = (() => {
             
             const name = document.getElementById('inlineEpicName').value.trim();
             const color = document.getElementById('inlineEpicColor').value;
-            if (!name) { showToast('Vul een epic naam in', 'error'); return; }
+            if (!name) { showToast('Vul een naam voor het thema in', 'error'); return; }
 
             const newEpic = { id: generateId(), name, color };
             project.epics.push(newEpic);
@@ -6068,7 +6219,7 @@ const ocExport = (() => {
             document.getElementById('inlineEpicName').value = '';
             document.getElementById('addEpicInline').classList.remove('active');
             renderFilterChips();
-            showToast('Epic aangemaakt');
+            showToast('Thema aangemaakt');
         }
 
         function addSubtask() {
@@ -6158,21 +6309,21 @@ const ocExport = (() => {
             saveToStorage();
             renderEpicsList();
             renderFilterChips();
-            showToast('Epic toegevoegd');
+            showToast('Thema toegevoegd');
         }
 
         async function deleteEpic(epicId) {
             const project = getActiveProject();
             if (!project) return;
             
-            if (await ocConfirm('Weet je zeker dat je deze epic wilt verwijderen?')) {
+            if (await ocConfirm('Dit thema verwijderen? De taken blijven staan, zonder thema.')) {
                 project.epics = project.epics.filter(e => e.id !== epicId);
                 project.cards.forEach(card => { if (card.epicId === epicId) card.epicId = null; });
                 saveToStorage();
                 renderEpicsList();
                 renderFilterChips();
                 renderBoard();
-                showToast('Epic verwijderd');
+                showToast('Thema verwijderd');
             }
         }
 
@@ -6186,7 +6337,7 @@ const ocExport = (() => {
             closePanel('epics');
             renderBoard();
             renderFilterChips();
-            showToast('Gefilterd op epic');
+            showToast('Gefilterd op thema');
         }
 
         function toggleTeamExpand(memberId) {
@@ -6242,7 +6393,7 @@ const ocExport = (() => {
                 return;
             }
             
-            sprint.name = document.getElementById('sprintNameInput').value || 'Sprint 1';
+            sprint.name = document.getElementById('sprintNameInput').value || 'Periode 1';
             sprint.startDate = startDate;
             sprint.endDate = endDate;
             sprint.days = parseFloat(document.getElementById('sprintDaysInput').value) || 10;
@@ -6253,7 +6404,7 @@ const ocExport = (() => {
             updateSprintInfo();
             renderTeamAvailabilityList();
             updateStats();
-            showToast('Sprint opgeslagen');
+            showToast('Periode opgeslagen');
         }
 
         function loadSprintSettings() {
@@ -6341,9 +6492,9 @@ const ocExport = (() => {
                 const blob = new Blob([json], { type: 'application/json' });
                 const link = document.createElement('a');
                 link.href = URL.createObjectURL(blob);
-                link.download = `sprintflow-${project.name.replace(/[^a-z0-9]/gi, '-')}-${new Date().toISOString().split('T')[0]}.json`;
+                link.download = exportBaseName() + '.json';
                 link.click();
-                showToast('Backup opgeslagen');
+                showToast('Back-up opgeslagen');
             } catch (error) {
                 showToast('Export mislukt', 'error');
                 console.error(error);
@@ -6386,7 +6537,7 @@ const ocExport = (() => {
                     const teamCount = Array.isArray(importedProject.team) ? importedProject.team.length : 0;
                     const epicCount = Array.isArray(importedProject.epics) ? importedProject.epics.length : 0;
                     
-                    const action = await ocConfirm(`Hoe wil je importeren?\n\n• ${taskCount} taken\n• ${teamCount} teamleden\n• ${epicCount} epics\n\nBackup van: ${imported.exportDate ? new Date(imported.exportDate).toLocaleString('nl-NL') : 'onbekend'}`, { ok: 'Importeer als nieuw project' });
+                    const action = await ocConfirm(`Hoe wil je importeren?\n\n• ${taskCount} taken\n• ${teamCount} teamleden\n• ${epicCount} thema's\n\nBackup van: ${imported.exportDate ? new Date(imported.exportDate).toLocaleString('nl-NL') : 'onbekend'}`, { ok: 'Importeer als nieuw project' });
                     
                     if (!action) {
                         event.target.value = '';
@@ -6422,9 +6573,9 @@ const ocExport = (() => {
 
         function exportBaseName() {
             const project = getActiveProject();
-            const slug = (project?.name || 'project').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-                .replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'project';
-            return `sprintflow-${slug}-${new Date().toISOString().slice(0, 10)}`;
+            const slug = (project?.name || ocProject('')).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+                .replace(/[^a-z0-9]+/g, '-').replace(/-?\d{4}-\d{2}-\d{2}-?/g, '-').replace(/^-+|-+$/g, '').slice(0, 60);
+            return ['takenbord', slug, new Date().toISOString().slice(0, 10)].filter(Boolean).join('-');
         }
 
         function buildBoardExport() {
@@ -6441,7 +6592,7 @@ const ocExport = (() => {
             if (sprint && sprint.goal) {
                 const goal = document.createElement('div');
                 goal.style.cssText = 'font-size:14px;color:#475569;margin:-4px 0 18px;';
-                goal.innerHTML = `<span style="font-weight:600;color:#1e293b">Sprintdoel:</span> ${escX(sprint.goal)}`;
+                goal.innerHTML = `<span style="font-weight:600;color:#1e293b">Doel:</span> ${escX(sprint.goal)}`;
                 node.appendChild(goal);
             }
             const board = document.createElement('div');
@@ -6461,7 +6612,7 @@ const ocExport = (() => {
                         const meta = [
                             owner ? escX(owner.name) : '',
                             card.estimate ? escX(formatEstimate(card.estimate)) : '',
-                            card.dueDate ? 'tegen ' + escX(formatDate(card.dueDate)) : '',
+                            card.dueDate ? 'uiterlijk ' + escX(formatDate(card.dueDate)) : '',
                             subs.length ? `${subs.filter(x => x.done).length}/${subs.length} subtaken` : ''
                         ].filter(Boolean).join(' · ');
                         return `<div data-oc-keep style="border:1px solid #e2e8f0;border-left:4px solid ${epic ? esc(safeColor(epic.color)) : '#cbd5e1'};border-radius:8px;padding:9px 10px;margin-bottom:8px;background:#fff">
@@ -6475,7 +6626,7 @@ const ocExport = (() => {
                 </div>`;
             }).join('');
             node.appendChild(board);
-            return { node, title: 'SprintFlow', subtitle };
+            return { node, title: 'Takenbord', subtitle };
         }
 
         async function exportBoard(kind) {
@@ -6492,20 +6643,20 @@ const ocExport = (() => {
 
         function exportAsCSV() {
             try {
-                const headers = ['ID', 'Titel', 'Beschrijving', 'Status', 'Epic', 'Eigenaar', 'Betrokkenen', 'Prioriteit', 'Inschatting', 'Deadline', 'Subtaken'];
+                const headers = ['ID', 'Titel', 'Beschrijving', 'Status', 'Thema', 'Eigenaar', 'Betrokkenen', 'Prioriteit', 'Inschatting', 'Uiterlijk op', 'Subtaken'];
                 const rows = getCards().map(card => {
                     const epic = getEpics().find(e => e.id === card.epicId);
                     const owner = getTeam().find(t => t.id === card.ownerId);
                     const participants = (card.participants || []).map(id => getTeam().find(t => t.id === id)?.name).filter(Boolean).join('; ');
                     const subtasks = (card.subtasks || []).map(s => `${s.done ? '✓' : '○'} ${s.text}`).join('; ');
                     const cell = v => `"${String(v == null ? '' : v).replace(/"/g, '""')}"`;
-                    return [card.id, card.title, card.description, card.status, epic?.name, owner?.name, participants, card.priority, card.estimate, card.dueDate, subtasks].map(cell).join(',');
+                    return [card.id, card.title, card.description, (COLUMNS.find(c => c.id === card.status) || {}).name || card.status, epic?.name, owner?.name, participants, card.priority, card.estimate, card.dueDate, subtasks].map(cell).join(',');
                 });
                 const csv = [headers.join(','), ...rows].join('\n');
                 const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
                 const link = document.createElement('a');
                 link.href = URL.createObjectURL(blob);
-                link.download = `kanban-bord-${new Date().toISOString().split('T')[0]}.csv`;
+                link.download = exportBaseName() + '.csv';
                 link.click();
                 showToast('CSV geëxporteerd');
             } catch (error) { showToast('Export mislukt', 'error'); }
