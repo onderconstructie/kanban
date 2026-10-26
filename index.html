@@ -3273,6 +3273,27 @@ html.kb-dragging, html.kb-dragging * { -webkit-user-select:none; user-select:non
 .touch-hint { display:none; margin:0; padding:1rem 1.5rem 0; margin-bottom:-0.5rem; font-size:0.8125rem; color:var(--slate-500); }
 @media (hover:none) { .touch-hint { display:block; } }
 @media (prefers-reduced-motion: reduce) { .card, .column, .toast, .modal, .sidebar-panel, .modal-overlay, .sidebar-overlay { transition:none !important; animation:none !important; } }
+/* Nieuwe taak in de duimzone (gsm, smal scherm of aanraakscherm). Op desktop blijft het bij de knop bovenaan. */
+.kb-fab-wrap { display:none; }
+@media (max-width:768px), (pointer:coarse) {
+    .kb-fab-wrap { display:block; position:fixed; z-index:90; right:calc(1rem + env(safe-area-inset-right, 0px)); bottom:calc(1rem + env(safe-area-inset-bottom, 0px)); transition:opacity 0.15s ease, transform 0.15s ease; }
+    .kb-fab { display:inline-flex; align-items:center; justify-content:center; gap:0.5rem; min-height:56px; padding:0 1.375rem 0 1.125rem; border:0; border-radius:999px; background:#047857; color:#fff; font:inherit; font-size:1rem; font-weight:600; white-space:nowrap; cursor:pointer; box-shadow:0 6px 18px rgba(4,120,87,0.32), 0 2px 6px rgba(15,23,42,0.12); }
+    .kb-fab svg { width:22px; height:22px; flex:none; }
+    .kb-fab:hover { background:#065f46; }
+    .kb-fab:active { transform:scale(0.97); }
+    .kb-fab:focus-visible { outline:3px solid #a7f3d0; outline-offset:3px; }
+    /* weg zolang een venster, menu of het toetsenbord open is, en tijdens het slepen */
+    html.oc-lock .kb-fab-wrap, html.kb-kbd .kb-fab-wrap, html.kb-dragging .kb-fab-wrap,
+    html:has(.ocs-back, .ocw-back, .gal-back, .oc-dialog-backdrop, .dropdown-menu.active) .kb-fab-wrap { opacity:0; transform:translateY(12px); pointer-events:none; }
+    /* geen tweede grote knop: de kleine bovenaan valt weg, de knop onderaan neemt het over */
+    .header .btn-new { display:none; }
+    /* ruimte onderaan, zodat de laatste kaarten en de voet vrij blijven */
+    .board-container { padding-bottom:calc(56px + 2.5rem + env(safe-area-inset-bottom, 0px)); }
+    footer.oc-footer { padding-bottom:calc(56px + 2.5rem + env(safe-area-inset-bottom, 0px)); }
+    .toast-container { bottom:calc(56px + 2rem + env(safe-area-inset-bottom, 0px)); }
+}
+@media (prefers-reduced-motion: reduce) { .kb-fab-wrap, .kb-fab { transition:none !important; } .kb-fab:active { transform:none; } }
+@media print { .kb-fab-wrap { display:none !important; } }
     </style>
 </head>
 <body>
@@ -3506,6 +3527,12 @@ function ocPickProject(st, arr, cur = 'current') { const p = ocProject(''); if (
     <div class="board-container">
         <p class="touch-hint" id="touchHint" hidden>Houd een taak even vast en sleep ze naar een andere kolom.</p>
         <div class="board" id="board"></div>
+    </div>
+    <div class="kb-fab-wrap">
+        <button type="button" class="kb-fab" id="fabNew">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <span>Nieuwe taak</span>
+        </button>
     </div>
 
     <!-- Card Modal -->
@@ -7043,6 +7070,45 @@ const ocExport = (() => {
   const SEL = '#exportPngBtn, #exportPdfBtn, .more-btn';
   ['pointerdown', 'focusin', 'mouseover'].forEach(t => document.addEventListener(t, e => { if (!warm && e.target.closest && e.target.closest(SEL)) go(); }, { passive:true, capture:true }));
 })();
+
+        /* Knop "Nieuwe taak" onderaan (duimzone): zelfde venster, in de kolom die je nu bekijkt. */
+        (() => {
+            const fab = document.getElementById('fabNew');
+            if (!fab) return;
+            const ADD = ['backlog', 'todo', 'bezig'];   // in Nakijken of Klaar begin je geen nieuwe taak
+            function columnInView() {
+                const wrap = document.querySelector('.board-container');
+                if (!wrap || wrap.scrollWidth <= wrap.clientWidth + 4 || wrap.scrollLeft < 8) return 'todo';
+                const w = wrap.getBoundingClientRect(), mid = w.left + w.width / 2;
+                let best = null, bestD = Infinity;
+                document.querySelectorAll('.board .column[data-status]').forEach(c => {
+                    const r = c.getBoundingClientRect(), d = Math.abs((r.left + r.right) / 2 - mid);
+                    if (d < bestD) { bestD = d; best = c.dataset.status; }
+                });
+                return ADD.includes(best) ? best : 'todo';
+            }
+            fab.addEventListener('click', () => {
+                openCardModal(null, columnInView());
+                focusBack.card = fab;
+                document.getElementById('cardTitle').focus({ preventScroll: true });   // meteen: zo opent het toetsenbord ook op iPhone
+            });
+            /* Toetsenbord open? De zichtbare hoogte zakt flink onder de hoogste die we op deze breedte zagen. */
+            const html = document.documentElement, vv = window.visualViewport;
+            let baseW = 0, baseH = 0;
+            const editable = el => el && (el.isContentEditable || (/^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName) && !/^(checkbox|radio|range|button|submit|color|file)$/.test(el.type)));
+            function check() {
+                const w = innerWidth, h = vv ? vv.height : innerHeight;
+                if (Math.abs(w - baseW) > 40) { baseW = w; baseH = 0; }   // draaien of ander venster: opnieuw meten
+                baseH = Math.max(baseH, h, innerHeight);
+                const kbd = h < baseH - 150 || (matchMedia('(pointer: coarse)').matches && editable(document.activeElement));
+                html.classList.toggle('kb-kbd', kbd);
+            }
+            if (vv) vv.addEventListener('resize', check, { passive: true });
+            addEventListener('resize', check, { passive: true });
+            document.addEventListener('focusin', check);
+            document.addEventListener('focusout', () => setTimeout(check, 50));
+            check();
+        })();
 
         function init() {
             setupDelegation();
