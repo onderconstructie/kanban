@@ -6200,12 +6200,13 @@ const ocExport = (() => {
             const picked = await ocShare.pick({ types: IMPORT_TYPES, self: 'kanban', title: 'Taken overnemen', intro: 'Kies welke taken en acties je op het bord zet. Ze komen in Te doen.' });
             if (!picked.length) return;
             const before = JSON.stringify({ cards: project.cards, team: project.team, av: project.teamAvailability });
-            const open = new Set(project.cards.filter(c => c.status !== 'klaar').map(c => c.title.trim().toLowerCase()));
+            const norm = t => String(t || '').trim().toLowerCase().replace(/^kloof dichten:\s*/, 'verschil wegwerken: ');
+            const open = new Set(project.cards.filter(c => c.status !== 'klaar').map(c => norm(c.title)));
             let added = 0, people = 0;
             picked.forEach(it => {
                 const title = String(it.text || '').trim().slice(0, 500);
-                if (!title || open.has(title.toLowerCase())) return;
-                open.add(title.toLowerCase());
+                if (!title || open.has(norm(title))) return;
+                open.add(norm(title));
                 const teamBefore = project.team.length;
                 const names = String(it.who || '').split(/\s*[,;&]\s*|\s+en\s+/).map(x => x.trim()).filter(Boolean);
                 const ids = names.map(n => memberFor(project, sprint, n));
