@@ -3224,6 +3224,19 @@
         .card-epic { max-width: 100%; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .card-priority-badge { flex-shrink: 0; }
         [hidden] { display: none !important; }
+        /* Overnemen, foutmelding, bron, toetsenbord */
+        .sr-only { position:absolute !important; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+        .import-btn { margin-top: 0.375rem; min-height: 44px; width: 100%; display: flex; align-items: center; justify-content: center; gap: 0.375rem; padding: 0.5rem; border-radius: 10px; border: 1.5px dashed #a7f3d0; background: #fff; color: #047857; font: inherit; font-size: 0.8125rem; font-weight: 600; cursor: pointer; }
+        .import-btn:hover { background: #ecfdf5; }
+        .import-btn svg { width: 16px; height: 16px; flex: none; }
+        .field-error { margin-top: 0.375rem; font-size: 0.8125rem; font-weight: 600; color: #b91c1c; }
+        .form-input[aria-invalid="true"] { border-color: #b91c1c; }
+        #cardModal .form-input, #cardModal .form-select, #cardModal .btn, #cardModal .priority-btn, #cardModal .estimate-custom-input { min-height: 44px; }
+        #cardModal .modal-close, #cardModal .btn-secondary { min-width: 44px; min-height: 44px; }
+        .card-source { font-size: 0.75rem; color: #64748b; margin: -0.25rem 0 0.75rem; }
+        .card.just-moved { box-shadow: 0 0 0 2px #10b981; }
+        .priority-btn[aria-pressed="true"] { box-shadow: inset 0 0 0 2px currentColor; }
+        @media (forced-colors: active) { .priority-btn[aria-pressed="true"] { border: 2px solid Highlight; } }
     </style>
 </head>
 <body>
@@ -3469,8 +3482,10 @@ function ocPickProject(st, arr, cur = 'current') { const p = ocProject(''); if (
             <input type="hidden" id="cardId">
             <div class="form-group">
                 <label class="form-label" for="cardTitle">Titel *</label>
-                <input type="text" class="form-input" id="cardTitle" placeholder="Wat moet er gedaan worden?">
+                <input type="text" class="form-input" id="cardTitle" placeholder="Wat moet er gedaan worden?" aria-describedby="cardTitleErr">
+                <p class="field-error" id="cardTitleErr" hidden>Typ eerst wat er gedaan moet worden.</p>
             </div>
+            <p class="card-source" id="cardSource" hidden></p>
             <div class="form-group">
                 <label class="form-label" for="cardDescription">Beschrijving</label>
                 <textarea class="form-textarea" id="cardDescription" placeholder="Voeg details toe..."></textarea>
@@ -3521,15 +3536,15 @@ function ocPickProject(st, arr, cur = 'current') { const p = ocProject(''); if (
             <div class="form-group">
                 <div class="form-label" id="priorityLabel">Prioriteit</div>
                 <div class="priority-options" role="group" aria-labelledby="priorityLabel">
-                    <button type="button" class="priority-btn high" onclick="setPriority('high')">
+                    <button type="button" class="priority-btn high" aria-pressed="false" onclick="setPriority('high')">
                         <span class="priority-dot"></span>
                         Hoog
                     </button>
-                    <button type="button" class="priority-btn medium" onclick="setPriority('medium')">
+                    <button type="button" class="priority-btn medium" aria-pressed="false" onclick="setPriority('medium')">
                         <span class="priority-dot"></span>
                         Middel
                     </button>
-                    <button type="button" class="priority-btn low" onclick="setPriority('low')">
+                    <button type="button" class="priority-btn low" aria-pressed="false" onclick="setPriority('low')">
                         <span class="priority-dot"></span>
                         Laag
                     </button>
@@ -3842,6 +3857,8 @@ function ocPickProject(st, arr, cur = 'current') { const p = ocProject(''); if (
 
     <!-- Toast Container -->
     <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+    <p class="sr-only" id="moveHint">Alt met pijltje links of rechts verplaatst de taak naar een andere kolom.</p>
+    <div class="sr-only" id="moveLive" role="status" aria-live="polite"></div>
 
     <footer class="footer oc-footer">
         <p class="quote oc-quote">Wie overal is, is nergens.</p>
@@ -4172,7 +4189,8 @@ const ocExport = (() => {
                     priority: PRIORITIES.includes(c.priority) ? c.priority : null,
                     participants: (Array.isArray(c.participants) ? c.participants : []).map(x => ref(x, teamIds)).filter(Boolean),
                     subtasks: arr(c.subtasks).map(t => ({ text: str(t.text, 500), done: !!t.done })),
-                    sprintId: ref(c.sprintId, sprintIds) || sprints[0].id
+                    sprintId: ref(c.sprintId, sprintIds) || sprints[0].id,
+                    ...(c.source ? { source: str(c.source, 160) } : {})
                 };
             });
             const teamAvailability = {};
@@ -5584,6 +5602,9 @@ const ocExport = (() => {
                             </svg>
                             Taak toevoegen
                         </button>
+                        ${column.id === 'todo' && canImport() ? `<button type="button" class="import-btn" data-act="importTasks" title="Taken en acties uit andere tools op het bord zetten">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>
+                            Overnemen uit…</button>` : ''}
                     </div>
                 `;
                 board.appendChild(columnEl);
@@ -5605,7 +5626,7 @@ const ocExport = (() => {
             const hasMetaInfo = card.dueDate || card.estimate || otherParticipants.length > 0;
 
             return `
-                <div class="card ${card.priority ? 'priority-' + esc(card.priority) : ''}" draggable="true" data-id="${esc(card.id)}" data-act="openCard" role="button" tabindex="0" aria-label="Taak: ${esc(card.title)}" ondragstart="handleDragStart(event)" ondragend="handleDragEnd(event)">
+                <div class="card ${card.priority ? 'priority-' + esc(card.priority) : ''}" draggable="true" data-id="${esc(card.id)}" data-act="openCard" role="button" tabindex="0" aria-label="Taak: ${esc(card.title)}" aria-describedby="moveHint" aria-keyshortcuts="Alt+ArrowLeft Alt+ArrowRight" ondragstart="handleDragStart(event)" ondragend="handleDragEnd(event)">
                     ${hasTopRow ? `
                         <div class="card-top-row">
                             ${epic ? `<div class="card-epic" style="background: ${hexToRgba(epic.color, 0.15)}; color: ${readableOn(epic.color)}">${esc(epic.name)}</div>` : '<div></div>'}
@@ -6061,6 +6082,11 @@ const ocExport = (() => {
             }
 
             renderSubtasks();
+            syncPriorityPressed();
+            showTitleErr(false);
+            const src = cardId && (getCards().find(c => c.id === cardId) || {}).source;
+            document.getElementById('cardSource').hidden = !src;
+            document.getElementById('cardSource').textContent = src ? `Overgenomen uit ${src}` : '';
             if (!document.getElementById('cardModal').contains(document.activeElement)) focusBack.card = document.activeElement;
             document.getElementById('cardModalOverlay').classList.add('active');
             document.getElementById('cardModal').classList.add('active');
@@ -6080,7 +6106,8 @@ const ocExport = (() => {
             if (!project || !sprint) return;
             
             const title = document.getElementById('cardTitle').value.trim();
-            if (!title) { showToast('Vul een titel in', 'error'); return; }
+            if (!title) { showTitleErr(true); document.getElementById('cardTitle').focus(); return; }
+            showTitleErr(false);
 
             // Convert due date from dd/mm/jjjj to ISO
             const dueDateInput = document.getElementById('cardDueDate').value;
@@ -6113,6 +6140,7 @@ const ocExport = (() => {
                 const index = project.cards.findIndex(c => c.id === cardId);
                 if (index !== -1) {
                     cardData.sprintId = project.cards[index].sprintId; // Keep original sprint
+                    if (project.cards[index].source) cardData.source = project.cards[index].source;   // bron onthouden
                     project.cards[index] = cardData;
                 }
             } else {
@@ -6124,6 +6152,98 @@ const ocExport = (() => {
             renderSprintTabs();
             closeCardModal();
             showToast(cardId ? 'Taak bijgewerkt' : 'Taak aangemaakt');
+            if (!cardId) scrollToColumn(cardData.status);
+        }
+
+        function showTitleErr(on) {
+            const t = document.getElementById('cardTitle');
+            document.getElementById('cardTitleErr').hidden = !on;
+            if (on) t.setAttribute('aria-invalid', 'true'); else t.removeAttribute('aria-invalid');
+        }
+
+        /* Op een smal scherm: de kolom waar de taak landt in beeld brengen */
+        function scrollToColumn(status) {
+            const col = document.querySelector(`.column[data-status="${status}"]`);
+            if (!col) return;
+            const wrap = document.querySelector('.board-container');
+            if (wrap && wrap.scrollWidth > wrap.clientWidth + 4) {
+                wrap.scrollTo({ left: Math.max(0, col.offsetLeft - wrap.offsetLeft - 16), behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+            }
+            const r = col.getBoundingClientRect();
+            if (r.top < 0 || r.top > innerHeight - 120) col.scrollIntoView({ block: 'start', inline: 'nearest' });
+        }
+
+        /* ---------- Overnemen uit andere tools (taken en acties) ---------- */
+        const IMPORT_TYPES = ['taak', 'actie'];
+        function canImport() { try { return ocShare.count(IMPORT_TYPES, 'kanban') > 0; } catch { return false; } }
+        // "who" en "when" komen in vrije vorm: een datum in JJJJ-MM-DD of dd/mm/jjjj wordt de einddatum
+        function parseWhen(v) {
+            const t = String(v || '').trim();
+            if (DATE_RE.test(t)) return t;
+            const m = t.match(/^(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{4})$/);
+            return m ? toIsoDate(`${m[1]}/${m[2]}/${m[3]}`) : '';
+        }
+        function memberFor(project, sprint, name) {
+            const n = String(name || '').trim().slice(0, 200);
+            if (!n) return null;
+            let m = project.team.find(t => t.name.trim().toLowerCase() === n.toLowerCase());
+            if (!m) {
+                m = { id: generateId(), name: n, color: AVATAR_COLORS[project.team.length % AVATAR_COLORS.length] };
+                project.team.push(m);
+                project.teamAvailability[m.id] = parseFloat(sprint?.days) || 10;
+            }
+            return m.id;
+        }
+        async function importTasks() {
+            const project = getActiveProject(), sprint = getActiveSprint();
+            if (!project || !sprint) return;
+            const picked = await ocShare.pick({ types: IMPORT_TYPES, self: 'kanban', title: 'Taken overnemen', intro: 'Kies welke taken en acties je op het bord zet. Ze komen in Te doen.' });
+            if (!picked.length) return;
+            const before = JSON.stringify({ cards: project.cards, team: project.team, av: project.teamAvailability });
+            const open = new Set(project.cards.filter(c => c.status !== 'klaar').map(c => c.title.trim().toLowerCase()));
+            let added = 0, people = 0;
+            picked.forEach(it => {
+                const title = String(it.text || '').trim().slice(0, 500);
+                if (!title || open.has(title.toLowerCase())) return;
+                open.add(title.toLowerCase());
+                const teamBefore = project.team.length;
+                const names = String(it.who || '').split(/\s*[,;&]\s*|\s+en\s+/).map(x => x.trim()).filter(Boolean);
+                const ids = names.map(n => memberFor(project, sprint, n));
+                people += project.team.length - teamBefore;
+                const due = parseWhen(it.when);
+                const desc = [it.note || '', it.when && !due ? `Tegen: ${it.when}` : ''].filter(Boolean).join('\n');
+                project.cards.push({
+                    id: generateId(), title, description: desc.slice(0, 5000), epicId: null, status: 'todo',
+                    ownerId: ids[0] || null, dueDate: due || null, estimate: null, priority: null,
+                    participants: ids.slice(1), subtasks: [], sprintId: sprint.id,
+                    source: [it.source, it.list].filter(Boolean).join(' · ').slice(0, 160)
+                });
+                added++;
+            });
+            if (!added) { showToast('Die taken staan al op het bord'); return; }
+            saveToStorage(); renderBoard(); renderSprintTabs(); renderFilterChips(); renderTeamList(); renderTeamAvailabilityList(); updateStats();
+            const msg = `${added} ${added === 1 ? 'taak' : 'taken'} in Te doen` + (people ? `, ${people} ${people === 1 ? 'teamlid' : 'teamleden'} toegevoegd` : '');
+            showToast(msg, 'success', () => {
+                const b = JSON.parse(before);
+                project.cards = b.cards; project.team = b.team; project.teamAvailability = b.av;
+                saveToStorage(); renderBoard(); renderSprintTabs(); renderFilterChips(); renderTeamList(); renderTeamAvailabilityList(); updateStats();
+            });
+            scrollToColumn('todo');
+        }
+
+        /* Kaart verplaatsen met het toetsenbord: Alt + pijltje links/rechts */
+        function moveCardBy(cardId, dir) {
+            const card = getCards().find(c => c.id === cardId);
+            if (!card) return;
+            const i = COLUMNS.findIndex(c => c.id === card.status), j = i + dir;
+            if (j < 0 || j >= COLUMNS.length) { document.getElementById('moveLive').textContent = `Staat al in ${COLUMNS[i].name}`; return; }
+            card.status = COLUMNS[j].id;
+            saveToStorage(); renderBoard();
+            const el = document.querySelector(`.card[data-id="${CSS.escape(cardId)}"]`);
+            if (el) { el.focus(); el.classList.add('just-moved'); setTimeout(() => el.classList.remove('just-moved'), 900); }
+            scrollToColumn(card.status);
+            const live = document.getElementById('moveLive');
+            live.textContent = ''; setTimeout(() => { live.textContent = `Verplaatst naar ${COLUMNS[j].name}`; }, 30);
         }
 
         function deleteCard(cardId) {
@@ -6153,6 +6273,10 @@ const ocExport = (() => {
         function setPriority(priority) {
             document.querySelectorAll('.priority-btn').forEach(btn => btn.classList.remove('active'));
             document.querySelector(`.priority-btn.${priority}`).classList.add('active');
+            syncPriorityPressed();
+        }
+        function syncPriorityPressed() {
+            document.querySelectorAll('.priority-btn').forEach(btn => btn.setAttribute('aria-pressed', String(btn.classList.contains('active'))));
         }
 
         function setEstimate(value) {
@@ -6678,7 +6802,25 @@ const ocExport = (() => {
                     closeCardModal(); closePanel('team'); closePanel('epics'); closePanel('sprint'); closeRoadmap(); closeDashboard();
                 }
                 if (e.key === 'n' && e.ctrlKey) { e.preventDefault(); openCardModal(); }
+                // Taakvenster: de focus blijft binnen het venster
+                const modal = document.getElementById('cardModal');
+                if (e.key === 'Tab' && modal.classList.contains('active') && !document.querySelector('.oc-dialog-backdrop, .ocs-back')) {
+                    const f = [...modal.querySelectorAll('button, input:not([type=hidden]), select, textarea, [tabindex]:not([tabindex="-1"])')]
+                        .filter(x => !x.disabled && x.offsetParent !== null);
+                    if (!f.length) return;
+                    const first = f[0], last = f[f.length - 1];
+                    if (!modal.contains(document.activeElement)) { e.preventDefault(); first.focus(); }
+                    else if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+                    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+                }
+                // Kaart verplaatsen
+                if (e.altKey && (e.key === 'ArrowLeft' || e.key === 'ArrowRight') && e.target.matches && e.target.matches('.card[data-id]')) {
+                    e.preventDefault();
+                    moveCardBy(e.target.dataset.id, e.key === 'ArrowLeft' ? -1 : 1);
+                }
             });
+            document.getElementById('cardTitle').addEventListener('keydown', e => { if (e.key === 'Enter' && !e.isComposing) { e.preventDefault(); saveCard(); } });
+            document.getElementById('cardTitle').addEventListener('input', () => { if (document.getElementById('cardTitle').value.trim()) showTitleErr(false); });
             document.getElementById('newSubtaskInput').addEventListener('keypress', (e) => { if (e.key === 'Enter') { e.preventDefault(); addSubtask(); } });
             document.getElementById('newMemberName').addEventListener('keypress', (e) => { if (e.key === 'Enter') { e.preventDefault(); addTeamMember(); } });
             document.getElementById('newEpicName').addEventListener('keypress', (e) => { if (e.key === 'Enter') { e.preventDefault(); addEpic(); } });
@@ -6704,6 +6846,7 @@ const ocExport = (() => {
             editSprintRm: el => editSprintFromRoadmap(el.dataset.id),
             deleteSprintRm: el => deleteSprintFromRoadmap(el.dataset.id),
             addCard: el => openCardModal(null, el.dataset.id),
+            importTasks: () => importTasks(),
             openCard: el => openCardModal(el.dataset.id),
             deleteCard: el => deleteCard(el.dataset.id),
             toggleTeam: el => toggleTeamExpand(el.dataset.id),
