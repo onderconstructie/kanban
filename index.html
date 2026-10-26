@@ -15,6 +15,10 @@
     <meta name="oc:opslag" content="sprintflow_kanban_v5, oc.share.kanban">
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg viewBox=&quot;0 0 40 40&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;%3E%3Ccircle cx=&quot;20&quot; cy=&quot;20&quot; r=&quot;18&quot; fill=&quot;%23f8fafc&quot; stroke=&quot;%23e2e8f0&quot; stroke-width=&quot;1.5&quot;/%3E%3Crect x=&quot;8.5&quot; y=&quot;11&quot; width=&quot;7&quot; height=&quot;5&quot; rx=&quot;1.5&quot; fill=&quot;%2364748b&quot;/%3E%3Crect x=&quot;8.5&quot; y=&quot;18&quot; width=&quot;7&quot; height=&quot;5&quot; rx=&quot;1.5&quot; fill=&quot;%2364748b&quot;/%3E%3Crect x=&quot;8.5&quot; y=&quot;25&quot; width=&quot;7&quot; height=&quot;5&quot; rx=&quot;1.5&quot; fill=&quot;%2394a3b8&quot;/%3E%3Crect x=&quot;16.5&quot; y=&quot;11&quot; width=&quot;7&quot; height=&quot;5&quot; rx=&quot;1.5&quot; fill=&quot;%2364748b&quot;/%3E%3Crect x=&quot;16.5&quot; y=&quot;18&quot; width=&quot;7&quot; height=&quot;5&quot; rx=&quot;1.5&quot; fill=&quot;%2394a3b8&quot;/%3E%3Crect x=&quot;24.5&quot; y=&quot;11&quot; width=&quot;7&quot; height=&quot;5&quot; rx=&quot;1.5&quot; fill=&quot;%2310b981&quot;/%3E%3C/svg%3E">
 <link rel="stylesheet" href="/fonts/fonts.css">
+<link rel="preload" href="/fonts/dm-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/dm-sans-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin>
+<style>html.oc-wacht body > .header .project-name, html.oc-wacht body > .start-bar, html.oc-wacht body > .vb-bar, html.oc-wacht body > .sprint-bar, html.oc-wacht body > .sprint-tabs-container, html.oc-wacht body > .filter-bar, html.oc-wacht body > .touch-hint, html.oc-wacht body > .board-container, html.oc-wacht body > .footer { visibility:hidden; animation:oc-toon 0s 2.5s forwards; } @keyframes oc-toon { to { visibility:visible; } }</style>
+<script>document.documentElement.classList.add('oc-wacht');</script>
     <style>
         :root {
             --slate-50: #f8fafc;
@@ -3237,6 +3241,38 @@
         .card.just-moved { box-shadow: 0 0 0 2px #10b981; }
         .priority-btn[aria-pressed="true"] { box-shadow: inset 0 0 0 2px currentColor; }
         @media (forced-colors: active) { .priority-btn[aria-pressed="true"] { border: 2px solid Highlight; } }
+
+/* ---------- Soepel op gsm (oktober 2026): tikken, typen, schuiven ---------- */
+html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
+button, a, summary, label, select, [role="button"], [role="tab"], [data-act], input[type="range"], input[type="checkbox"], input[type="radio"] { touch-action:manipulation; -webkit-tap-highlight-color:transparent; }
+@media (hover:none) { button:not(:disabled):active, a:active, summary:active, [role="button"]:active, [role="tab"]:active { filter:brightness(0.93); } }
+@media (pointer:coarse) { input:not([type="range"]):not([type="checkbox"]):not([type="radio"]):not([type="color"]), select, textarea { font-size:16px !important; } }
+/* venster open: de pagina erachter schuift niet mee, en scrollen binnen het venster loopt niet door naar de pagina */
+html:has(.ocs-back, .ocw-back, .gal-back, .oc-dialog-backdrop) { overflow:hidden; }
+.ocs-back *, .ocw-back *, .gal-back * { overscroll-behavior:contain; }
+
+body { min-height:100dvh; }
+.board { min-height:calc(100dvh - 260px); }
+.sidebar-panel { height:100dvh; }
+.modal { max-height:90dvh; }
+.dropdown-menu { max-height:calc(100dvh - 80px); }
+.modal-body, .panel-content, .dropdown-menu, .dashboard-modal, .roadmap-modal { overscroll-behavior:contain; }
+/* gesloten overlays niet meer laten meerekenen bij het scrollen (de wazige achtergrond kost veel op een gsm) */
+.modal-overlay, .sidebar-overlay { visibility:hidden; transition:opacity 0.3s ease, visibility 0s linear 0.3s; }
+.modal-overlay.active, .sidebar-overlay.active { visibility:visible; transition:opacity 0.3s ease, visibility 0s; }
+@media (hover:none) { .modal-overlay, .sidebar-overlay { backdrop-filter:none; } }
+/* venster open: de pagina erachter schuift niet mee */
+html.oc-lock, html.oc-lock body { overflow:hidden; }
+.toast-container { bottom:calc(1.5rem + env(safe-area-inset-bottom, 0px)); }
+@media (max-width:520px) { .toast-container { left:1rem; right:1rem; align-items:center; } }
+/* slepen met de vinger */
+@media (pointer:coarse) { .card { -webkit-touch-callout:none; -webkit-user-select:none; user-select:none; } .card:hover { transform:none; } }
+.card.touch-lift { opacity:0.35; }
+.drag-ghost { position:fixed !important; left:0; top:0; margin:0 !important; z-index:400; pointer-events:none; transition:none !important; will-change:transform; box-shadow:0 18px 40px rgba(15,23,42,0.22); border-color:var(--accent); }
+html.kb-dragging, html.kb-dragging * { -webkit-user-select:none; user-select:none; cursor:grabbing; }
+.touch-hint { display:none; margin:0; padding:1rem 1.5rem 0; margin-bottom:-0.5rem; font-size:0.8125rem; color:var(--slate-500); }
+@media (hover:none) { .touch-hint { display:block; } }
+@media (prefers-reduced-motion: reduce) { .card, .column, .toast, .modal, .sidebar-panel, .modal-overlay, .sidebar-overlay { transition:none !important; animation:none !important; } }
     </style>
 </head>
 <body>
@@ -3440,7 +3476,7 @@ function ocPickProject(st, arr, cur = 'current') { const p = ocProject(''); if (
                 <circle cx="11" cy="11" r="8"/>
                 <line x1="21" y1="21" x2="16.65" y2="16.65"/>
             </svg>
-            <input type="search" id="searchInput" placeholder="Zoeken..." aria-label="Zoek in taken" oninput="filterCards()">
+            <input type="search" id="searchInput" placeholder="Zoeken..." aria-label="Zoek in taken" oninput="filterCardsSoon()" enterkeyhint="search" autocomplete="off">
         </div>
         <div class="filter-groups">
             <div class="filter-group" id="statusFilterGroup" style="display: none;">
@@ -3468,6 +3504,7 @@ function ocPickProject(st, arr, cur = 'current') { const p = ocProject(''); if (
 
     <!-- Board -->
     <div class="board-container">
+        <p class="touch-hint" id="touchHint" hidden>Houd een taak even vast en sleep ze naar een andere kolom.</p>
         <div class="board" id="board"></div>
     </div>
 
@@ -4656,6 +4693,7 @@ const ocExport = (() => {
         }
 
         function openDashboard() {
+            setTimeout(syncLock, 0);
             updateDashboard();
             const el = document.getElementById('dashboardModal');
             el.classList.add('active');
@@ -4663,6 +4701,7 @@ const ocExport = (() => {
         }
 
         function closeDashboard() {
+            setTimeout(syncLock, 0);
             const el = document.getElementById('dashboardModal');
             if (!el.classList.contains('active')) return;
             focusOut('dashboard', el);
@@ -4840,6 +4879,7 @@ const ocExport = (() => {
         let roadmapDate = new Date();
 
         function openRoadmap() {
+            setTimeout(syncLock, 0);
             roadmapDate = new Date();
             renderRoadmap();
             const el = document.getElementById('roadmapModal');
@@ -4848,6 +4888,7 @@ const ocExport = (() => {
         }
 
         function closeRoadmap() {
+            setTimeout(syncLock, 0);
             const el = document.getElementById('roadmapModal');
             if (!el.classList.contains('active')) return;
             focusOut('roadmap', el);
@@ -5499,6 +5540,7 @@ const ocExport = (() => {
             const none = !getFilteredCards().length;
             ['exportPngBtn', 'exportPdfBtn'].forEach(id => { document.getElementById(id).disabled = none; });
             document.querySelector('.board-tools').hidden = none;
+            document.getElementById('touchHint').hidden = none;
         }
         function isoPlus(days) { const d = new Date(); d.setDate(d.getDate() + days); return d.toISOString().slice(0, 10); }
         function loadVoorbeeld() {
@@ -5614,6 +5656,7 @@ const ocExport = (() => {
             updateBars();
         }
 
+        const KB_FINE = matchMedia('(pointer: fine)').matches;
         function renderCard(card) {
             const epic = getEpics().find(e => e.id === card.epicId);
             const owner = getTeam().find(t => t.id === card.ownerId);
@@ -5626,7 +5669,7 @@ const ocExport = (() => {
             const hasMetaInfo = card.dueDate || card.estimate || otherParticipants.length > 0;
 
             return `
-                <div class="card ${card.priority ? 'priority-' + esc(card.priority) : ''}" draggable="true" data-id="${esc(card.id)}" data-act="openCard" role="button" tabindex="0" aria-label="Taak: ${esc(card.title)}" aria-describedby="moveHint" aria-keyshortcuts="Alt+ArrowLeft Alt+ArrowRight" ondragstart="handleDragStart(event)" ondragend="handleDragEnd(event)">
+                <div class="card ${card.priority ? 'priority-' + esc(card.priority) : ''}" draggable="${KB_FINE ? 'true' : 'false'}" data-id="${esc(card.id)}" data-act="openCard" role="button" tabindex="0" aria-label="Taak: ${esc(card.title)}" aria-describedby="moveHint" aria-keyshortcuts="Alt+ArrowLeft Alt+ArrowRight" ondragstart="handleDragStart(event)" ondragend="handleDragEnd(event)">
                     ${hasTopRow ? `
                         <div class="card-top-row">
                             ${epic ? `<div class="card-epic" style="background: ${hexToRgba(epic.color, 0.15)}; color: ${readableOn(epic.color)}">${esc(epic.name)}</div>` : '<div></div>'}
@@ -5962,7 +6005,9 @@ const ocExport = (() => {
             });
         }
 
+        function filterCardsSoon() { clearTimeout(filterCardsSoon.t); filterCardsSoon.t = setTimeout(filterCards, 160); }
         function filterCards() {
+            clearTimeout(filterCardsSoon.t);
             state.filters.search = document.getElementById('searchInput').value;
             renderBoard();
             renderFilterChips();
@@ -6027,6 +6072,7 @@ const ocExport = (() => {
         // ============================================
 
         function openCardModal(cardId = null, defaultStatus = 'todo') {
+            setTimeout(syncLock, 0);
             updateSelects();
             renderParticipantCheckboxes();
             document.getElementById('addEpicInline').classList.remove('active');
@@ -6094,6 +6140,7 @@ const ocExport = (() => {
         }
 
         function closeCardModal() {
+            setTimeout(syncLock, 0);
             const el = document.getElementById('cardModal');
             if (el.classList.contains('active')) focusOut('card', el);
             document.getElementById('cardModalOverlay').classList.remove('active');
@@ -6550,6 +6597,7 @@ const ocExport = (() => {
         // ============================================
 
         function openPanel(panel) {
+            setTimeout(syncLock, 0);
             document.getElementById(`${panel}Overlay`).classList.add('active');
             const el = document.getElementById(`${panel}Panel`);
             el.classList.add('active');
@@ -6560,6 +6608,7 @@ const ocExport = (() => {
         }
 
         function closePanel(panel) {
+            setTimeout(syncLock, 0);
             const el = document.getElementById(`${panel}Panel`);
             if (el.classList.contains('active')) focusOut(panel, el);
             document.getElementById(`${panel}Overlay`).classList.remove('active');
@@ -6890,6 +6939,111 @@ const ocExport = (() => {
             });
         }
 
+
+        /* ---------- Soepel: vensters en slepen met de vinger ---------- */
+        // Staat er een venster open, dan schuift de pagina erachter niet mee.
+        function syncLock() {
+            document.documentElement.classList.toggle('oc-lock', !!document.querySelector('.modal.active, .sidebar-panel.active, .dashboard-modal.active, .roadmap-modal.active'));
+        }
+        // Een taak verplaatsen naar een kolom (na slepen met de vinger).
+        function moveCardTo(cardId, status) {
+            const card = getCards().find(c => c.id === cardId), col = COLUMNS.find(c => c.id === status);
+            if (!card || !col || card.status === status) return;
+            card.status = status;
+            saveToStorage(); renderBoard();
+            const el = document.querySelector(`.card[data-id="${CSS.escape(cardId)}"]`);
+            if (el) { el.classList.add('just-moved'); setTimeout(() => el.classList.remove('just-moved'), 900); }
+            showToast(`Taak verplaatst naar ${col.name}`);
+        }
+        /* Lang drukken (0,3 s) op een taak pakt ze op. Daarna volgt ze je vinger, schuift het bord mee aan de randen
+           en blijft de pagina stil. Beweeg je eerder, dan scrol je gewoon. Loslaten boven een kolom zet de taak daar. */
+        (() => {
+            const HOLD = 300, SLOP = 10;
+            let t = null;
+            const stopScroll = e => { if (t && t.on && e.cancelable) e.preventDefault(); };
+            function cleanup() {
+                if (!t) return;
+                clearTimeout(t.timer); cancelAnimationFrame(t.raf);
+                if (t.ghost) t.ghost.remove();
+                t.card.classList.remove('touch-lift');
+                if (t.col) t.col.classList.remove('drag-over');
+                document.documentElement.classList.remove('kb-dragging');
+                document.removeEventListener('touchmove', stopScroll, { passive: false });
+                t = null;
+            }
+            function place() { if (t && t.ghost) t.ghost.style.transform = `translate3d(${t.x - t.dx}px, ${t.y - t.dy}px, 0) rotate(2deg)`; }
+            function columnAt() { const el = document.elementFromPoint(t.x, t.y); return el && el.closest('.column[data-status]'); }
+            function lift() {
+                if (!t || !t.card.isConnected) { cleanup(); return; }
+                t.on = true;
+                const r = t.card.getBoundingClientRect(), g = t.card.cloneNode(true);
+                g.classList.add('drag-ghost'); g.setAttribute('aria-hidden', 'true'); g.removeAttribute('tabindex'); g.removeAttribute('data-act');
+                g.style.width = r.width + 'px';
+                t.dx = t.x0 - r.left; t.dy = t.y0 - r.top;
+                document.body.appendChild(g); t.ghost = g;
+                t.card.classList.add('touch-lift');
+                document.documentElement.classList.add('kb-dragging');
+                if (navigator.vibrate) try { navigator.vibrate(8); } catch (e) {}
+                place(); loop();
+            }
+            function loop() {   // aan de randen het bord en de pagina laten meeschuiven, en de kolom onder je vinger oplichten
+                if (!t || !t.on) return;
+                const b = document.querySelector('.board-container'), br = b.getBoundingClientRect(), E = 44;
+                if (t.x < br.left + E) b.scrollLeft -= Math.ceil((br.left + E - t.x) / 3);
+                else if (t.x > br.right - E) b.scrollLeft += Math.ceil((t.x - br.right + E) / 3);
+                const top = (document.querySelector('.header') || {}).offsetHeight || 0;
+                if (t.y < top + E) window.scrollBy(0, -Math.ceil((top + E - t.y) / 3));
+                else if (t.y > innerHeight - E) window.scrollBy(0, Math.ceil((t.y - innerHeight + E) / 3));
+                const col = columnAt();
+                if (col !== t.col) { if (t.col) t.col.classList.remove('drag-over'); if (col) col.classList.add('drag-over'); t.col = col; }
+                t.raf = requestAnimationFrame(loop);
+            }
+            document.addEventListener('pointerdown', e => {
+                if (e.pointerType === 'mouse' || !e.isPrimary) return;
+                const card = e.target.closest('.board .card[data-id]');
+                if (!card || e.target.closest('button')) return;
+                cleanup();
+                t = { card, id: card.dataset.id, pid: e.pointerId, x0: e.clientX, y0: e.clientY, x: e.clientX, y: e.clientY, on: false };
+                t.timer = setTimeout(lift, HOLD);
+                document.addEventListener('touchmove', stopScroll, { passive: false });
+            }, { passive: true });
+            document.addEventListener('pointermove', e => {
+                if (!t || e.pointerId !== t.pid) return;
+                t.x = e.clientX; t.y = e.clientY;
+                if (!t.on) { if (Math.hypot(t.x - t.x0, t.y - t.y0) > SLOP) cleanup(); return; }
+                place();
+            }, { passive: true });
+            document.addEventListener('pointerup', e => {
+                if (!t || e.pointerId !== t.pid) return;
+                if (!t.on) { cleanup(); return; }   // gewoon getikt: de klik opent de taak
+                const col = columnAt(), id = t.id;
+                cleanup();
+                const stop = ev => { ev.stopPropagation(); ev.preventDefault(); };
+                document.addEventListener('click', stop, { capture: true, once: true });
+                setTimeout(() => document.removeEventListener('click', stop, true), 400);
+                if (col) moveCardTo(id, col.dataset.status);
+            });
+            document.addEventListener('pointercancel', e => { if (t && e.pointerId === t.pid) cleanup(); });
+            document.addEventListener('dragstart', () => { if (t) cleanup(); }, true);   // het toestel sleept zelf: dan niet dubbel
+            document.addEventListener('contextmenu', e => { if (t || (e.target.closest && e.target.closest('.board .card') && matchMedia('(hover: none)').matches)) e.preventDefault(); });
+            addEventListener('scroll', () => { if (t && !t.on) cleanup(); }, { passive: true, capture: true });
+        })();
+
+/* Soepel: de hulpbibliotheken voor Afbeelding en PDF alvast ophalen zodra iemand naar een downloadknop gaat (niet bij het laden). */
+(() => {
+  let warm = false;
+  const go = () => {
+    warm = true;
+    ['/lib/html2canvas-1.4.1.min.js', '/lib/jspdf-2.5.1.umd.min.js'].forEach(h => {
+      const l = document.createElement('link');
+      if (l.relList && l.relList.supports && l.relList.supports('prefetch')) { l.rel = 'prefetch'; l.as = 'script'; l.href = h; document.head.appendChild(l); }
+      else try { fetch(h).catch(() => {}); } catch (e) {}
+    });
+  };
+  const SEL = '#exportPngBtn, #exportPdfBtn, .more-btn';
+  ['pointerdown', 'focusin', 'mouseover'].forEach(t => document.addEventListener(t, e => { if (!warm && e.target.closest && e.target.closest(SEL)) go(); }, { passive:true, capture:true }));
+})();
+
         function init() {
             setupDelegation();
             loadFromStorage();
@@ -6902,6 +7056,7 @@ const ocExport = (() => {
             updateStats();
             updateSprintInfo();
             setupKeyboardHandlers();
+            document.documentElement.classList.remove('oc-wacht');
         }
 
         init();
