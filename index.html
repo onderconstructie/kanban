@@ -4769,17 +4769,17 @@ const ocExport = (() => {
             document.getElementById('dashProgressFill').style.width = progressPercent + '%';
 
             // Capacity
-            const totalCapacity = Object.values(project.teamAvailability).reduce((sum, v) => sum + (parseFloat(v) || 0), 0);
-            const usedCapacity = cards.reduce((sum, c) => sum + (parseFloat(c.estimate) || 0), 0);
+            const totalCapacity = getTotalCapacity();
+            const usedCapacity = plannedDays(cards);
             const capacityPercent = totalCapacity > 0 ? Math.round((usedCapacity / totalCapacity) * 100) : 0;
 
-            document.getElementById('dashCapacityUsed').textContent = usedCapacity;
-            document.getElementById('dashCapacityLabel').textContent = `van ${totalCapacity} dagen ingepland`;
+            document.getElementById('dashCapacityUsed').textContent = fmtDays(usedCapacity);
+            document.getElementById('dashCapacityLabel').textContent = `van ${fmtDays(totalCapacity)} dagen ingepland`;
             document.getElementById('dashCapacityFill').style.width = Math.min(capacityPercent, 100) + '%';
             document.getElementById('dashCapacityFill').style.background = capacityPercent > 100 
                 ? 'linear-gradient(90deg, var(--red-500) 0%, #f87171 100%)' 
                 : 'linear-gradient(90deg, var(--accent) 0%, #34d399 100%)';
-            document.getElementById('dashCapacityRemaining').textContent = `${Math.max(0, totalCapacity - usedCapacity)} dagen over`;
+            document.getElementById('dashCapacityRemaining').textContent = usedCapacity > totalCapacity ? `${fmtDays(usedCapacity - totalCapacity)} dagen te veel` : `${fmtDays(totalCapacity - usedCapacity)} dagen over`;
             document.getElementById('dashCapacityPercent').textContent = capacityPercent + '%';
 
             // Status breakdown
@@ -4824,9 +4824,11 @@ const ocExport = (() => {
                 teamStats.innerHTML = project.team.map(member => {
                     const memberCards = cards.filter(c => c.ownerId === member.id);
                     const memberDone = memberCards.filter(c => c.status === 'klaar').length;
-                    const memberEstimate = memberCards.reduce((sum, c) => sum + (parseFloat(c.estimate) || 0), 0);
-                    const memberAvailability = project.teamAvailability[member.id] || sprint.days || 10;
-                    const workloadPercent = memberAvailability > 0 ? Math.round((memberEstimate / memberAvailability) * 100) : 0;
+                    const memberEstimate = plannedDays(memberCards);
+                    const memberAvailability = availabilityOf(project, sprint, member.id);
+                    // geen beschikbare dagen maar wel werk: telt als overboekt
+                    const workloadPercent = memberAvailability > 0 ? Math.round((memberEstimate / memberAvailability) * 100) : (memberEstimate > 0 ? 101 : 0);
+                    const workloadText = memberAvailability > 0 || !memberEstimate ? workloadPercent + '%' : 'te veel';
                     const barColor = workloadPercent > 100 ? 'var(--red-500)' : workloadPercent > 80 ? 'var(--orange-500)' : 'var(--accent)';
                     
                     return `
@@ -4834,12 +4836,12 @@ const ocExport = (() => {
                             <div class="team-stat-avatar" style="${avatarStyle(member.color)}" aria-hidden="true">${esc(getInitials(member.name))}</div>
                             <div class="team-stat-info">
                                 <div class="team-stat-name">${esc(member.name)}</div>
-                                <div class="team-stat-meta">${memberDone}/${memberCards.length} taken · ${memberEstimate}/${memberAvailability} dagen</div>
+                                <div class="team-stat-meta">${memberDone}/${memberCards.length} taken · ${fmtDays(memberEstimate)}/${fmtDays(memberAvailability)} dagen</div>
                             </div>
                             <div class="team-stat-bar">
                                 <div class="team-stat-bar-fill" style="width: ${Math.min(workloadPercent, 100)}%; background: ${barColor}"></div>
                             </div>
-                            <div class="team-stat-value">${workloadPercent}%</div>
+                            <div class="team-stat-value">${workloadText}</div>
                         </div>
                     `;
                 }).join('');
@@ -5518,17 +5520,28 @@ const ocExport = (() => {
             getTeam().forEach(member => {
                 total += parseFloat(project.teamAvailability[member.id]) || 0;
             });
-            return total;
+            return roundDays(total);
         }
 
+        /* Ingepland = de inschattingen van alle taken in deze sprint, behalve wat in "Later" staat.
+           Overal dezelfde telling (balk, paneel, statistieken), los van zoeken of filters. */
+        const roundDays = n => Math.round(n * 10) / 10;
+        const fmtDays = n => roundDays(n).toLocaleString('nl-BE');   // 11,5 in plaats van 11.5
+        function sprintCards() {
+            const project = getActiveProject(), sprint = getActiveSprint();
+            return project && sprint ? project.cards.filter(c => c.sprintId === sprint.id) : [];
+        }
+        function plannedDays(cards) { return roundDays(cards.filter(c => c.status !== 'backlog').reduce((sum, c) => sum + (parseFloat(c.estimate) || 0), 0)); }
+        function availabilityOf(project, sprint, memberId) {
+            const v = parseFloat(project.teamAvailability[memberId]);
+            return Number.isFinite(v) ? v : (parseFloat(sprint && sprint.days) || 10);   // 0 dagen (verlof) blijft 0
+        }
         function getUsedCapacity() {
-            const sprint = getActiveSprint();
-            if (!sprint) return 0;
-            return getFilteredCards().filter(c => c.status !== 'backlog').reduce((sum, c) => sum + (parseFloat(c.estimate) || 0), 0);
+            return plannedDays(sprintCards());
         }
 
         function getCompletedCapacity() {
-            return getFilteredCards().filter(c => c.status === 'klaar').reduce((sum, c) => sum + (parseFloat(c.estimate) || 0), 0);
+            return roundDays(sprintCards().filter(c => c.status === 'klaar').reduce((sum, c) => sum + (parseFloat(c.estimate) || 0), 0));
         }
 
         // ============================================
@@ -5596,7 +5609,7 @@ const ocExport = (() => {
             const e = { form: id(), loket: id(), com: id() };
             const card = (title, status, extra = {}) => ({ id: id(), title, description: '', epicId: null, status, ownerId: null, dueDate: null, estimate: null, priority: null, participants: [], subtasks: [], sprintId: sp1, ...extra });
             const p = {
-                id: id(), voorbeeld: true, name: 'Voorbeeld: digitaal premieloket',
+                id: id(), voorbeeld: true, name: 'Digitaal premieloket renovatie',
                 sprints: [
                     { id: sp1, name: 'Sprint 1', startDate: isoPlus(-7), endDate: isoPlus(6), days: 10, goal: 'Het nieuwe aanvraagformulier staat klaar om te testen aan het loket.', status: 'active' },
                     { id: sp2, name: 'Sprint 2', startDate: isoPlus(7), endDate: isoPlus(20), days: 10, goal: 'Het loket werkt met het nieuwe formulier.', status: 'planned' }
@@ -5994,7 +6007,7 @@ const ocExport = (() => {
             const capacityText = document.getElementById('capacityText');
 
             capacityFill.style.width = `${capacityPercentage}%`;
-            capacityText.textContent = `${usedCapacity} / ${totalCapacity} dagen`;
+            capacityText.textContent = `${fmtDays(usedCapacity)} / ${fmtDays(totalCapacity)} dagen`;
 
             let statusClass = 'under';
             if (usedCapacity > totalCapacity) statusClass = 'over';
@@ -6005,12 +6018,12 @@ const ocExport = (() => {
 
             document.getElementById('panelStatTotal').textContent = total;
             document.getElementById('panelStatDone').textContent = done;
-            document.getElementById('panelStatDays').textContent = usedCapacity;
-            document.getElementById('panelStatDaysDone').textContent = completedCapacity;
+            document.getElementById('panelStatDays').textContent = fmtDays(usedCapacity);
+            document.getElementById('panelStatDaysDone').textContent = fmtDays(completedCapacity);
 
-            document.getElementById('panelCapacityTotal').textContent = totalCapacity;
-            document.getElementById('panelCapacityUsed').textContent = usedCapacity;
-            document.getElementById('panelCapacityRemaining').textContent = remaining >= 0 ? remaining : remaining.toFixed(1);
+            document.getElementById('panelCapacityTotal').textContent = fmtDays(totalCapacity);
+            document.getElementById('panelCapacityUsed').textContent = fmtDays(usedCapacity);
+            document.getElementById('panelCapacityRemaining').textContent = fmtDays(remaining);
 
             if (sprint) {
                 document.getElementById('defaultDaysDisplay').textContent = formatAvailability(sprint.days || 10);
@@ -6842,12 +6855,15 @@ const ocExport = (() => {
                 const rows = getCards().map(card => {
                     const epic = getEpics().find(e => e.id === card.epicId);
                     const owner = getTeam().find(t => t.id === card.ownerId);
-                    const participants = (card.participants || []).map(id => getTeam().find(t => t.id === id)?.name).filter(Boolean).join('; ');
-                    const subtasks = (card.subtasks || []).map(s => `${s.done ? '✓' : '○'} ${s.text}`).join('; ');
-                    const cell = v => `"${String(v == null ? '' : v).replace(/"/g, '""')}"`;
-                    return [card.id, card.title, card.description, (COLUMNS.find(c => c.id === card.status) || {}).name || card.status, epic?.name, owner?.name, participants, card.priority, card.estimate, card.dueDate, subtasks].map(cell).join(',');
+                    const participants = (card.participants || []).map(id => getTeam().find(t => t.id === id)?.name).filter(Boolean).join(', ');
+                    const subtasks = (card.subtasks || []).map(s => `${s.done ? '✓' : '○'} ${s.text}`).join(', ');
+                    // puntkomma als scheiding (zo opent een Belgische rekenblad het in kolommen), komma in getallen
+                    const cell = v => { let t = String(v == null ? '' : v); if (/^[=+\-@\t\r]/.test(t)) t = "'" + t; return `"${t.replace(/"/g, '""')}"`; };
+                    const prio = { high: 'Hoog', medium: 'Middel', low: 'Laag' }[card.priority] || '';
+                    const est = card.estimate ? String(card.estimate).replace('.', ',') : '';
+                    return [card.id, card.title, card.description, (COLUMNS.find(c => c.id === card.status) || {}).name || card.status, epic?.name, owner?.name, participants, prio, est, card.dueDate, subtasks].map(cell).join(';');
                 });
-                const csv = [headers.join(','), ...rows].join('\n');
+                const csv = [headers.map(h => `"${h}"`).join(';'), ...rows].join('\r\n');
                 const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
                 const link = document.createElement('a');
                 link.href = URL.createObjectURL(blob);
