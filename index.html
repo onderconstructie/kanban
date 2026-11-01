@@ -3520,6 +3520,7 @@ function ocPickProject(st, arr, cur = 'current') { const p = ocProject(''); if (
                     <svg class="edit-hint" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                 </div>
                 <div class="sprint-dates" id="sprintDates">Geen datums ingesteld</div>
+                <div class="sprint-dates sprint-buffer" id="sprintBuffer" hidden></div>
             </div>
         </button>
         <div class="sprint-stats">
@@ -4295,7 +4296,8 @@ const ocExport = (() => {
                 endDate: date(sp.endDate),
                 days: num(sp.days) > 0 ? num(sp.days) : 10,
                 goal: str(sp.goal),
-                status: SPRINT_STATUSES.includes(sp.status) ? sp.status : 'active'
+                status: SPRINT_STATUSES.includes(sp.status) ? sp.status : 'active',
+                ...(num(sp.buffer) > 0 && num(sp.buffer) <= 90 ? { buffer: Math.round(num(sp.buffer)) } : {})
             }));
             if (!sprints.length) sprints = [{ id: generateId(), name: 'Sprint 1', startDate: '', endDate: '', days: 10, goal: '', status: 'active' }];
             const teamIds = new Set(team.map(m => m.id)), epicIds = new Set(epics.map(e => e.id)), sprintIds = new Set(sprints.map(x => x.id));
@@ -4756,6 +4758,20 @@ const ocExport = (() => {
                 document.getElementById('sprintDates').textContent = `${start} - ${end}`;
             } else {
                 document.getElementById('sprintDates').textContent = 'Geen datums ingesteld';
+            }
+            updateBufferLine();
+        }
+        // Uit Sprintplanning: een deel blijft vrij voor onvoorzien. Zeg hoeveel je dan echt plant.
+        function updateBufferLine() {
+            const sprint = getActiveSprint();
+            const vrij = document.getElementById('sprintBuffer');
+            const b = sprint && sprint.buffer;
+            if (vrij) {
+                if (b) {
+                    const tot = getTotalCapacity(), plan = Math.floor(tot * (1 - b / 100) * 2 + 1e-9) / 2;
+                    vrij.textContent = `Plan tot ${fmtDays(plan)} ${plan === 1 ? 'dag' : 'dagen'}: ${b}% blijft vrij voor onvoorzien`;
+                    vrij.hidden = false;
+                } else { vrij.textContent = ''; vrij.hidden = true; }
             }
         }
 
@@ -6025,6 +6041,7 @@ const ocExport = (() => {
         }
 
         function updateStats() {
+            try { updateBufferLine(); } catch {}
             const sprint = getActiveSprint();
             const cards = getFilteredCards();
             const total = cards.length;
@@ -7232,6 +7249,8 @@ const ocExport = (() => {
             }
             const dagen = parseFloat(d.sprint && d.sprint.days);
             if (dagen > 0 && dagen <= 365) sprint.days = dagen;
+            const buf = parseFloat(d.sprint && d.sprint.buffer);
+            if (buf > 0 && buf <= 90) sprint.buffer = Math.round(buf); else delete sprint.buffer;
             state.activeSprintId = sprint.id;
             let people = 0;
             (Array.isArray(d.team) ? d.team : []).forEach(t => {
@@ -7242,6 +7261,9 @@ const ocExport = (() => {
                 const v = parseFloat(t.days);
                 if (v >= 0 && v <= 365) project.teamAvailability[m.id] = v;
             });
+            // Taken die eerder uit de planning kwamen maar er nu niet meer in staan: blijven, maar we zeggen het
+            const gestuurd = new Set(plan.map(x => x.id).filter(Boolean));
+            const weg = project.cards.filter(c => c.sprintId === sprint.id && c.fromId && c.status !== 'klaar' && !gestuurd.has(c.fromId));
             let added = 0, updated = 0, moved = 0;
             plan.forEach(({ t, title, id, card }) => {
                 const e = parseFloat(t.estimate), estimate = e > 0 && e <= 1000 ? String(e) : null;
@@ -7267,6 +7289,7 @@ const ocExport = (() => {
             if (moved) delen.push(`${moved} ${moved === 1 ? 'open taak schuift' : 'open taken schuiven'} mee uit een vorige sprint`);
             if (updated) delen.push(`${updated} ${updated === 1 ? 'taak' : 'taken'} bijgewerkt`);
             if (people) delen.push(`${people} ${people === 1 ? 'teamlid' : 'teamleden'} toegevoegd`);
+            if (weg.length) delen.push(weg.length === 1 ? `"${weg[0].title.slice(0, 60)}" staat niet meer in de planning en blijft op het bord` : `${weg.length} taken staan niet meer in de planning en blijven op het bord`);
             showToast(delen.length ? `${sname}: ${delen.join(', ')}` : `${sname} stond al zo op het bord`, 'success', () => {
                 const b = JSON.parse(before);
                 state.projects = b.projects; state.activeProjectId = b.activeProjectId; state.activeSprintId = b.activeSprintId;
