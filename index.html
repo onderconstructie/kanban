@@ -12,7 +12,7 @@
     <meta name="oc:kort" content="Je taken op een bord: te doen, bezig, klaar">
     <meta name="oc:volgorde" content="20">
     <meta name="oc:traject" content="project:6">
-    <meta name="oc:opslag" content="sprintflow_kanban_v5, oc.naar.kanban">
+    <meta name="oc:opslag" content="sprintflow_kanban_v5, oc.naar.kanban, oc.share.kanban">
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg viewBox=&quot;0 0 40 40&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;%3E%3Ccircle cx=&quot;20&quot; cy=&quot;20&quot; r=&quot;18&quot; fill=&quot;%23f8fafc&quot; stroke=&quot;%23e2e8f0&quot; stroke-width=&quot;1.5&quot;/%3E%3Crect x=&quot;8.5&quot; y=&quot;11&quot; width=&quot;7&quot; height=&quot;5&quot; rx=&quot;1.5&quot; fill=&quot;%2364748b&quot;/%3E%3Crect x=&quot;8.5&quot; y=&quot;18&quot; width=&quot;7&quot; height=&quot;5&quot; rx=&quot;1.5&quot; fill=&quot;%2364748b&quot;/%3E%3Crect x=&quot;8.5&quot; y=&quot;25&quot; width=&quot;7&quot; height=&quot;5&quot; rx=&quot;1.5&quot; fill=&quot;%2394a3b8&quot;/%3E%3Crect x=&quot;16.5&quot; y=&quot;11&quot; width=&quot;7&quot; height=&quot;5&quot; rx=&quot;1.5&quot; fill=&quot;%2364748b&quot;/%3E%3Crect x=&quot;16.5&quot; y=&quot;18&quot; width=&quot;7&quot; height=&quot;5&quot; rx=&quot;1.5&quot; fill=&quot;%2394a3b8&quot;/%3E%3Crect x=&quot;24.5&quot; y=&quot;11&quot; width=&quot;7&quot; height=&quot;5&quot; rx=&quot;1.5&quot; fill=&quot;%2310b981&quot;/%3E%3C/svg%3E">
 <link rel="stylesheet" href="/fonts/fonts.css">
 <link rel="preload" href="/fonts/dm-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
@@ -3323,6 +3323,8 @@ html.kb-dragging, html.kb-dragging * { -webkit-user-select:none; user-select:non
 /* de verwijderknop staat rechtsboven: alleen de bovenste regel maakt er plaats voor, de titel krijgt de volle breedte */
 .card { padding-right:0.875rem; }
 .card > .card-top-row:first-child, .card > .card-title:first-child { padding-right:2rem; }
+.card-title { overflow-wrap:break-word; -webkit-hyphens:auto; hyphens:auto; }   /* een lang woord loopt niet onder de verwijderknop */
+.column { scroll-margin-top:4.5rem; }   /* naar een kolom springen: de kop van de kolom blijft onder de vaste balk zichtbaar */
 .stat-label, .capacity-label, .filter-group-label, .sprint-tab .sprint-task-count, .card-epic, .card-priority-badge, .card-estimate, .card-meta, .subtasks-percent { font-size:0.75rem; }
 
 /* ---------- Eenheid (november 2026): één kop, één ⋮-menu, één startscherm en één melding, zoals in de referentietools ---------- */
@@ -3366,7 +3368,7 @@ html.kb-dragging, html.kb-dragging * { -webkit-user-select:none; user-select:non
 .oc-open-link:hover { background:#ecfdf5; }
 .oc-open-link svg, .oc-open-row .oc-open-link svg { width:18px; height:18px; margin:0; color:currentColor; opacity:1; flex:none; }
 
-.oc-toast { position:fixed; left:50%; right:auto; bottom:calc(1.25rem + env(safe-area-inset-bottom, 0px)); transform:translate(-50%, calc(100% + 3rem)); visibility:hidden; z-index:10002; display:flex; align-items:center; gap:0.75rem; max-width:calc(100% - 2rem); min-height:44px; padding:0.375rem 1rem; border-radius:12px; background:#1e293b; color:#fff; font-family:inherit; font-size:0.875rem; box-shadow:0 10px 30px rgba(15,23,42,0.25); transition:transform 0.25s ease, visibility 0s 0.25s; }
+.oc-toast { position:fixed; left:50%; right:auto; width:max-content; bottom:calc(1.25rem + env(safe-area-inset-bottom, 0px)); transform:translate(-50%, calc(100% + 3rem)); visibility:hidden; z-index:10002; display:flex; align-items:center; gap:0.75rem; max-width:calc(100% - 2rem); min-height:44px; padding:0.375rem 1rem; border-radius:12px; background:#1e293b; color:#fff; font-family:inherit; font-size:0.875rem; box-shadow:0 10px 30px rgba(15,23,42,0.25); transition:transform 0.25s ease, visibility 0s 0.25s; }
 .oc-toast.show { transform:translate(-50%, 0); visibility:visible; transition:transform 0.25s ease; }
 .oc-toast.has-undo { padding-right:0.375rem; }
 .oc-toast span { min-width:0; }
@@ -3394,9 +3396,10 @@ function ocPickProject(st, arr, cur = 'current') { const p = ocProject(''); if (
                 document.querySelectorAll('.dropdown-menu.active, .dropdown.active').forEach(d => d.classList.remove('active'));
                 const back = document.createElement('div');
                 back.className = 'oc-dialog-backdrop';
-                back.innerHTML = `<div class="oc-dialog" role="dialog" aria-modal="true">
-                    ${isPrompt ? `<label class="oc-dialog-label"></label><input class="oc-dialog-input" type="text">`
-                               : `<p class="oc-dialog-msg"></p>`}
+                const did = 'ocDlg' + Date.now().toString(36);
+                back.innerHTML = `<div class="oc-dialog" role="${isPrompt ? 'dialog' : 'alertdialog'}" aria-modal="true" ${isPrompt ? '' : `aria-labelledby="${did}"`}>
+                    ${isPrompt ? `<label class="oc-dialog-label" for="${did}"></label><input class="oc-dialog-input" id="${did}" type="text">`
+                               : `<p class="oc-dialog-msg" id="${did}"></p>`}
                     <div class="oc-dialog-actions">
                         <button class="oc-dialog-btn oc-dialog-cancel" type="button">Annuleer</button>
                         <button class="oc-dialog-btn oc-dialog-ok${danger ? ' danger' : ''}" type="button"></button>
@@ -3420,6 +3423,10 @@ function ocPickProject(st, arr, cur = 'current') { const p = ocProject(''); if (
                 const cancel = () => close(isPrompt ? null : false);
                 function onKey(e) {
                     if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); cancel(); }
+                    if (e.key === 'Tab') {   // de focus blijft in de vraag
+                        const f = [...back.querySelectorAll('input, button')], i = f.indexOf(document.activeElement);
+                        e.preventDefault(); f[(i + (e.shiftKey ? -1 : 1) + f.length) % f.length].focus();
+                    }
                     if (e.key === 'Enter' && (isPrompt || document.activeElement !== back.querySelector('.oc-dialog-cancel'))) { e.preventDefault(); e.stopPropagation(); ok(); }
                 }
                 document.addEventListener('keydown', onKey, true);
@@ -4308,7 +4315,8 @@ const ocExport = (() => {
                     participants: (Array.isArray(c.participants) ? c.participants : []).map(x => ref(x, teamIds)).filter(Boolean),
                     subtasks: arr(c.subtasks).map(t => ({ text: str(t.text, 500), done: !!t.done })),
                     sprintId: ref(c.sprintId, sprintIds) || sprints[0].id,
-                    ...(c.source ? { source: str(c.source, 160) } : {})
+                    ...(c.source ? { source: str(c.source, 160) } : {}),
+                    ...(c.fromId ? { fromId: str(c.fromId, 60) } : {})   // story uit Sprintplanning: zo herkent het bord ze bij een volgende keer
                 };
             });
             const teamAvailability = {};
@@ -4515,7 +4523,7 @@ const ocExport = (() => {
             if (!await ocConfirm('Alles wissen? Al je projecten, sprints, taken en teamleden verdwijnen. Je kan dit nog ongedaan maken tot je iets anders doet.')) return;
             clearTimeout(saveTimeout);
             const stored = {};
-            ocStoreKeys().concat('oc.share.kanban').forEach(k => { try { stored[k] = localStorage.getItem(k); localStorage.removeItem(k); } catch {} });
+            [...new Set(ocStoreKeys().concat('oc.share.kanban'))].forEach(k => { try { stored[k] = localStorage.getItem(k); localStorage.removeItem(k); } catch {} });
             ocShare.clear('kanban');
             const copy = { projects: state.projects, activeProjectId: state.activeProjectId, activeSprintId: state.activeSprintId };
             const fresh = createDefaultProject();
@@ -6339,7 +6347,8 @@ const ocExport = (() => {
             if (!picked.length) return;
             const before = JSON.stringify({ cards: project.cards, team: project.team, av: project.teamAvailability });
             const norm = t => String(t || '').trim().toLowerCase().replace(/^kloof dichten:\s*/, 'verschil wegwerken: ');
-            const open = new Set(project.cards.filter(c => c.status !== 'klaar').map(c => norm(c.title)));
+            // niet dubbel: wat nog open staat in het project, en alles wat al in deze sprint staat (ook als het klaar is)
+            const open = new Set(project.cards.filter(c => c.status !== 'klaar' || c.sprintId === sprint.id).map(c => norm(c.title)));
             let added = 0, people = 0;
             picked.forEach(it => {
                 const title = String(it.text || '').trim().slice(0, 500);
@@ -7172,7 +7181,9 @@ const ocExport = (() => {
         /* ---------- Sprint ontvangen uit Sprintplanning ----------
            Sprintplanning legt de sprint klaar in 'oc.naar.kanban' en opent dit bord.
            Na een bevestiging komt de sprint met team, taken en schattingen (in dagen) op het bord. */
+        let ocOntvangBezig = false;
         async function ocOntvangSprint() {
+            if (ocOntvangBezig) return;
             let raw = null;
             try { raw = localStorage.getItem('oc.naar.kanban'); localStorage.removeItem('oc.naar.kanban'); } catch { return; }
             if (!raw) return;
@@ -7183,16 +7194,36 @@ const ocExport = (() => {
             const sname = String(d.sprint && d.sprint.name || '').trim().slice(0, 120) || 'Sprint';
             const tasks = d.tasks.filter(t => t && String(t.text || '').trim());
             if (!tasks.length) return;
-            const ok = await ocDialog({ message: `${sname} uit ${van} op het bord zetten? ${tasks.length === 1 ? 'Eén taak komt' : tasks.length + ' taken komen'} in Te doen, met hun schatting en het team.`, okText: 'Zet op het bord' });
+            const low = v => String(v || '').trim().toLowerCase();
+            // Welk project: het actieve; is dat het voorbeeld, dan het actieve project uit de app, anders het eerste eigen project
+            const eigen = state.projects.filter(p => !p.voorbeeld);
+            let project = getActiveProject();
+            if (!project || project.voorbeeld) project = eigen.find(p => p.name === ocProject('')) || eigen[0] || null;
+            // Wat er gebeurt, al vooraf bepalen: zo zegt de vraag precies wat er komt
+            const sprintVan = project && project.sprints.find(sp => low(sp.name) === low(sname));
+            const plan = tasks.map(t => {
+                const title = String(t.text).trim().slice(0, 500), id = t.id ? String(t.id).slice(0, 60) : '';
+                // dezelfde kaart: in deze sprint (ook als ze klaar is), of nog open in een andere sprint van het project
+                const kand = project ? project.cards.filter(c => (sprintVan && c.sprintId === sprintVan.id) || c.status !== 'klaar') : [];
+                const card = (id && kand.find(c => c.fromId === id)) || kand.find(c => (!sprintVan || c.sprintId === sprintVan.id) && low(c.title) === low(title)) || kand.find(c => low(c.title) === low(title));
+                return { t, title, id, card };
+            });
+            const nieuw = plan.filter(x => !x.card).length, al = plan.length - nieuw;
+            const waar = eigen.length > 1 && project ? ` van ${project.name}` : '';
+            const wat = !al ? `${nieuw === 1 ? 'Eén taak komt' : nieuw + ' taken komen'} in Te doen, met hun schatting en het team.`
+                : `${nieuw ? `${nieuw === 1 ? 'Eén nieuwe taak komt' : nieuw + ' nieuwe taken komen'} in Te doen. ` : ''}${al === 1 ? 'Eén taak staat' : al + ' taken staan'} al op het bord en ${al === 1 ? 'krijgt' : 'krijgen'} de schatting uit ${van}.`;
+            ocOntvangBezig = true;
+            // Herlaad je tijdens de vraag, dan komt ze terug
+            const terug = () => { try { localStorage.setItem('oc.naar.kanban', raw); } catch {} };
+            addEventListener('pagehide', terug);
+            const ok = await ocDialog({ message: `${sname} uit ${van} op het bord${waar} zetten? ${wat}`, okText: 'Zet op het bord' });
+            removeEventListener('pagehide', terug);
+            ocOntvangBezig = false;
             if (!ok) { showToast('Niet op het bord gezet. Via Overnemen uit… kan het later nog.'); return; }
             const before = JSON.stringify({ projects: state.projects, activeProjectId: state.activeProjectId, activeSprintId: state.activeSprintId });
-            let project = getActiveProject();
-            if (!project || project.voorbeeld) {
-                project = state.projects.find(p => !p.voorbeeld);
-                if (!project) { project = createDefaultProject(); state.projects.push(project); }
-                state.activeProjectId = project.id;
-            }
-            let sprint = project.sprints.find(sp => String(sp.name || '').trim().toLowerCase() === sname.toLowerCase());
+            if (!project) { project = createDefaultProject(); state.projects.push(project); }
+            state.activeProjectId = project.id;
+            let sprint = sprintVan;
             if (!sprint) {
                 const eerste = project.sprints[0];
                 const leeg = project.sprints.length === 1 && eerste && /^sprint 1$/i.test(String(eerste.name || '').trim()) && !project.cards.some(c => c.sprintId === eerste.id);
@@ -7206,36 +7237,46 @@ const ocExport = (() => {
             (Array.isArray(d.team) ? d.team : []).forEach(t => {
                 const nm = String(t && t.name || '').trim().slice(0, 200);
                 if (!nm) return;
-                let m = project.team.find(x => String(x.name || '').trim().toLowerCase() === nm.toLowerCase());
+                let m = project.team.find(x => low(x.name) === low(nm));
                 if (!m) { m = { id: generateId(), name: nm, color: AVATAR_COLORS[project.team.length % AVATAR_COLORS.length] }; project.team.push(m); people++; }
                 const v = parseFloat(t.days);
                 if (v >= 0 && v <= 365) project.teamAvailability[m.id] = v;
             });
-            let added = 0, updated = 0;
-            tasks.forEach(t => {
-                const title = String(t.text).trim().slice(0, 500);
-                const e = parseFloat(t.estimate), estimate = e > 0 && e <= 1000 ? e : null;
-                const bestaand = project.cards.find(c => c.sprintId === sprint.id && String(c.title || '').trim().toLowerCase() === title.toLowerCase());
-                if (bestaand) { if (estimate != null && bestaand.estimate !== estimate) { bestaand.estimate = estimate; updated++; } return; }
+            let added = 0, updated = 0, moved = 0;
+            plan.forEach(({ t, title, id, card }) => {
+                const e = parseFloat(t.estimate), estimate = e > 0 && e <= 1000 ? String(e) : null;
+                if (card) {
+                    let anders = false;
+                    if (estimate != null && parseFloat(card.estimate) !== e) { card.estimate = estimate; anders = true; }
+                    if (id && card.fromId === id && card.title !== title) { card.title = title; anders = true; }   // hernoemd in de planning
+                    if (id && !card.fromId) card.fromId = id;
+                    if (card.sprintId !== sprint.id) { card.sprintId = sprint.id; moved++; }   // nog open in een vorige sprint: schuift mee
+                    else if (anders) updated++;
+                    return;
+                }
                 project.cards.push({
                     id: generateId(), title, description: String(t.note || '').slice(0, 5000), epicId: null, status: 'todo',
                     ownerId: null, dueDate: null, estimate, priority: null, participants: [], subtasks: [], sprintId: sprint.id,
-                    source: `${van} · ${sname}`.slice(0, 160)
+                    source: `${van} · ${sname}`.slice(0, 160), ...(id ? { fromId: id } : {})
                 });
                 added++;
             });
             saveToStorage(); refreshUI(); renderTeamList(); renderTeamAvailabilityList(); updateBars();
             const delen = [];
             if (added) delen.push(`${added} ${added === 1 ? 'taak' : 'taken'} in Te doen`);
-            if (updated) delen.push(`${updated} ${updated === 1 ? 'schatting' : 'schattingen'} bijgewerkt`);
+            if (moved) delen.push(`${moved} ${moved === 1 ? 'open taak schuift' : 'open taken schuiven'} mee uit een vorige sprint`);
+            if (updated) delen.push(`${updated} ${updated === 1 ? 'taak' : 'taken'} bijgewerkt`);
             if (people) delen.push(`${people} ${people === 1 ? 'teamlid' : 'teamleden'} toegevoegd`);
-            showToast(delen.length ? `${sname}: ${delen.join(', ')}` : `${sname} stond al op het bord`, 'success', () => {
+            showToast(delen.length ? `${sname}: ${delen.join(', ')}` : `${sname} stond al zo op het bord`, 'success', () => {
                 const b = JSON.parse(before);
                 state.projects = b.projects; state.activeProjectId = b.activeProjectId; state.activeSprintId = b.activeSprintId;
                 saveToStorage(); refreshUI(); renderTeamList(); renderTeamAvailabilityList(); updateBars();
             });
             scrollToColumn('todo');
         }
+        // Takenbord stond al open (in de app of een ander venster): ook dan de klaargelegde sprint oppikken, maar alleen in een zichtbaar venster
+        addEventListener('storage', e => { if (e.key === 'oc.naar.kanban' && e.newValue && document.visibilityState === 'visible') ocOntvangSprint(); });
+        document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') ocOntvangSprint(); });
 
         init();
     </script>
