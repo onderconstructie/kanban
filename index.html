@@ -3312,6 +3312,19 @@ html.kb-dragging, html.kb-dragging * { -webkit-user-select:none; user-select:non
         .ocb-mi .ocb-s { font-size:0.75rem; }
         .dropdown-menu .ocb-note { text-align:left; margin:0; padding:0.25rem 0.75rem 0.375rem; max-width:16rem; }
 </style>
+<style>
+/* UX-audit (nov 2026) */
+/* iPad staand en kleine laptop: de vijf kolommen passen naast elkaar, Klaar valt niet meer buiten beeld */
+@media (min-width:900px) and (max-width:1100px) {
+  .board-container { padding-left:1rem; padding-right:1rem; }
+  .board { grid-template-columns:repeat(5, minmax(0, 1fr)); gap:0.625rem; }
+}
+.card-priority-badge.low { color:#166534; }
+/* de verwijderknop staat rechtsboven: alleen de bovenste regel maakt er plaats voor, de titel krijgt de volle breedte */
+.card { padding-right:0.875rem; }
+.card > .card-top-row:first-child, .card > .card-title:first-child { padding-right:2rem; }
+.stat-label, .capacity-label, .filter-group-label, .sprint-tab .sprint-task-count, .card-epic, .card-priority-badge, .card-estimate, .card-meta, .subtasks-percent { font-size:0.75rem; }
+</style>
 </head>
 <body>
     <script>
