@@ -5,11 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#ffffff">
     <title>Takenbord – Onder Constructie</title>
-    <meta name="description" content="Je taken op een bord, van later tot klaar. Plan per sprint en hou de werklast van je team in het oog.">
+    <meta name="description" content="Je taken op een bord, van later tot klaar. Een sprint uit Sprintplanning staat er meteen op, met team en schattingen.">
     <meta name="oc:groep" content="projecten">
     <meta name="oc:labels" content="">
     <meta name="oc:pdca" content="do, plan">
-    <meta name="oc:kort" content="Je taken op een bord: te doen, bezig, klaar">
+    <meta name="oc:kort" content="Je taken op een bord, van later tot klaar">
     <meta name="oc:volgorde" content="20">
     <meta name="oc:traject" content="project:6">
     <meta name="oc:opslag" content="sprintflow_kanban_v5, oc.naar.kanban, oc.share.kanban">
@@ -7193,6 +7193,17 @@ const ocExport = (() => {
             setupKeyboardHandlers();
             document.documentElement.classList.remove('oc-wacht');
             ocOntvangSprint();
+            ocOpenOvernemen();
+        }
+
+        /* Een andere tool (bv. Schildpaddiagram) opende dit bord met ?van=<tool>: meteen kiezen wat je overneemt. */
+        function ocOpenOvernemen() {
+            let van = '';
+            try { const u = new URL(location.href); van = u.searchParams.get('van') || ''; if (van && van !== 'sprint') { u.searchParams.delete('van'); history.replaceState(null, '', u.pathname + u.search + u.hash); } } catch { return; }
+            if (!van || van === 'sprint' || !canImport()) return;
+            const project = getActiveProject();
+            if (!project || project.voorbeeld) { showToast('Kies of maak je eigen project. Daarna staat Overnemen uit… onder Te doen.'); return; }
+            setTimeout(() => { importTasks(); }, 300);
         }
 
         /* ---------- Sprint ontvangen uit Sprintplanning ----------
