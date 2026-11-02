@@ -1698,6 +1698,7 @@
             color: var(--slate-700);
         }
 
+        .wip-note { margin: 0 0.75rem 0.5rem; padding: 0.5rem 0.625rem; font-size: 0.75rem; line-height: 1.4; color: #92400e; background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; }
         .column-count {
             font-size: 0.75rem;
             font-weight: 700;
@@ -5498,9 +5499,9 @@ const ocExport = (() => {
             if (val === 0.5) return '½ dag';
             if (val === 1) return '1 dag';
             if (val === 1.5) return '1½ dag';
-            if (val === 2.5) return '2½ d';
-            if (val % 1 === 0.5) return `${Math.floor(val)}½ d`;
-            return `${val} d`;
+            // overal dezelfde schrijfwijze: ½ dag, 1 dag, 1½ dag, 2 dagen, 2½ dagen
+            if (val % 1 === 0.5) return `${Math.floor(val)}½ dagen`;
+            return `${String(val).replace('.', ',')} dagen`;
         }
 
         function formatAvailability(value) {
@@ -5745,6 +5746,7 @@ const ocExport = (() => {
                         </div>
                         <span class="column-count" aria-label="${cards.length} taken">${cards.length}</span>
                     </div>
+                    ${column.id === 'bezig' ? wipNote() : ''}
                     <div class="column-cards">
                         ${cards.map(renderCard).join('')}
                         <button type="button" class="add-card-btn" data-act="addCard" data-id="${esc(column.id)}" aria-label="Taak toevoegen aan ${esc(column.name)}">
@@ -5765,6 +5767,15 @@ const ocExport = (() => {
             updateBars();
         }
 
+        /* Te veel tegelijk: wie drie of meer taken tegelijk bezig heeft in deze sprint, krijgt een zacht signaal.
+           Los van zoeken en filters. Taken zonder eigenaar tellen niet mee. */
+        const WIP_PER_PERSOON = 3;
+        function wipNote() {
+            const per = {};
+            sprintCards().filter(c => c.status === 'bezig' && c.ownerId).forEach(c => { per[c.ownerId] = (per[c.ownerId] || 0) + 1; });
+            const veel = getTeam().filter(m => (per[m.id] || 0) >= WIP_PER_PERSOON).map(m => `${m.name} (${per[m.id]})`);
+            return veel.length ? `<p class="wip-note">Veel tegelijk bezig: ${esc(veel.join(', '))}. Maak eerst iets af.</p>` : '';
+        }
         const KB_FINE = matchMedia('(pointer: fine)').matches;
         function renderCard(card) {
             const epic = getEpics().find(e => e.id === card.epicId);
