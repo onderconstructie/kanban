@@ -3231,9 +3231,9 @@
         [hidden] { display: none !important; }
         /* Overnemen, foutmelding, bron, toetsenbord */
         .sr-only { position:absolute !important; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
-        .import-btn { margin-top: 0.375rem; min-height: 44px; width: 100%; display: flex; align-items: center; justify-content: center; gap: 0.375rem; padding: 0.5rem; border-radius: 10px; border: 1.5px dashed #a7f3d0; background: #fff; color: #047857; font: inherit; font-size: 0.8125rem; font-weight: 600; cursor: pointer; }
-        .import-btn:hover { background: #ecfdf5; }
-        .import-btn svg { width: 16px; height: 16px; flex: none; }
+        /* De knop "Overnemen uit andere tools" krijgt vorm en onderregel van het gedeelde oc-sync-blok; hier alleen de plaats */
+        .import-wrap { margin-top: 0.375rem; }
+        .import-wrap .oc-import { width: 100%; }
         .field-error { margin-top: 0.375rem; font-size: 0.8125rem; font-weight: 600; color: #b91c1c; }
         .form-input[aria-invalid="true"] { border-color: #b91c1c; }
         #cardModal .form-input, #cardModal .form-select, #cardModal .btn, #cardModal .priority-btn, #cardModal .estimate-custom-input { min-height: 44px; }
@@ -3715,7 +3715,7 @@ function ocPickProject(st, arr, cur = 'current') { const p = ocProject(''); if (
             <div class="inner">
                 <p>Met het Takenbord volg je de taken van je project op, van later tot klaar.</p>
                 <ul>
-                    <li><b>Zet je taken op het bord.</b> Maak een taak met "Nieuwe taak", of haal ze binnen met "Overnemen uit…" onder Te doen. Geef er een eigenaar, een einddatum, een prioriteit en een schatting in dagen bij.</li>
+                    <li><b>Zet je taken op het bord.</b> Maak een taak met "Nieuwe taak", of haal ze binnen met "Overnemen uit andere tools" onder Te doen. Geef er een eigenaar, een einddatum, een prioriteit en een schatting in dagen bij.</li>
                     <li><b>Schuif ze op.</b> Sleep een taak naar de volgende kolom: Later, Te doen, Bezig, Nakijken en Klaar. Op een gsm of tablet houd je de taak eerst even vast.</li>
                     <li><b>Let op de capaciteit.</b> Bovenaan staat hoeveel dagen werk er in de sprint gepland is, tegenover de dagen die het team beschikbaar is. Wat in Later staat, telt niet mee. Boven 85% kleurt de balk oranje, boven 100% rood. Hou je een deel vrij voor onvoorzien, dan zie je tot hoeveel dagen je best plant.</li>
                     <li><b>Lees de signalen.</b> Een einddatum die voorbij is, wordt rood zolang de taak niet klaar is. Heeft iemand drie of meer taken tegelijk in Bezig, dan verschijnt daar een melding: maak eerst iets af. Hoog, Middel en Laag tonen de prioriteit op de kaart.</li>
@@ -4148,6 +4148,11 @@ function ocPickProject(st, arr, cur = 'current') { const p = ocProject(''); if (
      ocShare.clear('raci');                // bij "Alles wissen"
      const gekozen = await ocShare.pick({ types:['betrokkene'], self:'weerstand', title:'Doelgroepen overnemen' });
      // geeft [] terug bij annuleren, anders de aangevinkte items (met .source en .list erbij)
+     ocShare.pick({ ..., have:['Budget goedkeuren'] })  // optioneel: wat de tool al heeft, staat uitgegrijsd ("staat er al")
+     ocShare.pick({ ..., vink:false })    // niets vooraf aanvinken;  notes:false  toont geen notities (voor wie alleen namen neemt)
+     window.ocHave = types => [...]       // optioneel per tool: dan telt de knop "Overnemen uit andere tools" alleen wat nieuw is
+   Dezelfde tekst van dezelfde soort uit meerdere tools tonen en tellen we één keer (tools geven overgenomen werk ook weer door).
+   ?van=<tool> vinkt alleen die bron aan, en daarin de lijst van het actieve project als die er is.
 */
 const ocShare = (() => {
   const PREFIX = 'oc.share.';
@@ -4163,7 +4168,8 @@ const ocShare = (() => {
         name: String(l.name || '').slice(0, 80),
         items: (l.items || []).filter(i => i && i.type && String(i.text || '').trim())
           .slice(0, 300).map(i => ({ type:i.type, text:String(i.text).trim().slice(0, 300),
-            note: i.note ? String(i.note).slice(0, 200) : undefined, who: i.who || undefined, when: i.when || undefined }))
+            note: i.note ? String(i.note).slice(0, 200) : undefined, who: typeof i.who === 'string' && i.who.trim() ? i.who.trim().slice(0, 120) : undefined,
+            when: typeof i.when === 'string' && i.when.trim() ? i.when.trim().slice(0, 40) : undefined }))
       })).filter(l => l.items.length);
       if (!clean.length) { localStorage.removeItem(PREFIX + id); return; }
       localStorage.setItem(PREFIX + id, JSON.stringify({ id, tool, updated: Date.now(), lists: clean }));
@@ -4172,7 +4178,7 @@ const ocShare = (() => {
   function clear(id) { try { localStorage.removeItem(PREFIX + id); } catch {} }
 
   // Elke bron apart: één kapotte sleutel mag de andere niet verbergen.
-  function sources(types, self) {
+  function sources(types, self, voorkeur) {
     const out = [];
     let keys = [];
     try { for (let i = 0; i < localStorage.length; i++) keys.push(localStorage.key(i)); } catch { return out; }
@@ -4183,13 +4189,26 @@ const ocShare = (() => {
         if (!d || !Array.isArray(d.lists)) return;
         d.lists.forEach(l => {
           if (!l || !Array.isArray(l.items)) return;
-          const items = l.items.filter(it => it && types.includes(it.type) && typeof it.text === 'string');
+          const items = l.items.filter(it => it && types.includes(it.type) && typeof it.text === 'string' && it.text.trim())
+            .map(it => ({ ...it, who: typeof it.who === 'string' ? it.who : undefined, when: typeof it.when === 'string' ? it.when : undefined }));
           if (items.length) out.push({ tool: String(d.tool || d.id || k.slice(PREFIX.length)), id: d.id, updated: +d.updated || 0, list: String(l.name || ''), items });
         });
       } catch {}
     });
-    return out.sort((a, b) => (b.updated || 0) - (a.updated || 0));
+    out.sort((a, b) => (b.updated || 0) - (a.updated || 0));
+    // Elke tekst van elke soort één keer. Wie houdt hem? De bron uit ?van=, dan de rijkste (notitie, wie, wanneer),
+    // dan de grootste lijst (meestal het origineel, niet een tool die het overnam), dan de recentste.
+    // Mist de gekozen versie een wie of wanneer die een andere bron wel heeft, dan vullen we aan.
+    const score = (s, it) => [s.id === voorkeur ? 1 : 0, (it.note ? 2 : 0) + (it.who ? 1 : 0) + (it.when ? 1 : 0), s.items.length, s.updated || 0];
+    const beter = (a, b) => { for (let i = 0; i < a.length; i++) if (a[i] !== b[i]) return a[i] > b[i]; return false; };
+    const best = new Map();
+    out.forEach(s => s.items.forEach(it => { const k = it.type + '|' + norm(it.text), sc = score(s, it), e = best.get(k); if (!e || beter(sc, e.sc)) best.set(k, { it, sc }); }));
+    out.forEach(s => s.items.forEach(it => { const e = best.get(it.type + '|' + norm(it.text)).it; if (e !== it) { if (!e.who && it.who) e.who = it.who; if (!e.when && it.when) e.when = it.when; } }));
+    return out.map(s => ({ ...s, items: s.items.filter(it => best.get(it.type + '|' + norm(it.text)).it === it) }))
+      .filter(s => s.items.length);
   }
+  // Vergelijken zonder hoofdletters, dubbele spaties of leestekens aan de rand
+  function norm(v) { return String(v || '').normalize('NFC').toLowerCase().replace(/\s+/g, ' ').trim().replace(/^[\s.,;:!?·-]+|[\s.,;:!?·-]+$/g, ''); }
 
   let styled = false;
   function style() {
@@ -4214,7 +4233,9 @@ const ocShare = (() => {
       .ocs-src-head span{font-size:.75rem;color:#64748b}
       .ocs-all{margin-left:auto;font:inherit;font-size:.8125rem;color:#047857;background:none;border:0;cursor:pointer;padding:.25rem .5rem;min-height:44px;border-radius:6px}
       .ocs-all:hover{background:#d1fae5}
-      .ocs-item{display:flex;align-items:flex-start;gap:.625rem;padding:.625rem .25rem;min-height:44px;box-sizing:border-box;border-top:1px solid #f1f5f9;cursor:pointer;font-size:.9375rem;line-height:1.4}
+      .ocs-item{display:flex;align-items:flex-start;gap:.625rem;padding:.625rem .25rem;min-height:44px;box-sizing:border-box;border-top:1px solid #f1f5f9;cursor:pointer;font-size:.9375rem;line-height:1.4;overflow-wrap:anywhere;min-width:0}
+      .ocs-item.al{cursor:default;color:#64748b}.ocs-item.al em{font-style:normal;font-size:.75rem;font-weight:600;color:#047857;margin-left:.375rem;white-space:nowrap}
+      .ocs-src-head b,.ocs-src-head span{overflow-wrap:anywhere;min-width:0}.ocs-note{margin:.25rem 0 .5rem;padding:.5rem .75rem;border-radius:10px;background:#f8fafc;color:#475569;font-size:.875rem;line-height:1.45}
       .ocs-item input{width:18px;height:18px;margin-top:.125rem;accent-color:#10b981;flex:none}
       .ocs-item small{display:block;font-size:.75rem;color:#64748b}
       .ocs-empty{padding:1.5rem .25rem;color:#64748b;font-size:.9375rem;line-height:1.5}
@@ -4227,21 +4248,24 @@ const ocShare = (() => {
     document.head.appendChild(s);
   }
 
-  function pick({ types, self, title, intro }) {
+  function pick({ types, self, title, intro, have, vink, notes }) {
     style();
     return new Promise(resolve => {
-      const src = sources(types, self);
+      let van = window.ocVan || ''; try { van = van || new URLSearchParams(location.search).get('van') || ''; } catch {}
+      const src = sources(types, self, van), terug = document.activeElement;
+      const heeft = new Set((have || []).map(norm));
+      const vanNaam = van && !src.some(s => s.id === van) ? van : '';
       const back = document.createElement('div');
       back.className = 'ocs-back';
       const what = types.map(t => LABEL[t] || t).join(' of ');
       back.innerHTML = `<div class="ocs" role="dialog" aria-modal="true" aria-label="${esc(title || 'Overnemen')}">
         <div class="ocs-head"><div class="ocs-title">${esc(title || 'Overnemen uit een andere tool')}</div>
           <div class="ocs-sub">${esc(intro || `Kies welke ${what} je wil overnemen.`)}</div></div>
-        <div class="ocs-body">${src.length ? src.map((s, si) => `
+        <div class="ocs-body">${vanNaam ? `<p class="ocs-note">Uit die tool ligt nog niets klaar. Hieronder staat wat andere tools aanbieden.</p>` : ''}${src.length ? src.map((s, si) => `
           <div class="ocs-src"><div class="ocs-src-head"><b>${esc(s.tool)}</b><span>${esc(s.list)} · ${s.items.length}</span>
             <button class="ocs-all" type="button" data-all="${si}">alles</button></div>
-            ${s.items.map((it, ii) => `<label class="ocs-item"><input type="checkbox" data-s="${si}" data-i="${ii}">
-              <span>${esc(it.text)}${it.who || it.when || it.note ? `<small>${esc([it.who, datum(it.when), it.note].filter(Boolean).join(' · '))}</small>` : ''}</span></label>`).join('')}
+            ${s.items.map((it, ii) => { const al = heeft.has(norm(it.text)); return `<label class="ocs-item${al ? ' al' : ''}"><input type="checkbox" data-s="${si}" data-i="${ii}"${al ? ' disabled' : ''}>
+              <span>${esc(it.text)}${al ? '<em>staat er al</em>' : ''}${it.who || it.when || (notes !== false && it.note) ? `<small>${esc([it.who, datum(it.when), notes !== false && it.note].filter(Boolean).join(' · '))}</small>` : ''}</span></label>`; }).join('')}
           </div>`).join('') : `<p class="ocs-empty">Er zijn nog geen ${esc(what)} om over te nemen. Vul ze eerst in een andere tool van Onder Constructie in, dan verschijnen ze hier.</p>`}
         </div>
         <div class="ocs-foot"><button class="ocs-btn ocs-cancel" type="button">Annuleer</button>
@@ -4249,25 +4273,39 @@ const ocShare = (() => {
       document.body.appendChild(back);
       requestAnimationFrame(() => back.classList.add('open'));
       const ok = back.querySelector('.ocs-ok');
-      const boxes = () => [...back.querySelectorAll('input[type=checkbox]')];
+      const boxes = () => [...back.querySelectorAll('input[type=checkbox]:not(:disabled)')];
       const sync = () => { const n = boxes().filter(b => b.checked).length; ok.disabled = !n; ok.textContent = n ? `Neem ${n} over` : 'Neem over'; };
-      // Eén bron, of geopend vanuit een tool (?van=<tool>): die items staan al aangevinkt.
-      let van = window.ocVan || ''; try { van = van || new URLSearchParams(location.search).get('van') || ''; } catch {}
-      boxes().forEach(b => { const s = src[+b.dataset.s]; if (src.length === 1 || (van && s.id === van)) b.checked = true; }); sync();
+      // Geopend vanuit een tool (?van=<tool>): alleen die bron aanvinken, en daarin de lijst van het actieve project als die er is.
+      // Zonder ?van= en met één bron: die staat aangevinkt.
+      let proj = ''; try { proj = norm((JSON.parse(localStorage.getItem('oc.project') || 'null') || {}).name); } catch {}
+      const vanSrc = van ? src.filter(s => s.id === van) : [];
+      const vanProj = proj ? vanSrc.filter(s => norm(s.list) === proj) : [];
+      // Alleen vanuit een link (?van=) staat iets vooraf aangevinkt. Anders kies je zelf (of tik op "alles"):
+      // één tik op het punt dat je wil, mag nooit de rest overnemen.
+      const aan = vink === false || !van ? [] : (vanProj.length ? vanProj : vanSrc);
+      boxes().forEach(b => { if (aan.includes(src[+b.dataset.s])) b.checked = true; }); sync();
       back.addEventListener('change', sync);
       back.addEventListener('click', e => {
         const a = e.target.closest('[data-all]');
         if (a) { const bs = boxes().filter(b => b.dataset.s === a.dataset.all); const all = bs.every(b => b.checked); bs.forEach(b => b.checked = !all); sync(); }
         if (e.target === back) close([]);
       });
-      function close(v) { document.removeEventListener('keydown', onKey, true); back.remove(); resolve(v); }
-      function onKey(e) { if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); close([]); } }
+      function close(v) { document.removeEventListener('keydown', onKey, true); back.remove(); try { if (terug && terug.isConnected) terug.focus({ preventScroll:true }); } catch {} resolve(v); }
+      function onKey(e) {
+        if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); close([]); return; }
+        if (e.key !== 'Tab') return;   // de focus blijft in de kiezer
+        const f = [...back.querySelectorAll('input:not(:disabled),button:not(:disabled)')].filter(x => x.offsetParent !== null);
+        if (!f.length) return;
+        const i = f.indexOf(document.activeElement);
+        if (e.shiftKey && i <= 0) { e.preventDefault(); f[f.length - 1].focus(); }
+        else if (!e.shiftKey && (i === f.length - 1 || i < 0)) { e.preventDefault(); f[0].focus(); }
+      }
       document.addEventListener('keydown', onKey, true);
       back.querySelector('.ocs-cancel').addEventListener('click', () => close([]));
       ok.addEventListener('click', () => close(boxes().filter(b => b.checked).map(b => {
         const s = src[+b.dataset.s]; return { ...s.items[+b.dataset.i], source: s.tool, list: s.list };
       })));
-      const first = back.querySelector('input,.ocs-cancel'); first && first.focus();
+      const first = back.querySelector('input:not(:disabled),.ocs-cancel'); first && first.focus();
     });
   }
 
@@ -4276,16 +4314,21 @@ const ocShare = (() => {
   return { publish, clear, pick, count, sources, esc };
 })();
 
-        /* De open taken van het actieve project klaarleggen voor andere tools. */
+        /* De open taken van al je eigen projecten klaarleggen voor andere tools, één lijst per project.
+           Het voorbeeld nooit. "who" = eigenaar en deelnemers, gescheiden door "; ". "when" = de einddatum als JJJJ-MM-DD. */
         function ocPublishKanban() {
             try {
-                const p = (state.projects || []).find(x => x.id === state.activeProjectId);
-                if (!p || p.voorbeeld) { ocShare.clear('kanban'); return; }
-                const who = id => ((p.team || []).find(m => m.id === id) || {}).name;
-                const when = d => { try { return d ? toDisplayDate(d) : undefined; } catch { return d || undefined; } };
-                ocShare.publish('kanban', 'Takenbord', [{ name: p.name, items: (p.cards || [])
-                    .filter(c => c.status !== 'klaar' && c.title)
-                    .map(c => ({ type: 'actie', text: c.title, who: who(c.ownerId), when: when(c.dueDate) })) }]);
+                const eigen = (state.projects || []).filter(p => p && !p.voorbeeld);
+                ocShare.publish('kanban', 'Takenbord', eigen.map(p => {
+                    const naam = id => { const m = (p.team || []).find(x => x.id === id); return m && String(m.name || '').trim(); };
+                    return { name: p.name, items: (p.cards || [])
+                        .filter(c => c && c.status !== 'klaar' && c.title)
+                        .map(c => {
+                            const wie = [...new Set([c.ownerId, ...(Array.isArray(c.participants) ? c.participants : [])].map(naam).filter(Boolean))];
+                            return { type: 'actie', text: c.title, who: wie.join('; ') || undefined,
+                                when: /^\d{4}-\d{2}-\d{2}$/.test(String(c.dueDate || '')) ? c.dueDate : undefined };
+                        }) };
+                }));
             } catch {}
         }
 /* ---------- Download als afbeelding of PDF (gedeeld door de Onder Constructie-tools, v3) ----------
@@ -5638,7 +5681,8 @@ const ocExport = (() => {
         }
 
         function getInitials(name) {
-            return String(name || '').trim().split(/\s+/).map(n => n[0] || '').join('').toUpperCase().slice(0, 2) || '?';
+            // Alleen letters: "Bewoners & cliënten" wordt BC, niet B&
+            return String(name || '').trim().split(/\s+/).map(n => (n.match(/\p{L}/u) || [''])[0]).join('').toUpperCase().slice(0, 2) || '?';
         }
 
         // Date format helpers (dd/mm/jjjj <-> YYYY-MM-DD)
@@ -5937,9 +5981,7 @@ const ocExport = (() => {
                             </svg>
                             Taak toevoegen
                         </button>
-                        ${column.id === 'todo' && canImport() ? `<button type="button" class="import-btn" data-act="importTasks" title="Taken en acties uit andere tools op het bord zetten">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>
-                            Overnemen uit…</button>` : ''}
+                        ${column.id === 'todo' && canImport() ? `<div class="import-wrap"><button type="button" class="oc-import" data-oc-types="taak,actie" data-act="importTasks">Overnemen uit andere tools</button></div>` : ''}
                     </div>
                 `;
                 board.appendChild(columnEl);
@@ -6535,10 +6577,38 @@ const ocExport = (() => {
             const m = t.match(/^(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{4})$/);
             return m ? toIsoDate(`${m[1]}/${m[2]}/${m[3]}`) : '';
         }
+        /* Teamleden soepel herkennen: zonder hoofdletters, accenten, dubbele spaties of leestekens aan de rand.
+           "Bram" en "Bram (IT)" zijn dezelfde persoon als er maar één Bram in het team staat en de haakjes niet botsen
+           ("Bram (IT)" en "Bram (HR)" blijven twee mensen). Twijfel: geen samenvoeging. */
+        const naamNorm = v => String(v || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/\s+/g, ' ').trim().replace(/^[\s.,;:!?·-]+|[\s.,;:!?·-]+$/g, '');
+        const naamKern = v => naamNorm(String(v || '').replace(/\s*\([^()]*\)\s*$/, ''));
+        function findMember(project, name) {
+            const n = naamNorm(name), team = (project && project.team) || [];
+            if (!n) return null;
+            const exact = team.find(t => naamNorm(t.name) === n);
+            if (exact) return exact;
+            const k = naamKern(name);
+            if (!k) return null;
+            const zelfde = team.filter(t => naamKern(t.name) === k);
+            if (zelfde.length !== 1) return null;
+            const metHaakjes = v => naamNorm(v) !== naamKern(v);
+            return metHaakjes(name) && metHaakjes(zelfde[0].name) ? null : zelfde[0];
+        }
+        /* Eén "wie" is één teamlid, ook met een komma, & of "en" erin ("Céline Peeters, coördinator", "Bewoners & cliënten").
+           Een lijst wordt het alleen als het duidelijk is: namen gescheiden door ";" (zo geeft het Takenbord ze zelf door),
+           of een "wie" waarvan elk deel al een teamlid is ("Fatima, Pieter" als Fatima en Pieter in het team staan). */
+        function whoNames(project, who) {
+            const s = String(who || '').trim();
+            if (!s) return [];
+            if (/[;\n]/.test(s)) return s.split(/\s*[;\n]+\s*/).map(x => x.trim()).filter(Boolean);
+            const delen = s.split(/\s*[,&]\s*|\s+en\s+/i).map(x => x.trim()).filter(Boolean);
+            if (delen.length > 1 && !findMember(project, s) && delen.every(d => findMember(project, d))) return delen;
+            return [s];
+        }
         function memberFor(project, sprint, name) {
             const n = String(name || '').trim().slice(0, 200);
             if (!n) return null;
-            let m = project.team.find(t => t.name.trim().toLowerCase() === n.toLowerCase());
+            let m = findMember(project, n);
             if (!m) {
                 m = { id: generateId(), name: n, color: AVATAR_COLORS[project.team.length % AVATAR_COLORS.length] };
                 project.team.push(m);
@@ -6556,23 +6626,35 @@ const ocExport = (() => {
         // Een zwaar probleem krijgt hier meteen prioriteit Hoog. Andere bronnen en andere notes blijven zonder prioriteit.
         const RADAR_ZWAAR = 'zwaar probleem';
         const prioFromShare = it => /radar/i.test(String(it.source || '')) && String(it.note || '').trim().toLowerCase() === RADAR_ZWAAR ? 'high' : null;
-        async function importTasks() {
+        // Niet dubbel: wat nog open staat in het project, en alles wat al in deze sprint staat (ook als het klaar is).
+        // De kiezer grijst dat uit, en de knop telt het niet als nieuw.
+        function ocOpBord(project, sprint) { return project && sprint ? project.cards.filter(c => c.status !== 'klaar' || c.sprintId === sprint.id).map(c => c.title) : []; }
+        window.ocHave = types => { try { return types.some(t => IMPORT_TYPES.includes(t)) ? ocOpBord(getActiveProject(), getActiveSprint()) : []; } catch { return []; } };
+        // nieuw: { naam, terug } als dit project net voor deze overname werd aangemaakt (zie ocNaarAppProject)
+        async function importTasks(nieuw) {
+            if (!nieuw || !nieuw.naam) nieuw = null;
             const project = getActiveProject(), sprint = getActiveSprint();
             if (!project || !sprint) return;
-            const picked = await ocShare.pick({ types: IMPORT_TYPES, self: 'kanban', title: 'Taken overnemen', intro: 'Kies welke taken en acties je op het bord zet. Ze komen in Te doen.' });
-            if (!picked.length) return;
+            const opBord = ocOpBord(project, sprint);
+            const nieuwZin = nieuw ? `Nieuw project ‘${nieuw.naam}’ aangemaakt voor wat je overneemt.` : '';
+            const picked = await ocShare.pick({ types: IMPORT_TYPES, self: 'kanban', title: 'Taken overnemen', intro: (nieuwZin ? nieuwZin + ' ' : '') + 'Kies welke taken en acties je op het bord zet. Ze komen in Te doen.', have: opBord });
+            if (!picked.length) { if (nieuw) showToast(nieuwZin.slice(0, -1), 'success', nieuw.terug); return; }
+            // Hoeveel er in de kiezer al stonden ("staat er al"): die noemen we in de melding
+            const kiesNorm = v => String(v || '').normalize('NFC').toLowerCase().replace(/\s+/g, ' ').trim().replace(/^[\s.,;:!?·-]+|[\s.,;:!?·-]+$/g, '');
+            const heeft = new Set(opBord.map(kiesNorm));
+            const alGezien = new Set(); try { ocShare.sources(IMPORT_TYPES, 'kanban').forEach(s => s.items.forEach(it => { const k = kiesNorm(it.text); if (heeft.has(k)) alGezien.add(k); })); } catch {}
+            let alStond = alGezien.size;
             const before = JSON.stringify({ cards: project.cards, team: project.team, av: project.teamAvailability });
             const norm = t => String(t || '').trim().toLowerCase().replace(/^kloof dichten:\s*/, 'verschil wegwerken: ');
-            // niet dubbel: wat nog open staat in het project, en alles wat al in deze sprint staat (ook als het klaar is)
-            const open = new Set(project.cards.filter(c => c.status !== 'klaar' || c.sprintId === sprint.id).map(c => norm(c.title)));
+            const open = new Set(opBord.map(norm));
             let added = 0, people = 0;
             picked.forEach(it => {
                 const title = String(it.text || '').trim().slice(0, 500);
-                if (!title || open.has(norm(title))) return;
+                if (!title) return;
+                if (open.has(norm(title))) { alStond++; return; }
                 open.add(norm(title));
                 const teamBefore = project.team.length;
-                const names = String(it.who || '').split(/\s*[,;&]\s*|\s+en\s+/).map(x => x.trim()).filter(Boolean);
-                const ids = names.map(n => memberFor(project, sprint, n));
+                const ids = [...new Set(whoNames(project, it.who).map(n => memberFor(project, sprint, n)).filter(Boolean))];
                 people += project.team.length - teamBefore;
                 const due = parseWhen(it.when);
                 const desc = [it.note || '', it.when && !due ? `Tegen: ${it.when}` : ''].filter(Boolean).join('\n');
@@ -6584,10 +6666,13 @@ const ocExport = (() => {
                 });
                 added++;
             });
-            if (!added) { showToast('Die taken staan al op het bord'); return; }
+            const alTekst = alStond ? ` ${alStond === 1 ? 'Eén taak stond' : alStond + ' taken stonden'} er al.` : '';
+            if (!added) { showToast(`Geen nieuwe taken.${alTekst || ' Die taken staan al op het bord.'}`); return; }
             saveToStorage(); renderBoard(); renderSprintTabs(); renderFilterChips(); renderTeamList(); renderTeamAvailabilityList(); updateStats();
-            const msg = `${added} ${added === 1 ? 'taak' : 'taken'} in Te doen` + (people ? `, ${people} ${people === 1 ? 'teamlid' : 'teamleden'} toegevoegd` : '');
-            showToast(msg, 'success', () => {
+            const msg = `${added} ${added === 1 ? 'nieuwe taak' : 'nieuwe taken'} in Te doen` + (people ? `, ${people} ${people === 1 ? 'teamlid' : 'teamleden'} toegevoegd` : '') + '.' + alTekst;
+            // In een net aangemaakt project haalt Ongedaan het hele project weg
+            if (nieuw) showToast(`${nieuwZin} ${added} ${added === 1 ? 'nieuwe taak' : 'nieuwe taken'} in Te doen.`, 'success', nieuw.terug);
+            else showToast(msg, 'success', () => {
                 const b = JSON.parse(before);
                 project.cards = b.cards; project.team = b.team; project.teamAvailability = b.av;
                 saveToStorage(); renderBoard(); renderSprintTabs(); renderFilterChips(); renderTeamList(); renderTeamAvailabilityList(); updateStats();
@@ -7428,9 +7513,40 @@ const ocExport = (() => {
             let van = '';
             try { const u = new URL(location.href); van = u.searchParams.get('van') || ''; if (van && van !== 'sprint') { window.ocVan = van; u.searchParams.delete('van'); history.replaceState(null, '', u.pathname + u.search + u.hash); } } catch { return; }
             if (!van || van === 'sprint' || !canImport()) { window.ocVan = ''; return; }
+            // Eerst naar het project dat in de app actief is: anders komt wat je voor project B doorgeeft in project A
+            const nieuw = ocNaarAppProject();
             const project = getActiveProject();
-            if (!project || project.voorbeeld) { window.ocVan = ''; showToast('Kies of maak je eigen project. Daarna staat Overnemen uit… onder Te doen.'); return; }
-            setTimeout(async () => { try { await importTasks(); } finally { window.ocVan = ''; } }, 300);   // ocVan: de items van die tool staan al aangevinkt
+            if (!project || project.voorbeeld) { window.ocVan = ''; showToast('Kies of maak je eigen project. Daarna staat Overnemen uit andere tools onder Te doen.'); return; }
+            setTimeout(async () => { try { await importTasks(nieuw); } finally { window.ocVan = ''; } }, 300);   // ocVan: de items van die tool staan al aangevinkt
+        }
+        // Projectnamen soepel vergelijken: zonder hoofdletters, accenten, spaties of leestekens
+        function ocZacht(s) { return String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^\p{L}\p{N}]+/gu, ''); }
+        /* Naar het project dat in de app actief is (oc.project), soepel vergeleken op de naam. Een voorbeeld is nooit het doel.
+           Bestaat het hier nog niet, dan maken we het aan. Geeft dan { naam, terug } terug: terug() haalt het weer weg. */
+        function ocNaarAppProject() {
+            const ap = ocProject(''), c = getActiveProject();
+            if (!ap || (c && !c.voorbeeld && ocZacht(c.name) === ocZacht(ap))) return null;
+            const m = state.projects.find(p => !p.voorbeeld && ocZacht(p.name) === ocZacht(ap));
+            if (m) { switchProject(m.id); return null; }
+            // nog leeg eigen project met een standaardnaam: dat krijgt gewoon de naam uit de app
+            if (c && !c.voorbeeld && !c.cards.length && !c.team.length && ['mijnproject', 'nieuwproject', 'naamloos', ''].includes(ocZacht(c.name))) {
+                c.name = ap; saveToStorage(); refreshUI(); return null;
+            }
+            const vorig = { activeProjectId: state.activeProjectId, activeSprintId: state.activeSprintId };
+            const p = createDefaultProject(); p.name = ap;
+            state.projects.push(p);
+            switchProject(p.id);
+            return { naam: ap, terug: () => {
+                const i = state.projects.indexOf(p);
+                if (i < 0 || state.projects.length < 2) return;
+                state.projects.splice(i, 1);
+                if (state.projects.some(x => x.id === vorig.activeProjectId)) Object.assign(state, vorig);
+                else { state.activeProjectId = state.projects[0].id; state.activeSprintId = state.projects[0].sprints[0]?.id || null; }
+                state.filters = { search: '', epic: null, owner: null, status: null };
+                document.getElementById('searchInput').value = '';
+                saveToStorage(); refreshUI(); renderTeamList(); renderTeamAvailabilityList();
+                showToast(`Project ‘${ap}’ weer weggehaald`);
+            } };
         }
 
         /* ---------- Sprint ontvangen uit Sprintplanning ----------
@@ -7446,14 +7562,21 @@ const ocExport = (() => {
             if (!d || d.v !== 1 || !Array.isArray(d.tasks) || !d.tasks.length) return;
             if (d.at && Date.now() - Date.parse(d.at) > 864e5) return;   // ouder dan een dag: niet meer opdringen
             const van = String(d.fromTitle || 'Sprintplanning').slice(0, 60);
-            const sname = String(d.sprint && d.sprint.name || '').trim().slice(0, 120) || 'Sprint';
+            let sname = String(d.sprint && d.sprint.name || '').trim().slice(0, 120) || 'Sprint';
             const tasks = d.tasks.filter(t => t && String(t.text || '').trim());
             if (!tasks.length) return;
             const low = v => String(v || '').trim().toLowerCase();
             // Welk project: het actieve; is dat het voorbeeld, dan het actieve project uit de app, anders het eerste eigen project
             const eigen = state.projects.filter(p => !p.voorbeeld);
             let project = getActiveProject();
-            if (!project || project.voorbeeld) project = eigen.find(p => p.name === ocProject('')) || eigen[0] || null;
+            // Is in de app een ander project actief, dan gaat de sprint daarheen. Bestaat het hier nog niet, dan komt het er (na de vraag).
+            const ap = ocProject(''), apNu = ap && project && !project.voorbeeld && ocZacht(project.name) === ocZacht(ap);
+            let maakNieuw = '';
+            if (ap && !apNu) { project = eigen.find(p => ocZacht(p.name) === ocZacht(ap)) || null; if (!project) maakNieuw = ap; }
+            if (!maakNieuw && (!project || project.voorbeeld)) project = eigen[0] || null;
+            // "Sprint 1 · Project B" heet in project B gewoon "Sprint 1"
+            const pNaam = project ? project.name : maakNieuw, knip = sname.lastIndexOf(' · ');
+            if (pNaam && knip > 0 && ocZacht(sname.slice(knip + 3)) === ocZacht(pNaam)) sname = sname.slice(0, knip).trim() || sname;
             // Wat er gebeurt, al vooraf bepalen: zo zegt de vraag precies wat er komt
             const sprintVan = project && project.sprints.find(sp => low(sp.name) === low(sname));
             const plan = tasks.map(t => {
@@ -7464,7 +7587,7 @@ const ocExport = (() => {
                 return { t, title, id, card };
             });
             const nieuw = plan.filter(x => !x.card).length, al = plan.length - nieuw;
-            const waar = eigen.length > 1 && project ? ` van ${project.name}` : '';
+            const waar = maakNieuw ? ` van een nieuw project ‘${maakNieuw}’` : (eigen.length > 1 || (ap && !apNu)) && project ? ` van ${project.name}` : '';
             const wat = !al ? `${nieuw === 1 ? 'Eén taak komt' : nieuw + ' taken komen'} in Te doen, met hun schatting en het team.`
                 : `${nieuw ? `${nieuw === 1 ? 'Eén nieuwe taak komt' : nieuw + ' nieuwe taken komen'} in Te doen. ` : ''}${al === 1 ? 'Eén taak staat' : al + ' taken staan'} al op het bord en ${al === 1 ? 'krijgt' : 'krijgen'} de schatting uit ${van}.`;
             ocOntvangBezig = true;
@@ -7474,9 +7597,9 @@ const ocExport = (() => {
             const ok = await ocDialog({ message: `${sname} uit ${van} op het bord${waar} zetten? ${wat}`, okText: 'Zet op het bord' });
             removeEventListener('pagehide', terug);
             ocOntvangBezig = false;
-            if (!ok) { showToast('Niet op het bord gezet. Via Overnemen uit… kan het later nog.'); return; }
+            if (!ok) { showToast('Niet op het bord gezet. Via Overnemen uit andere tools kan het later nog.'); return; }
             const before = JSON.stringify({ projects: state.projects, activeProjectId: state.activeProjectId, activeSprintId: state.activeSprintId });
-            if (!project) { project = createDefaultProject(); state.projects.push(project); }
+            if (!project) { project = createDefaultProject(); if (maakNieuw) project.name = maakNieuw; state.projects.push(project); }
             state.activeProjectId = project.id;
             let sprint = sprintVan;
             if (!sprint) {
@@ -7494,7 +7617,7 @@ const ocExport = (() => {
             (Array.isArray(d.team) ? d.team : []).forEach(t => {
                 const nm = String(t && t.name || '').trim().slice(0, 200);
                 if (!nm) return;
-                let m = project.team.find(x => low(x.name) === low(nm));
+                let m = findMember(project, nm);
                 if (!m) { m = { id: generateId(), name: nm, color: AVATAR_COLORS[project.team.length % AVATAR_COLORS.length] }; project.team.push(m); people++; }
                 const v = parseFloat(t.days);
                 if (v >= 0 && v <= 365) project.teamAvailability[m.id] = v;
@@ -7505,18 +7628,28 @@ const ocExport = (() => {
             let added = 0, updated = 0, moved = 0;
             plan.forEach(({ t, title, id, card }) => {
                 const e = parseFloat(t.estimate), estimate = e > 0 && e <= 1000 ? String(e) : null;
+                // Wie het doet en tegen wanneer: zoals bij Overnemen. Eén "wie" is één teamlid, een lijst alleen met ";".
+                // Pas opzoeken (en zo nodig aan het team toevoegen) als de kaart iemand nodig heeft
+                const wieIds = () => { const voor = project.team.length;
+                    const r = typeof t.who === 'string' ? [...new Set(whoNames(project, t.who).map(n => memberFor(project, sprint, n)).filter(Boolean))] : [];
+                    people += project.team.length - voor; return r; };
+                const wanneer = typeof t.when === 'string' ? t.when.trim().slice(0, 40) : '', due = parseWhen(wanneer);
                 if (card) {
                     let anders = false;
                     if (estimate != null && parseFloat(card.estimate) !== e) { card.estimate = estimate; anders = true; }
+                    // Wat op het bord nog leeg is, vullen we aan. Wat je op het bord al invulde, blijft.
+                    if (!card.ownerId) { const ids = wieIds(); if (ids.length) { card.ownerId = ids[0]; if (!(card.participants || []).length) card.participants = ids.slice(1); anders = true; } }
+                    if (due && !card.dueDate) { card.dueDate = due; anders = true; }
                     if (id && card.fromId === id && card.title !== title) { card.title = title; anders = true; }   // hernoemd in de planning
                     if (id && !card.fromId) card.fromId = id;
                     if (card.sprintId !== sprint.id) { card.sprintId = sprint.id; moved++; }   // nog open in een vorige sprint: schuift mee
                     else if (anders) updated++;
                     return;
                 }
+                const ids = wieIds(), desc = [String(t.note || ''), wanneer && !due ? `Tegen: ${wanneer}` : ''].filter(Boolean).join('\n');
                 project.cards.push({
-                    id: generateId(), title, description: String(t.note || '').slice(0, 5000), epicId: null, status: 'todo',
-                    ownerId: null, dueDate: null, estimate, priority: null, participants: [], subtasks: [], sprintId: sprint.id,
+                    id: generateId(), title, description: desc.slice(0, 5000), epicId: null, status: 'todo',
+                    ownerId: ids[0] || null, dueDate: due || null, estimate, priority: null, participants: ids.slice(1), subtasks: [], sprintId: sprint.id,
                     source: `${van} · ${sname}`.slice(0, 160), ...(id ? { fromId: id } : {})
                 });
                 added++;
@@ -7837,19 +7970,36 @@ document.getElementById('ocBegin').addEventListener('click', function () { openC
     try { var mt = document.querySelector('meta[name="oc:opslag"]'), mz = mt && /oc\.share\.([\w-]+)/.exec(mt.content); zelf = mz ? mz[1] : ''; } catch (e) {}
     function esc(v) { return String(v).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
     function samenvatting(types) {
-      var tools = [], perType = {}, n = 0, keys = [];
+      var tools = [], perType = {}, n = 0, al = 0, keys = [], gezien = {}, heeft = {};
+      function norm(v) { return String(v || '').normalize('NFC').toLowerCase().replace(/\s+/g, ' ').trim().replace(/^[\s.,;:!?·-]+|[\s.,;:!?·-]+$/g, ''); }
       try { for (var i = 0; i < localStorage.length; i++) keys.push(localStorage.key(i)); } catch (e) { return ''; }
+      // Wat de tool al heeft (window.ocHave), telt niet als nieuw
+      try { if (typeof window.ocHave === 'function') (window.ocHave(types) || []).forEach(function (x) { heeft[norm(x)] = 1; }); } catch (e) {}
+      // Zoals de kiezer: elke tekst van elke soort één keer, bij de rijkste bron (notitie, wie, wanneer), dan de grootste lijst, dan de recentste
+      var lijsten = [];
       keys.forEach(function (k) {
         if (!k || k.indexOf('oc.share.') !== 0 || k === 'oc.share.' + zelf) return;
-        try {
-          var d = JSON.parse(localStorage.getItem(k)), m = 0; if (!d || !Array.isArray(d.lists)) return;
-          d.lists.forEach(function (l) { (l && Array.isArray(l.items) ? l.items : []).forEach(function (it) {
-            if (it && types.indexOf(it.type) >= 0 && typeof it.text === 'string') { m++; perType[it.type] = (perType[it.type] || 0) + 1; }
-          }); });
-          if (m) { n += m; tools.push({ naam: String(d.tool || d.id || k.slice(9)), t: +d.updated || 0 }); }
+        try { var d = JSON.parse(localStorage.getItem(k)); if (!d || !Array.isArray(d.lists)) return;
+          d.lists.forEach(function (l) {
+            var its = (l && Array.isArray(l.items) ? l.items : []).filter(function (it) { return it && types.indexOf(it.type) >= 0 && typeof it.text === 'string' && it.text.trim(); });
+            if (its.length) lijsten.push({ naam: String(d.tool || d.id || ''), t: +d.updated || 0, items: its });
+          });
         } catch (e) {}
       });
-      if (!n) return '';
+      var best = {};
+      lijsten.forEach(function (l) { l.items.forEach(function (it) {
+        var s = it.type + '|' + norm(it.text), sc = [(it.note ? 2 : 0) + (it.who ? 1 : 0) + (it.when ? 1 : 0), l.items.length, l.t], e = best[s];
+        var beter = !e; for (var i = 0; !beter && e && i < 3; i++) { if (sc[i] !== e.sc[i]) { beter = sc[i] > e.sc[i]; break; } }
+        if (beter) best[s] = { sc: sc, l: l, type: it.type, tekst: it.text };
+      }); });
+      var perTool = {};
+      Object.keys(best).forEach(function (s) {
+        var b = best[s]; if (heeft[norm(b.tekst)]) { al++; return; }
+        n++; perType[b.type] = (perType[b.type] || 0) + 1;
+        var tl = perTool[b.l.naam] || (perTool[b.l.naam] = { naam: b.l.naam, t: 0 }); tl.t = Math.max(tl.t, b.l.t);
+      });
+      tools = Object.keys(perTool).map(function (k) { return perTool[k]; });
+      if (!n) return al ? 'Alles staat er al' : '';
       tools.sort(function (a, b) { return b.t - a.t; });
       var nm = tools.map(function (x) { return x.naam; }), soort = Object.keys(perType);
       var wat = soort.length === 1 && VEEL[soort[0]] ? n + ' ' + (n === 1 ? EEN[soort[0]] : VEEL[soort[0]]) : n + (n === 1 ? ' punt' : ' punten');
