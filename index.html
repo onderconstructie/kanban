@@ -4147,7 +4147,9 @@ function ocPickProject(st, arr, cur = 'current') { const p = ocProject(''); if (
      ]);                                   // aanroepen na elke bewaring
      ocShare.clear('raci');                // bij "Alles wissen"
      const gekozen = await ocShare.pick({ types:['betrokkene'], self:'weerstand', title:'Doelgroepen overnemen' });
-     // geeft [] terug bij annuleren, anders de aangevinkte items (met .source en .list erbij)
+     // geeft [] terug bij annuleren, anders de aangevinkte items (met .source, .bronId en .list erbij)
+     // Afspraak: een tool geeft wat ze overnam (bronId) NIET opnieuw door, tenzij ze er een eigen oordeel aan toevoegde
+     // (een score, een eigenaar, een datum). Zo blijft de bron de baas en komt wat daar verwijderd is niet terug.
      ocShare.pick({ ..., have:['Budget goedkeuren'] })  // optioneel: wat de tool al heeft, staat uitgegrijsd ("staat er al")
      ocShare.pick({ ..., vink:false })    // niets vooraf aanvinken;  notes:false  toont geen notities (voor wie alleen namen neemt)
      window.ocHave = types => [...]       // optioneel per tool: dan telt de knop "Overnemen uit andere tools" alleen wat nieuw is
@@ -4303,7 +4305,7 @@ const ocShare = (() => {
       document.addEventListener('keydown', onKey, true);
       back.querySelector('.ocs-cancel').addEventListener('click', () => close([]));
       ok.addEventListener('click', () => close(boxes().filter(b => b.checked).map(b => {
-        const s = src[+b.dataset.s]; return { ...s.items[+b.dataset.i], source: s.tool, list: s.list };
+        const s = src[+b.dataset.s]; return { ...s.items[+b.dataset.i], source: s.tool, bronId: s.id, list: s.list };
       })));
       const first = back.querySelector('input:not(:disabled),.ocs-cancel'); first && first.focus();
     });
@@ -4316,13 +4318,23 @@ const ocShare = (() => {
 
         /* De open taken van al je eigen projecten klaarleggen voor andere tools, één lijst per project.
            Het voorbeeld nooit. "who" = eigenaar en deelnemers, gescheiden door "; ". "when" = de einddatum als JJJJ-MM-DD. */
+        /* Herkomst: een kaart die je overnam (van = de tool waar ze vandaan komt) geeft het bord pas door als jij er op het bord
+           een eigen oordeel aan gaf: een andere kolom dan Te doen, een eigenaar of een datum die niet uit de bron kwam.
+           Anders blijft de bron de baas: wat je daar afvinkt, aanpast of verwijdert, komt niet via het bord terug.
+           Pas je de titel aan, dan is het je eigen kaart (zie saveCard). Oude kaarten zonder herkomst gelden als eigen werk. */
+        const ocMensen = c => [c.ownerId, ...(Array.isArray(c.participants) ? c.participants : [])].filter(Boolean).join(',');
+        function ocEigenOordeel(c) {
+            if (!c || !c.van) return true;
+            const w = c.vanWas || {};
+            return c.status !== 'todo' || (!!c.ownerId && ocMensen(c) !== (w.o || '')) || (!!c.dueDate && c.dueDate !== (w.d || ''));
+        }
         function ocPublishKanban() {
             try {
                 const eigen = (state.projects || []).filter(p => p && !p.voorbeeld);
                 ocShare.publish('kanban', 'Takenbord', eigen.map(p => {
                     const naam = id => { const m = (p.team || []).find(x => x.id === id); return m && String(m.name || '').trim(); };
                     return { name: p.name, items: (p.cards || [])
-                        .filter(c => c && c.status !== 'klaar' && c.title)
+                        .filter(c => c && c.status !== 'klaar' && c.title && ocEigenOordeel(c))
                         .map(c => {
                             const wie = [...new Set([c.ownerId, ...(Array.isArray(c.participants) ? c.participants : [])].map(naam).filter(Boolean))];
                             return { type: 'actie', text: c.title, who: wie.join('; ') || undefined,
@@ -4541,7 +4553,9 @@ const ocExport = (() => {
                     subtasks: arr(c.subtasks).map(t => ({ text: str(t.text, 500), done: !!t.done })),
                     sprintId: ref(c.sprintId, sprintIds) || sprints[0].id,
                     ...(c.source ? { source: str(c.source, 160) } : {}),
-                    ...(c.fromId ? { fromId: str(c.fromId, 60) } : {})   // story uit Sprintplanning: zo herkent het bord ze bij een volgende keer
+                    ...(c.fromId ? { fromId: str(c.fromId, 60) } : {}),   // story uit Sprintplanning: zo herkent het bord ze bij een volgende keer
+                    // herkomst: de tool waaruit de kaart kwam, en eigenaar en datum zoals ze binnenkwamen (zie ocEigenOordeel)
+                    ...(typeof c.van === 'string' && c.van ? { van: str(c.van, 40), vanWas: { o: str(c.vanWas && c.vanWas.o, 400), d: date(c.vanWas && c.vanWas.d) } } : {})
                 };
             });
             const teamAvailability = {};
@@ -6535,6 +6549,9 @@ const ocExport = (() => {
                 if (index !== -1) {
                     cardData.sprintId = project.cards[index].sprintId; // Keep original sprint
                     if (project.cards[index].source) cardData.source = project.cards[index].source;   // bron onthouden
+                    // herkomst houden zolang de titel dezelfde blijft; een nieuwe titel maakt er je eigen kaart van
+                    const oud = project.cards[index];
+                    if (oud.van && naamNorm(oud.title) === naamNorm(title)) { cardData.van = oud.van; cardData.vanWas = oud.vanWas; }
                     project.cards[index] = cardData;
                 }
             } else {
@@ -6662,7 +6679,8 @@ const ocExport = (() => {
                     id: generateId(), title, description: desc.slice(0, 5000), epicId: null, status: 'todo',
                     ownerId: ids[0] || null, dueDate: due || null, estimate: estFromNote(it.note), priority: prioFromShare(it),
                     participants: ids.slice(1), subtasks: [], sprintId: sprint.id,
-                    source: [it.source, it.list].filter(Boolean).join(' · ').slice(0, 160)
+                    source: [it.source, it.list].filter(Boolean).join(' · ').slice(0, 160),
+                    ...(typeof it.bronId === 'string' && it.bronId ? { van: it.bronId.slice(0, 40), vanWas: { o: ids.join(','), d: due || '' } } : {})
                 });
                 added++;
             });
@@ -7638,8 +7656,9 @@ const ocExport = (() => {
                     let anders = false;
                     if (estimate != null && parseFloat(card.estimate) !== e) { card.estimate = estimate; anders = true; }
                     // Wat op het bord nog leeg is, vullen we aan. Wat je op het bord al invulde, blijft.
-                    if (!card.ownerId) { const ids = wieIds(); if (ids.length) { card.ownerId = ids[0]; if (!(card.participants || []).length) card.participants = ids.slice(1); anders = true; } }
-                    if (due && !card.dueDate) { card.dueDate = due; anders = true; }
+                    if (!card.ownerId) { const ids = wieIds(); if (ids.length) { card.ownerId = ids[0]; if (!(card.participants || []).length) card.participants = ids.slice(1); anders = true;
+                        if (card.van) card.vanWas = { ...(card.vanWas || {}), o: ocMensen(card) }; } }   // aangevuld uit de bron, niet door jou
+                    if (due && !card.dueDate) { card.dueDate = due; anders = true; if (card.van) card.vanWas = { ...(card.vanWas || {}), d: due }; }
                     if (id && card.fromId === id && card.title !== title) { card.title = title; anders = true; }   // hernoemd in de planning
                     if (id && !card.fromId) card.fromId = id;
                     if (card.sprintId !== sprint.id) { card.sprintId = sprint.id; moved++; }   // nog open in een vorige sprint: schuift mee
@@ -7650,7 +7669,8 @@ const ocExport = (() => {
                 project.cards.push({
                     id: generateId(), title, description: desc.slice(0, 5000), epicId: null, status: 'todo',
                     ownerId: ids[0] || null, dueDate: due || null, estimate, priority: null, participants: ids.slice(1), subtasks: [], sprintId: sprint.id,
-                    source: `${van} · ${sname}`.slice(0, 160), ...(id ? { fromId: id } : {})
+                    source: `${van} · ${sname}`.slice(0, 160), ...(id ? { fromId: id } : {}),
+                    van: 'sprint', vanWas: { o: ids.join(','), d: due || '' }   // herkomst: Sprintplanning blijft de bron
                 });
                 added++;
             });
