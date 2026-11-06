@@ -4331,6 +4331,18 @@ const ocShare = (() => {
             const w = c.vanWas || {};
             return c.status !== 'todo' || (!!c.ownerId && ocMensen(c) !== (w.o || '')) || (!!c.dueDate && c.dueDate !== (w.d || ''));
         }
+        /* "Verder waar je was" in de app: een overgenomen kaart gaat (terecht) niet mee in oc.share.kanban, maar is wel werk.
+           Daarom legt het bord zelf vast hoe "leeg" eruitziet (oc.leeg./kanban/, zoals de andere tools): zolang er in je eigen
+           projecten geen kaart en geen teamlid staat, is wat bewaard is de lege toestand. Daarna telt elke afwijking als werk.
+           Staat er al werk en is er nog geen lege toestand (van vroeger), dan '{}' = niet gekend: wat er staat, telt. */
+        const OC_LEEG = 'oc.leeg./kanban/';
+        function ocLeegMerk(bewaard) {
+            try {
+                const werk = (state.projects || []).some(p => p && !p.voorbeeld && ((p.cards || []).length || (p.team || []).length));
+                if (!werk) localStorage.setItem(OC_LEEG, JSON.stringify({ [STORAGE_KEY]: bewaard }));
+                else if (localStorage.getItem(OC_LEEG) == null) localStorage.setItem(OC_LEEG, '{}');
+            } catch {}
+        }
         function ocPublishKanban() {
             try {
                 const eigen = (state.projects || []).filter(p => p && !p.voorbeeld);
@@ -4679,9 +4691,11 @@ const ocExport = (() => {
                         activeProjectId: state.activeProjectId,
                         activeSprintId: state.activeSprintId
                     };
-                    localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
+                    const bewaard = JSON.stringify(dataToSave);
+                    localStorage.setItem(STORAGE_KEY, bewaard);
                     ocPublishKanban();
-                    
+                    ocLeegMerk(bewaard);
+
                     // Show saved indicator
                     indicator.classList.remove('saving');
                     indicator.querySelector('span').textContent = 'Opgeslagen';
