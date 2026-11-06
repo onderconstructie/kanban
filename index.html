@@ -17,7 +17,10 @@
 <link rel="stylesheet" href="/fonts/fonts.css">
 <link rel="preload" href="/fonts/dm-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/dm-sans-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin>
-<style>html.oc-wacht body > .header .project-name, html.oc-wacht body > .start-bar, html.oc-wacht body > .vb-bar, html.oc-wacht body > .sprint-bar, html.oc-wacht body > .sprint-tabs-container, html.oc-wacht body > .filter-bar, html.oc-wacht body > .touch-hint, html.oc-wacht body > .board-container, html.oc-wacht body > .footer { visibility:hidden; animation:oc-toon 0s 2.5s forwards; } @keyframes oc-toon { to { visibility:visible; } }</style>
+<style>html.oc-wacht body > .header .project-name, html.oc-wacht body > .start-bar, html.oc-wacht body > .vb-bar, html.oc-wacht body > .sprint-bar, html.oc-wacht body > .sprint-tabs-container, html.oc-wacht body > .filter-bar, html.oc-wacht body > .touch-hint, html.oc-wacht body > .board-container, html.oc-wacht body > .footer { visibility:hidden; animation:oc-toon 0s 2.5s forwards; } @keyframes oc-toon { to { visibility:visible; } }
+/* Zelfde ritme als de andere tools: de titel staat op dezelfde hoogte, zodat de kop niet verspringt als je van tool wisselt */
+.oc-head .title { margin-top:calc(0.5rem + 7px) !important; }
+</style>
 <script>document.documentElement.classList.add('oc-wacht');</script>
     <style>
         :root {
