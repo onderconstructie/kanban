@@ -7277,7 +7277,7 @@ const ocExport = (() => {
                                     <span class="roadmap-sprint-name">${esc(sprint.name)}</span>
                                     <span class="roadmap-sprint-tasks">${taskCount}</span>
                                     <div class="roadmap-resize-handle right" data-side="right" data-id="${esc(sprint.id)}"></div>
-                                    <div class="roadmap-date-tooltip">${esc(toDisplayDate(sprint.startDate))} — ${esc(toDisplayDate(sprint.endDate))}</div>
+                                    <div class="roadmap-date-tooltip">${esc(toDisplayDate(sprint.startDate))} tot ${esc(toDisplayDate(sprint.endDate))}</div>
                                 </div>
                             </div>
                         `;
@@ -7586,7 +7586,7 @@ const ocExport = (() => {
             // Update tooltip with dates (tooltip is inside the bar now)
             const tooltip = bar.querySelector('.roadmap-date-tooltip');
             if (tooltip) {
-                tooltip.textContent = `${toDisplayDate(formatIsoDate(newStartDate))} — ${toDisplayDate(formatIsoDate(newEndDate))}`;
+                tooltip.textContent = `${toDisplayDate(formatIsoDate(newStartDate))} tot ${toDisplayDate(formatIsoDate(newEndDate))}`;
             }
             
             // Store calculated dates for use when drag ends
@@ -9132,7 +9132,7 @@ const ocExport = (() => {
             const f = state.filters || {};
             const filtered = !!(f.search || f.epic || f.owner || f.status);
             const dates = sprint && (sprint.startDate || sprint.endDate)
-                ? [sprint.startDate && toDisplayDate(sprint.startDate), sprint.endDate && toDisplayDate(sprint.endDate)].filter(Boolean).join(' – ') : '';
+                ? [sprint.startDate && toDisplayDate(sprint.startDate), sprint.endDate && toDisplayDate(sprint.endDate)].filter(Boolean).join(' tot ') : '';
             const subtitle = [project?.name, sprint?.name, dates, filtered ? 'gefilterd' : ''].filter(Boolean).join(' · ');
 
             const node = document.createElement('div');
