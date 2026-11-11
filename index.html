@@ -22,6 +22,11 @@
 .oc-head .title { margin-top:calc(0.5rem + 7px) !important; }
 /* voorbeeldtekst in velden: contrast minstens 4,5:1 (ook waar de tool zelf niets kiest) */
 input::placeholder, textarea::placeholder { color:#64748b; opacity:1; }
+
+/* Lege staat: alleen de startkaart. Sprint, tellers, filters en het bord komen pas na je eerste taak (of het voorbeeld). */
+body:has(#startBar:not([hidden])) :is(.sprint-bar, .sprint-tabs-container, .filter-bar, .board-container, .kb-fab-wrap) { display:none !important; }
+/* knoppen en velden in de huisletter (niet in de standaardletter van de browser) */
+button, input, select, textarea { font-family:inherit; }
 </style>
 <script>document.documentElement.classList.add('oc-wacht');</script>
     <style>
