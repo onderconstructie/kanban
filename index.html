@@ -5771,7 +5771,7 @@ window.ocKoppel = (() => {
     if (bytes(tekstN) > MAX_BYTES || teGroot(deel)) { terug(); vanVenster(vensterTeGroot(nh.name, true, keuze)); return; }
     volg(); bewaarLokaal();
     stop(); h = nh; naam = nh.name || voorstel(keuze); fase = 'actief'; fout = '';
-    try { await inRij(() => schrijf(nh, tekstN, mijn, deel)); } catch (e) { h = null; fase = 'uit'; terug(); bewaarLokaal(); toon(); meld('Het bestand kan niet bewaard worden. Er is niets gekoppeld.'); return; }
+    try { await inRij(() => schrijf(nh, tekstN, mijn, deel)); } catch (e) { h = null; fase = 'uit'; terug(); bewaarLokaal(); toon(); meld('Het bestand bewaren lukt niet. Er is niets gekoppeld.'); return; }
     if (!await begin(nh, 'granted')) { terug(); bewaarLokaal(); return; }
     const H0 = V()[0], n = S[A.lijst].filter(deelbaar).reduce((s, u) => s + (u[H0] || []).length, 0);
     meld(n ? `Gekoppeld. Je ${aantal(n)} ${n === 1 ? 'staat' : 'staan'} nu ook in ${naam}.` : `Gekoppeld met ${naam}.`);
@@ -7743,11 +7743,11 @@ ${delen.map(p).join('\n')}
             const endDate = toIsoDate(endInput);
 
             if (startInput && !startDate) {
-                showToast('Ongeldige startdatum. Gebruik dd/mm/jjjj', 'error');
+                showToast('De startdatum klopt niet. Schrijf dd/mm/jjjj', 'error');
                 return;
             }
             if (endInput && !endDate) {
-                showToast('Ongeldige einddatum. Gebruik dd/mm/jjjj', 'error');
+                showToast('De einddatum klopt niet. Schrijf dd/mm/jjjj', 'error');
                 return;
             }
 
@@ -8820,7 +8820,7 @@ ${delen.map(p).join('\n')}
             const dueDate = dueDateInput ? toIsoDate(dueDateInput) : null;
             
             if (dueDateInput && !dueDate) {
-                showToast('Ongeldige datum bij Uiterlijk op. Gebruik dd/mm/jjjj', 'error');
+                showToast('De datum bij Uiterlijk op klopt niet. Schrijf dd/mm/jjjj', 'error');
                 return;
             }
 
@@ -9301,11 +9301,11 @@ ${delen.map(p).join('\n')}
             
             // Validate dates if entered
             if (startInput && !startDate) {
-                showToast('Ongeldige startdatum. Gebruik dd/mm/jjjj', 'error');
+                showToast('De startdatum klopt niet. Schrijf dd/mm/jjjj', 'error');
                 return;
             }
             if (endInput && !endDate) {
-                showToast('Ongeldige einddatum. Gebruik dd/mm/jjjj', 'error');
+                showToast('De einddatum klopt niet. Schrijf dd/mm/jjjj', 'error');
                 return;
             }
             
