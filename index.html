@@ -7395,12 +7395,12 @@ ${delen.map(p).join('\n')}
             document.getElementById('currentSprintName').textContent = sprint?.name || 'Sprint';
             
             if (sprint?.startDate && sprint?.endDate) {
-                const start = new Date(sprint.startDate).toLocaleDateString('nl-NL', { day: 'numeric', month: 'short' });
-                const end = new Date(sprint.endDate).toLocaleDateString('nl-NL', { day: 'numeric', month: 'short' });
+                const start = lokaleDatum(sprint.startDate).toLocaleDateString('nl-NL', { day: 'numeric', month: 'short' });
+                const end = lokaleDatum(sprint.endDate).toLocaleDateString('nl-NL', { day: 'numeric', month: 'short' });
                 document.getElementById('sprintDates').textContent = `${start} - ${end}`;
             } else if (sprint?.endDate) {
                 // Uit Sprintplanning komt alleen de laatste dag mee: toon die ook
-                document.getElementById('sprintDates').textContent = 'tot ' + new Date(sprint.endDate).toLocaleDateString('nl-NL', { day: 'numeric', month: 'short' });
+                document.getElementById('sprintDates').textContent = 'tot ' + lokaleDatum(sprint.endDate).toLocaleDateString('nl-NL', { day: 'numeric', month: 'short' });
             } else {
                 document.getElementById('sprintDates').textContent = 'Geen datums ingesteld';
             }
@@ -7720,8 +7720,8 @@ ${delen.map(p).join('\n')}
                 const isActive = sprint.id === state.activeSprintId;
                 
                 if (sprint.startDate && sprint.endDate) {
-                    const start = new Date(sprint.startDate);
-                    const end = new Date(sprint.endDate);
+                    const start = lokaleDatum(sprint.startDate);   // v16.53: lokaal, zie lokaleDatum
+                    const end = lokaleDatum(sprint.endDate);
                     
                     // Check if sprint overlaps with current month
                     if (end >= monthStart && start <= monthEnd) {
@@ -8144,9 +8144,12 @@ ${delen.map(p).join('\n')}
             return `${d}/${m}/${y}`;
         }
 
+        // v16.53: een datum "JJJJ-MM-DD" lokaal lezen. new Date('2026-11-15') is middernacht UTC: in een tijdzone achter UTC (New York)
+        // werd dat 14 november, en een taak stond al op haar vervaldag als te laat.
+        function lokaleDatum(v) { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(v || '').trim()); return m ? new Date(+m[1], +m[2] - 1, +m[3]) : new Date(v); }
         function formatDate(dateStr) {
             if (!dateStr) return '';
-            return new Date(dateStr).toLocaleDateString('nl-NL', { day: 'numeric', month: 'short' });
+            return lokaleDatum(dateStr).toLocaleDateString('nl-NL', { day: 'numeric', month: 'short' });
         }
 
         function formatEstimate(estimate) {
@@ -8169,7 +8172,7 @@ ${delen.map(p).join('\n')}
         function isOverdue(dateStr) {
             if (!dateStr) return false;
             const today = new Date(); today.setHours(0, 0, 0, 0);
-            return new Date(dateStr) < today;
+            return lokaleDatum(dateStr) < today;
         }
 
         /* Melding, eventueel met Ongedaan (6 s): dezelfde donkere melding als in de andere tools */
