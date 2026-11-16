@@ -10038,8 +10038,8 @@ ${delen.map(p).join('\n')}
         /* Een andere tool (bv. Schildpaddiagram) opende dit bord met ?van=<tool>: meteen kiezen wat je overneemt. */
         function ocOpenOvernemen() {
             let van = '';
-            try { const u = new URL(location.href); van = u.searchParams.get('van') || ''; if (van && van !== 'sprint') { window.ocVan = van; u.searchParams.delete('van'); history.replaceState(null, '', u.pathname + u.search + u.hash); } } catch { return; }
-            if (!van || van === 'sprint' || !canImport()) { window.ocVan = ''; return; }
+            try { const u = new URL(location.href); van = u.searchParams.get('van') || ''; if (van && !/^(sprint|kladblok)$/.test(van)) { window.ocVan = van; u.searchParams.delete('van'); history.replaceState(null, '', u.pathname + u.search + u.hash); } } catch { return; }
+            if (!van || /^(sprint|kladblok)$/.test(van) || !canImport()) { window.ocVan = ''; return; }
             // Eerst naar het project dat in de app actief is: anders komt wat je voor project B doorgeeft in project A
             const nieuw = ocNaarAppProject();
             const project = getActiveProject();
@@ -10086,6 +10086,7 @@ ${delen.map(p).join('\n')}
             try { raw = localStorage.getItem('oc.naar.kanban'); localStorage.removeItem('oc.naar.kanban'); } catch { return; }
             if (!raw) return;
             let d; try { d = JSON.parse(raw); } catch { return; }
+            if (d && d.v === 1 && Array.isArray(d.kaarten)) { await ocOntvangKaarten(d, raw); return; }   // losse kaarten uit Kladblok
             if (!d || d.v !== 1 || !Array.isArray(d.tasks) || !d.tasks.length) return;
             if (d.at && Date.now() - Date.parse(d.at) > 864e5) return;   // ouder dan een dag: niet meer opdringen
             const van = String(d.fromTitle || 'Sprintplanning').slice(0, 60);
@@ -10217,6 +10218,76 @@ ${delen.map(p).join('\n')}
                 state.projects = b.projects; state.activeProjectId = b.activeProjectId; state.activeSprintId = b.activeSprintId;
                 saveToStorage(); refreshUI(); renderTeamList(); renderTeamAvailabilityList(); updateBars();
             });
+            scrollToColumn('todo');
+        }
+        /* ---------- Kaarten ontvangen uit Kladblok ----------
+           Kladblok legt { v:1, from, fromTitle, at (ISO), naam, kaarten:[{ text }] } klaar in 'oc.naar.kanban' en opent dit bord.
+           Je kiest het project (standaard het actieve project van de app); de kaarten komen in Te doen van de lopende sprint. */
+        function ocKiesProject(vraag, opties, standaard) {
+            return new Promise(resolve => {
+                const back = document.createElement('div'); back.className = 'oc-dialog-backdrop';
+                const id = 'ocKp' + Date.now().toString(36);
+                back.innerHTML = `<div class="oc-dialog" role="dialog" aria-modal="true" aria-labelledby="${id}m"><p class="oc-dialog-msg" id="${id}m"></p>
+                    <label class="oc-dialog-label" for="${id}" style="margin-top:1rem">In welk project?</label><select class="oc-dialog-input" id="${id}" style="min-height:44px"></select>
+                    <div class="oc-dialog-actions"><button class="oc-dialog-btn oc-dialog-cancel" type="button">Annuleer</button><button class="oc-dialog-btn oc-dialog-ok" type="button">Zet op het bord</button></div></div>`;
+                back.querySelector('.oc-dialog-msg').textContent = vraag;
+                const sel = back.querySelector('select');
+                opties.forEach(o => { const x = document.createElement('option'); x.value = o.v; x.textContent = o.t; if (o.v === standaard) x.selected = true; sel.appendChild(x); });
+                const prev = document.activeElement; document.body.appendChild(back);
+                requestAnimationFrame(() => back.classList.add('open'));
+                back.querySelector('.oc-dialog-ok').focus();
+                const close = v => { document.removeEventListener('keydown', onKey, true); back.remove(); if (prev && prev.focus) prev.focus(); resolve(v); };
+                function onKey(e) {
+                    if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); close(null); }
+                    if (e.key === 'Tab') { const f = [...back.querySelectorAll('select, button')], i = f.indexOf(document.activeElement); e.preventDefault(); f[(i + (e.shiftKey ? -1 : 1) + f.length) % f.length].focus(); }
+                }
+                document.addEventListener('keydown', onKey, true);
+                back.querySelector('.oc-dialog-ok').addEventListener('click', () => close(sel.value));
+                back.querySelector('.oc-dialog-cancel').addEventListener('click', () => close(null));
+                back.addEventListener('click', e => { if (e.target === back) close(null); });
+            });
+        }
+        async function ocOntvangKaarten(d, raw) {
+            if (d.at && Date.now() - Date.parse(d.at) > 864e5) return;   // ouder dan een dag: niet meer opdringen
+            const van = String(d.fromTitle || 'Kladblok').slice(0, 60), naam = String(d.naam || '').replace(/\s+/g, ' ').trim().slice(0, 80);
+            const titels = d.kaarten.map(k => String(k && k.text || '').replace(/[\u0000-\u001f]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 500)).filter(Boolean).slice(0, 500);
+            if (!titels.length) return;
+            const eigen = state.projects.filter(p => !p.voorbeeld), ap = ocProject(''), act = getActiveProject();
+            const apP = ap ? eigen.find(p => ocZacht(p.name) === ocZacht(ap)) : null;
+            const opties = eigen.map(p => ({ v: p.id, t: p.name }));
+            if (ap && !apP) opties.unshift({ v: 'nieuw', t: `Nieuw project: ${ap}` });
+            else if (!eigen.length) opties.push({ v: 'nieuw', t: 'Nieuw project' });
+            const standaard = apP ? apP.id : ap ? 'nieuw' : act && !act.voorbeeld ? act.id : opties[0].v;
+            ocOntvangBezig = true;
+            const terug = () => { try { localStorage.setItem('oc.naar.kanban', raw); } catch {} };   // herlaad je tijdens de vraag, dan komt ze terug
+            addEventListener('pagehide', terug);
+            const n = titels.length;
+            const keuze = await ocKiesProject(`${n === 1 ? 'Eén kaart' : n + ' kaarten'} uit ${van}${naam ? ` (${naam})` : ''} op het bord zetten, in Te doen?`, opties, standaard);
+            removeEventListener('pagehide', terug);
+            ocOntvangBezig = false;
+            if (!keuze) { showToast('Niet op het bord gezet.'); return; }
+            const before = JSON.stringify({ projects: state.projects, activeProjectId: state.activeProjectId, activeSprintId: state.activeSprintId });
+            let project = state.projects.find(p => p.id === keuze);
+            if (!project) { project = createDefaultProject(); project.name = ap || project.name; state.projects.push(project); }
+            const sprint = (state.activeProjectId === project.id && project.sprints.find(s => s.id === state.activeSprintId)) || project.sprints.find(s => s.status === 'active') || project.sprints[0];
+            state.activeProjectId = project.id; state.activeSprintId = sprint.id;
+            const norm = t => String(t || '').trim().toLowerCase().replace(/\s+/g, ' ');
+            const open = new Set(project.cards.filter(c => c.status !== 'klaar').map(c => norm(c.title)));
+            let added = 0, al = 0;
+            titels.forEach(title => {
+                if (open.has(norm(title))) { al++; return; }
+                open.add(norm(title));
+                project.cards.push({ id: generateId(), title, description: '', epicId: null, status: 'todo', ownerId: null, dueDate: null, estimate: null, priority: null,
+                    participants: [], subtasks: [], sprintId: sprint.id, source: [van, naam].filter(Boolean).join(' · ').slice(0, 160) });
+                added++;
+            });
+            saveToStorage(); refreshUI(); renderTeamList(); renderTeamAvailabilityList(); updateBars();
+            const alTekst = al ? ` ${al === 1 ? 'Eén kaart stond' : al + ' kaarten stonden'} er al.` : '';
+            showToast(added ? `${added} ${added === 1 ? 'kaart' : 'kaarten'} in Te doen van ${project.name}.${alTekst}` : `Geen nieuwe kaarten.${alTekst}`, 'success', added ? () => {
+                const b = JSON.parse(before);
+                state.projects = b.projects; state.activeProjectId = b.activeProjectId; state.activeSprintId = b.activeSprintId;
+                saveToStorage(); refreshUI(); renderTeamList(); renderTeamAvailabilityList(); updateBars();
+            } : undefined);
             scrollToColumn('todo');
         }
         // Takenbord stond al open (in de app of een ander venster): ook dan de klaargelegde sprint oppikken, maar alleen in een zichtbaar venster
