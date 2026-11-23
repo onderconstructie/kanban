@@ -4593,6 +4593,9 @@ window.ocProjectkiezer = function (plek, o) {
 };
 /* oc-projectkiezer v1 einde */
 </script>
+<style id="oc-ctrlz">@media (hover:hover) and (pointer:fine){#ocToast button::after{content:" (Ctrl+Z)";font-weight:400;opacity:.8}}</style>
+<style id="oc-leeg-as">/* Leeg bord op een breed scherm: de werkbalk staat op dezelfde as als de startkaart, niet tegen de linkerrand */
+@media (min-width:1000px){body:has(#startBar:not([hidden])) #kb-main > .header > .header-actions{width:100%;max-width:720px;margin-left:auto;margin-right:auto;}}</style>
 </head>
 <body>
     <script>
@@ -8320,7 +8323,7 @@ ${delen.map(p).join('\n')}
             t.setAttribute('role', type === 'error' ? 'alert' : 'status');
             t.classList.add('show');
             clearTimeout(ocToastTimer);
-            ocToastTimer = setTimeout(function ocT() { const w = window.ocWacht ? ocWacht(t) : 0; if (w) { ocToastTimer = setTimeout(ocT, w); return; } t.classList.remove('show'); ocToastUndo = null; }, ms || (ocToastUndo ? 6000 : (type === 'error' ? 4500 : 2600)));
+            ocToastTimer = setTimeout(function ocT() { const w = window.ocWacht ? ocWacht(t) : 0; if (w) { ocToastTimer = setTimeout(ocT, w); return; } t.classList.remove('show'); ocToastUndo = null; }, ms || (ocToastUndo ? 10000 : (type === 'error' ? 6000 : 4000)));
         }
         document.querySelector('#ocToast button').addEventListener('click', () => { const f = ocToastUndo; ocToastUndo = null; document.getElementById('ocToast').classList.remove('show'); if (f) f(); });
 
